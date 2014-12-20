@@ -1,27 +1,5 @@
 # Module Documentation
 
-## Module Main
-
-### Types
-
-    data Action where
-      TextChanged :: String -> Action
-
-    data State where
-      State :: String -> State
-
-
-### Values
-
-    initialState :: State
-
-    performAction :: State -> Action -> T.Action _ State
-
-    render :: T.Context Action -> State -> T.Html _
-
-    spec :: T.Spec _ State Action
-
-
 ## Module Thermite
 
 ### Types
@@ -65,6 +43,3 @@
     props :: forall action. [Prop action] -> Props action
 
     text :: forall action. String -> Html action
-
-
-
