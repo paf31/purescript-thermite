@@ -14,11 +14,11 @@ initialState = State ""
 
 render :: T.Context Action -> State -> T.Html _
 render ctx (State s) = 
-  T.createElement "p" (T.props []) $ welcome : response s
+  T.createElement "div" (T.props []) $ welcome : response s
   where
   welcome :: T.Html _
   welcome = 
-    T.createElement "p" (T.props [])
+    T.createElement "div" (T.props [])
       [ T.text "What is your name? "
       , T.createElement "input" (T.props [ T.onChange ctx TextChanged ]) []
       ]
@@ -26,7 +26,7 @@ render ctx (State s) =
   response :: String -> [T.Html _]
   response "" = []
   response s = 
-    [ T.createElement "p" (T.props [])
+    [ T.createElement "div" (T.props [])
         [ T.text "Hello, "
         , T.text s 
         ]
