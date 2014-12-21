@@ -6,7 +6,6 @@ module Thermite.Html
   , props
   , createElement  
   , text
-  , onChange
   ) where
 
 foreign import data Prop :: * -> *
@@ -44,14 +43,4 @@ foreign import createElement """
     };
   }
   """ :: forall action. String -> Props action -> [Html action] -> Html action
-
-foreign import onChange """
-  function onChange(context) {
-    return function (f) {
-      return ["onChange", function(e) {
-        context.performAction(f(e.target.value));
-      }];
-    };
-  }
-  """ :: forall action. Context action -> (String -> action) -> Prop action
 

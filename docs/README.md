@@ -25,6 +25,15 @@
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 
 
+## Module Thermite.Events
+
+### Values
+
+    onChange :: forall action. Context action -> (String -> action) -> Prop action
+
+    onClick :: forall action. Context action -> action -> Prop action
+
+
 ## Module Thermite.Html
 
 ### Types
@@ -41,8 +50,6 @@
 ### Values
 
     createElement :: forall action. String -> Props action -> [Html action] -> Html action
-
-    onChange :: forall action. Context action -> (String -> action) -> Prop action
 
     props :: forall action. [Prop action] -> Props action
 

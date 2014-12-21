@@ -4,8 +4,9 @@ import Data.Function
 
 import qualified Thermite as T
 import qualified Thermite.Html as T
+import qualified Thermite.Events as T
 
-data Action = TextChanged String
+data Action = TextChanged String | ClearText
 
 data State = State { name :: String }
 
@@ -25,6 +26,7 @@ render = mkFn3 render'
       T.createElement "div" (T.props [])
         [ T.text "What is your name? "
         , T.createElement "input" (T.props [ T.onChange ctx TextChanged ]) []
+        , T.createElement "button" (T.props [ T.onClick  ctx (TextChanged "") ]) [ T.text "Clear" ]
         ]
 
     response :: String -> [T.Html _]
