@@ -6,19 +6,23 @@
 
     type Action eff a = (a -> Eff eff Unit) -> Eff eff Unit
 
-    data ComponentClass :: # ! -> *
+    data ComponentClass :: * -> # ! -> *
 
-    newtype Spec eff state action where
-      Spec :: SpecRecord eff state action -> Spec eff state action
+    type PerformAction state props action eff = Fn3 state props action (Action eff state)
 
-    type SpecRecord eff state action = { render :: Context action -> state -> Html action, performAction :: state -> action -> Action eff state, setup :: Maybe action, initialState :: state }
+    type Render state props action = Fn3 (Context action) state props (Html action)
+
+    newtype Spec eff state props action where
+      Spec :: SpecRecord eff state props action -> Spec eff state props action
+
+    type SpecRecord eff state props action = { render :: Render state props action, performAction :: PerformAction state props action eff, initialState :: state }
 
 
 ### Values
 
-    createClass :: forall eff state action. Spec eff state action -> ComponentClass eff
+    createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
 
-    render :: forall eff. ComponentClass eff -> Eff (dom :: DOM | eff) Unit
+    render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 
 
 ## Module Thermite.Html
