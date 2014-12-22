@@ -27,11 +27,96 @@
 
 ## Module Thermite.Events
 
+### Types
+
+    data ClipboardEvent :: *
+
+    data FocusEvent :: *
+
+    data FormEvent :: *
+
+    data KeyboardEvent :: *
+
+    data MouseEvent :: *
+
+    data TouchEvent :: *
+
+    data UIEvent :: *
+
+    data WheelEvent :: *
+
+
 ### Values
 
-    onChange :: forall action. Context action -> (String -> action) -> Prop action
+    event :: forall action event. String -> Context action -> (event -> action) -> Prop action
 
-    onClick :: forall action. Context action -> action -> Prop action
+    onBlur :: forall action. Context action -> (FocusEvent -> action) -> Prop action
+
+    onChange :: forall action. Context action -> (FormEvent -> action) -> Prop action
+
+    onClick :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onCopy :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+
+    onCut :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+
+    onDoubleClick :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDrag :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragEnd :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragEnter :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragExit :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragLeave :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragOver :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDragStart :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onDrop :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onFocus :: forall action. Context action -> (FocusEvent -> action) -> Prop action
+
+    onInput :: forall action. Context action -> (FormEvent -> action) -> Prop action
+
+    onKeyDown :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+
+    onKeyPress :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+
+    onKeyUp :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+
+    onMouseDown :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseEnter :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseLeave :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseMove :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseOut :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseOver :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onMouseUp :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+
+    onPaste :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+
+    onScroll :: forall action. Context action -> (UIEvent -> action) -> Prop action
+
+    onSubmit :: forall action. Context action -> (FormEvent -> action) -> Prop action
+
+    onTouchCancel :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+
+    onTouchEnd :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+
+    onTouchMove :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+
+    onTouchStart :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+
+    onWheel :: forall action. Context action -> (WheelEvent -> action) -> Prop action
 
 
 ## Module Thermite.Html

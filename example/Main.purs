@@ -14,6 +14,12 @@ data State = State { name :: String }
 
 data Props = Props { greeting :: String }
 
+foreign import unsafeStringValue """
+  function unsafeStringValue(e) {
+    return e.target.value;
+  }
+  """ :: T.FormEvent -> String
+
 initialState :: State
 initialState = State { name: "" }
 
@@ -26,8 +32,8 @@ render = mkFn3 render'
     welcome :: T.Html _
     welcome = 
       T.div'
-        [ T.input [ A.value s.name, A.placeholder "What is your name?", T.onChange ctx TextChanged ] []
-        , T.button [ T.onClick ctx (TextChanged "") ] [ T.text "Clear" ]
+        [ T.input [ A.value s.name, A.placeholder "What is your name?", T.onChange ctx (TextChanged <<< unsafeStringValue) ] []
+        , T.button [ T.onClick ctx (\_ -> TextChanged "") ] [ T.text "Clear" ]
         ]
 
     response :: String -> [T.Html _]
