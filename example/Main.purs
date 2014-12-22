@@ -31,8 +31,12 @@ render = mkFn3 render'
     welcome :: T.Html _
     welcome = 
       T.div'
-        [ T.input [ A.value s.name, A.placeholder "What is your name?", T.onChange ctx (TextChanged <<< unsafeStringValue) ] []
-        , T.button [ T.onClick ctx (\_ -> TextChanged "") ] [ T.text "Clear" ]
+        [ T.input [ A.value s.name
+                  , A.placeholder "What is your name?"
+                  , T.onChange ctx (TextChanged <<< unsafeStringValue) 
+                  ] []
+        , T.button [ T.onClick ctx (\_ -> TextChanged "") ] 
+                   [ T.text "Clear" ]
         ]
 
     response :: String -> [T.Html _]
