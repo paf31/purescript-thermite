@@ -3,28 +3,15 @@ module Thermite.Html
   , Prop()
   , Props()
   , Context()
-  , props
   , createElement  
   , text
   ) where
 
 foreign import data Prop :: * -> *
 
-foreign import data Props :: * -> *
-
 foreign import data Context :: * -> *
 
-foreign import props """
-  function props(ps) {
-    var result = {};
-
-    for (var i = 0; i < ps.length; i++) {
-      result[ps[i][0]] = ps[i][1];
-    }
-
-    return result;
-  }
-  """ :: forall action. [Prop action] -> Props action
+type Props action = [Prop action]
 
 foreign import data Html :: * -> * 
 
@@ -36,11 +23,17 @@ foreign import text """
 
 foreign import createElement """
   function createElement(name) {
-    return function(props) {
+    return function(ps) {
       return function(children) {
+        var props = {};
+
+        for (var i = 0; i < ps.length; i++) {
+          var p = ps[i];
+          props[p[0]] = p[1];
+        }
+
         return React.createElement(name, props, children);
       };
     };
   }
   """ :: forall action. String -> Props action -> [Html action] -> Html action
-
