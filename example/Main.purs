@@ -14,11 +14,10 @@ data State = State { name :: String }
 
 data Props = Props { greeting :: String }
 
-foreign import unsafeStringValue """
-  function unsafeStringValue(e) {
-    return e.target.value;
-  }
-  """ :: T.FormEvent -> String
+foreign import unsafeStringValue 
+  "function unsafeStringValue(e) {\
+  \  return e.target.value;\
+  \}" :: T.FormEvent -> String
 
 initialState :: State
 initialState = State { name: "" }
