@@ -5,6 +5,7 @@ import Data.Function
 import qualified Thermite as T
 import qualified Thermite.Html as T
 import qualified Thermite.Html.Elements as T
+import qualified Thermite.Html.Attributes as A
 import qualified Thermite.Events as T
 
 data Action = TextChanged String | ClearText
@@ -25,8 +26,7 @@ render = mkFn3 render'
     welcome :: T.Html _
     welcome = 
       T.div'
-        [ T.text "What is your name? "
-        , T.input [ T.onChange ctx TextChanged ] []
+        [ T.input [ A.value s.name, A.placeholder "What is your name?", T.onChange ctx TextChanged ] []
         , T.button [ T.onClick ctx (TextChanged "") ] [ T.text "Clear" ]
         ]
 

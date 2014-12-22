@@ -54,6 +54,209 @@
     text :: forall action. String -> Html action
 
 
+## Module Thermite.Html.Attributes
+
+### Values
+
+    _id :: forall action. String -> Prop action
+
+    _type :: forall action. String -> Prop action
+
+    accept :: forall action. String -> Prop action
+
+    acceptCharset :: forall action. String -> Prop action
+
+    accessKey :: forall action. String -> Prop action
+
+    action :: forall action. String -> Prop action
+
+    allowFullScreen :: forall action. String -> Prop action
+
+    allowTransparency :: forall action. String -> Prop action
+
+    alt :: forall action. String -> Prop action
+
+    async :: forall action. String -> Prop action
+
+    attribute :: forall action. String -> String -> Prop action
+
+    autoComplete :: forall action. String -> Prop action
+
+    autoPlay :: forall action. String -> Prop action
+
+    cellPadding :: forall action. String -> Prop action
+
+    cellSpacing :: forall action. String -> Prop action
+
+    charSet :: forall action. String -> Prop action
+
+    checked :: forall action. String -> Prop action
+
+    classID :: forall action. String -> Prop action
+
+    className :: forall action. String -> Prop action
+
+    colSpan :: forall action. String -> Prop action
+
+    cols :: forall action. String -> Prop action
+
+    content :: forall action. String -> Prop action
+
+    contentEditable :: forall action. String -> Prop action
+
+    contextMenu :: forall action. String -> Prop action
+
+    controls :: forall action. String -> Prop action
+
+    coords :: forall action. String -> Prop action
+
+    crossOrigin :: forall action. String -> Prop action
+
+    dateTime :: forall action. String -> Prop action
+
+    defer :: forall action. String -> Prop action
+
+    dir :: forall action. String -> Prop action
+
+    disabled :: forall action. String -> Prop action
+
+    download :: forall action. String -> Prop action
+
+    draggable :: forall action. String -> Prop action
+
+    encType :: forall action. String -> Prop action
+
+    form :: forall action. String -> Prop action
+
+    formAction :: forall action. String -> Prop action
+
+    formEncType :: forall action. String -> Prop action
+
+    formMethod :: forall action. String -> Prop action
+
+    formNoValidate :: forall action. String -> Prop action
+
+    formTarget :: forall action. String -> Prop action
+
+    frameBorder :: forall action. String -> Prop action
+
+    height :: forall action. String -> Prop action
+
+    hidden :: forall action. String -> Prop action
+
+    href :: forall action. String -> Prop action
+
+    hrefLang :: forall action. String -> Prop action
+
+    htmlFor :: forall action. String -> Prop action
+
+    httpEquiv :: forall action. String -> Prop action
+
+    icon :: forall action. String -> Prop action
+
+    label :: forall action. String -> Prop action
+
+    lang :: forall action. String -> Prop action
+
+    list :: forall action. String -> Prop action
+
+    loop :: forall action. String -> Prop action
+
+    manifest :: forall action. String -> Prop action
+
+    marginHeight :: forall action. String -> Prop action
+
+    marginWidth :: forall action. String -> Prop action
+
+    max :: forall action. String -> Prop action
+
+    maxLength :: forall action. String -> Prop action
+
+    media :: forall action. String -> Prop action
+
+    mediaGroup :: forall action. String -> Prop action
+
+    method :: forall action. String -> Prop action
+
+    min :: forall action. String -> Prop action
+
+    multiple :: forall action. String -> Prop action
+
+    muted :: forall action. String -> Prop action
+
+    name :: forall action. String -> Prop action
+
+    noValidate :: forall action. String -> Prop action
+
+    open :: forall action. String -> Prop action
+
+    pattern :: forall action. String -> Prop action
+
+    placeholder :: forall action. String -> Prop action
+
+    poster :: forall action. String -> Prop action
+
+    preload :: forall action. String -> Prop action
+
+    radioGroup :: forall action. String -> Prop action
+
+    readOnly :: forall action. String -> Prop action
+
+    rel :: forall action. String -> Prop action
+
+    required :: forall action. String -> Prop action
+
+    role :: forall action. String -> Prop action
+
+    rowSpan :: forall action. String -> Prop action
+
+    rows :: forall action. String -> Prop action
+
+    sandbox :: forall action. String -> Prop action
+
+    scope :: forall action. String -> Prop action
+
+    scrolling :: forall action. String -> Prop action
+
+    seamless :: forall action. String -> Prop action
+
+    selected :: forall action. String -> Prop action
+
+    shape :: forall action. String -> Prop action
+
+    size :: forall action. String -> Prop action
+
+    sizes :: forall action. String -> Prop action
+
+    span :: forall action. String -> Prop action
+
+    spellCheck :: forall action. String -> Prop action
+
+    src :: forall action. String -> Prop action
+
+    srcDoc :: forall action. String -> Prop action
+
+    srcSet :: forall action. String -> Prop action
+
+    start :: forall action. String -> Prop action
+
+    step :: forall action. String -> Prop action
+
+    tabIndex :: forall action. String -> Prop action
+
+    target :: forall action. String -> Prop action
+
+    title :: forall action. String -> Prop action
+
+    useMap :: forall action. String -> Prop action
+
+    value :: forall action. String -> Prop action
+
+    width :: forall action. String -> Prop action
+
+    wmode :: forall action. String -> Prop action
+
+
 ## Module Thermite.Html.Elements
 
 ### Values
