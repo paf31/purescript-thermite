@@ -8,9 +8,9 @@
 
     data ComponentClass :: * -> # ! -> *
 
-    type PerformAction state props action eff = Fn3 state props action (Action eff state)
+    type PerformAction state props action eff = state -> props -> action -> Action eff state
 
-    type Render state props action = Fn3 (Context action) state props (Html action)
+    type Render state props action = Context action -> state -> props -> Html action
 
     newtype Spec eff state props action where
       Spec :: SpecRecord eff state props action -> Spec eff state props action
