@@ -4,6 +4,7 @@
 
 - [Module Documentation](docs/README.md)
 - [Example](example/Main.purs)
+- [Task List Example](https://github.com/paf31/purescript-thermite-todomvc)
 
 ## Building
 
