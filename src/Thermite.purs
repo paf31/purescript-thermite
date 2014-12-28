@@ -6,6 +6,7 @@ module Thermite
   , ComponentClass()
   , createClass 
   , render
+  , component
   ) where
 
 import DOM
@@ -63,3 +64,12 @@ foreign import render """
   }
   """ :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 
+foreign import component """
+  function component(comp) {
+    return function(props) {
+      return function(children) {
+        return React.createElement(comp, props, children);
+      };
+    };
+  }
+  """ :: forall props action eff. ComponentClass props eff -> props -> [Html action] -> Html action

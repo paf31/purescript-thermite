@@ -18,6 +18,8 @@
 
 ### Values
 
+    component :: forall props action eff. ComponentClass props eff -> props -> [Html action] -> Html action
+
     createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
 
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
