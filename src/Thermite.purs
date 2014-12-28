@@ -1,6 +1,5 @@
 module Thermite
-  ( Action()
-  , PerformAction()
+  ( PerformAction()
   , Render()
   , Spec(..)
   , SpecRecord()
@@ -14,10 +13,9 @@ import DOM
 import Control.Monad.Eff
 
 import Thermite.Html
+import Thermite.Action
 
-type Action eff a = (a -> Eff eff Unit) -> Eff eff Unit
-
-type PerformAction state props action eff = state -> props -> action -> Action eff state
+type PerformAction state props action eff = props -> action -> Action eff state Unit 
 
 type Render state props action = Context action -> state -> props -> Html action
 
@@ -39,9 +37,9 @@ foreign import createClassImpl """
       },
       performAction: function(action) {
         var self = this;
-        spec.performAction(self.state)(self.props)(action)(function(state) {
+        spec.performAction(self.props)(action)(self.state)(function(o) {
           return function() {
-            self.setState(state);
+            self.setState(o.state);
           };
         })();
       },

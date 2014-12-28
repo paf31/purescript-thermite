@@ -4,11 +4,9 @@
 
 ### Types
 
-    type Action eff a = (a -> Eff eff Unit) -> Eff eff Unit
-
     data ComponentClass :: * -> # ! -> *
 
-    type PerformAction state props action eff = state -> props -> action -> Action eff state
+    type PerformAction state props action eff = props -> action -> Action eff state Unit
 
     type Render state props action = Context action -> state -> props -> Html action
 
@@ -23,6 +21,43 @@
     createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
 
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+
+
+## Module Thermite.Action
+
+### Types
+
+    newtype Action eff state a
+
+    type ActionResult state a = { value :: a, state :: state }
+
+
+### Type Class Instances
+
+    instance applicativeAction :: Applicative (Action eff state)
+
+    instance applyAction :: Apply (Action eff state)
+
+    instance bindAction :: Bind (Action eff state)
+
+    instance functorAction :: Functor (Action eff state)
+
+    instance monadAction :: Monad (Action eff state)
+
+
+### Values
+
+    action :: forall eff state a. (state -> (a -> state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
+
+    asyncSetState :: forall eff state. ((state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state Unit
+
+    getState :: forall eff state. Action eff state state
+
+    modifyState :: forall eff state. (state -> state) -> Action eff state Unit
+
+    runAction :: forall eff state a. Action eff state a -> state -> (ActionResult state a -> Eff eff Unit) -> Eff eff Unit
+
+    setState :: forall eff state. state -> Action eff state Unit
 
 
 ## Module Thermite.Events
