@@ -4,6 +4,8 @@ module Thermite.Action
   , getState
   , setState
   , modifyState
+  , sync
+  , async
   , asyncSetState
   ) where
 
@@ -47,12 +49,15 @@ modifyState f = do
   s <- getState
   setState (f s)
 
-wait :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
-wait c = Impure $ Wait \k -> c (k <<< Pure)
+async :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
+async c = Impure $ Wait \k -> c (k <<< Pure)
+
+sync :: forall eff state a. Eff eff a -> Action eff state a
+sync e = async ((>>=) e)
 
 asyncSetState :: forall eff state. ((state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state Unit
 asyncSetState c = do
-  s <- wait c 
+  s <- async c 
   setState s 
 
 instance functorAction :: Functor (Action eff state) where

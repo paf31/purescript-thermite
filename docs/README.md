@@ -33,6 +33,8 @@
 
 ### Values
 
+    async :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
+
     asyncSetState :: forall eff state. ((state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state Unit
 
     getState :: forall eff state. Action eff state state
@@ -42,6 +44,8 @@
     runAction :: forall eff state props action a. Context state props action -> Action eff state a -> Eff eff Unit
 
     setState :: forall eff state. state -> Action eff state Unit
+
+    sync :: forall eff state a. Eff eff a -> Action eff state a
 
 
 ## Module Thermite.Events
