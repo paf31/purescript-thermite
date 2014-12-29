@@ -10,47 +10,37 @@ import qualified Thermite.Action as T
 import qualified Thermite.Events as T
 import qualified Thermite.Types as T
 
-data Action = TextChanged String | ClearText
+data Action = Increment | Decrement
 
-data State = State { name :: String }
-
-data Props = Props { greeting :: String }
-
-foreign import unsafeStringValue 
-  "function unsafeStringValue(e) {\
-  \  return e.target.value;\
-  \}" :: T.FormEvent -> String
+type State = { counter :: Number }
 
 initialState :: State
-initialState = State { name: "" }
+initialState = { counter: 0 }
 
-render :: T.Render State Props Action
-render ctx (State s) (Props p) = T.div' $ welcome : response s.name
+render :: T.Render State _ Action
+render ctx s _ = T.div' [counter, buttons]
   where
-  welcome :: T.Html _
-  welcome = 
-    T.div'
-      [ T.input [ A.value s.name
-                , A.placeholder "What is your name?"
-                , T.onChange ctx (TextChanged <<< unsafeStringValue) 
-                ] []
-      , T.button [ T.onClick ctx (\_ -> TextChanged "") ] 
-                 [ T.text "Clear" ]
+  counter :: T.Html _
+  counter = 
+    T.p'
+      [ T.text "Value: "
+      , T.text $ show s.counter
       ]
 
-  response :: String -> [T.Html _]
-  response "" = []
-  response s = 
-    [ T.div'
-      [ T.text p.greeting
-      , T.text s
+  buttons :: T.Html _
+  buttons = 
+    T.p'
+      [ T.button [ T.onClick ctx (\_ -> Increment) ] 
+                 [ T.text "Increment" ]
+      , T.button [ T.onClick ctx (\_ -> Decrement) ] 
+                 [ T.text "Decrement" ]
       ]
-    ]
 
-performAction :: T.PerformAction Props Action (T.Action _ State) 
-performAction _ (TextChanged s) = T.setState $ State { name: s }
+performAction :: T.PerformAction _ Action (T.Action _ State) 
+performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
+performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 
-spec :: T.Spec _ State Props Action
+spec :: T.Spec _ State _ Action
 spec = T.Spec { initialState: initialState
               , performAction: performAction
               , render: render
@@ -58,4 +48,4 @@ spec = T.Spec { initialState: initialState
 
 main = do
   let component = T.createClass spec
-  T.render component (Props { greeting: "Hello, " })
+  T.render component {}
