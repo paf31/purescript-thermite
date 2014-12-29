@@ -15,8 +15,6 @@
 
     data Action eff state a
 
-    type ActionResult state a = { value :: a, state :: state }
-
 
 ### Type Class Instances
 

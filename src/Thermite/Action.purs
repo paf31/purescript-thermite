@@ -1,6 +1,5 @@
 module Thermite.Action 
-  ( ActionResult()
-  , Action()
+  ( Action()
   , runAction
   , getState
   , setState
@@ -12,8 +11,6 @@ import Control.Monad.Eff
 
 import Thermite.Types
 import Thermite.Internal
-
-type ActionResult state a = { state :: state, value :: a }
 
 data ActionF eff state next
   = GetState (state -> next)
