@@ -9,7 +9,7 @@ import Thermite.Types
 foreign import getStateImpl """
   function getStateImpl(ctx) {
     return function() {
-      return ctx.getState();
+      return ctx.state;
     };
   }
   """ :: forall eff state props action. Context state props action -> Eff eff state
