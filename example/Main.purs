@@ -6,8 +6,9 @@ import qualified Thermite as T
 import qualified Thermite.Html as T
 import qualified Thermite.Html.Elements as T
 import qualified Thermite.Html.Attributes as A
-import qualified Thermite.Events as T
 import qualified Thermite.Action as T
+import qualified Thermite.Events as T
+import qualified Thermite.Types as T
 
 data Action = TextChanged String | ClearText
 
@@ -46,7 +47,7 @@ render ctx (State s) (Props p) = T.div' $ welcome : response s.name
       ]
     ]
 
-performAction :: T.PerformAction State Props Action _ 
+performAction :: T.PerformAction Props Action (T.Action _ State) 
 performAction _ (TextChanged s) = T.setState $ State { name: s }
 
 spec :: T.Spec _ State Props Action

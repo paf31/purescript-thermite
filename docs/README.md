@@ -2,23 +2,9 @@
 
 ## Module Thermite
 
-### Types
-
-    data ComponentClass :: * -> # ! -> *
-
-    type PerformAction state props action eff = props -> action -> Action eff state Unit
-
-    type Render state props action = Context action -> state -> props -> Html action
-
-    newtype Spec eff state props action where
-      Spec :: SpecRecord eff state props action -> Spec eff state props action
-
-    type SpecRecord eff state props action = { render :: Render state props action, performAction :: PerformAction state props action eff, initialState :: state }
-
-
 ### Values
 
-    createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
+    createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 
@@ -27,7 +13,7 @@
 
 ### Types
 
-    newtype Action eff state a
+    data Action eff state a
 
     type ActionResult state a = { value :: a, state :: state }
 
@@ -42,12 +28,12 @@
 
     instance functorAction :: Functor (Action eff state)
 
+    instance functorActionF :: Functor (ActionF eff state)
+
     instance monadAction :: Monad (Action eff state)
 
 
 ### Values
-
-    action :: forall eff state a. (state -> (a -> state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
 
     asyncSetState :: forall eff state. ((state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state Unit
 
@@ -55,7 +41,7 @@
 
     modifyState :: forall eff state. (state -> state) -> Action eff state Unit
 
-    runAction :: forall eff state a. Action eff state a -> state -> (ActionResult state a -> Eff eff Unit) -> Eff eff Unit
+    runAction :: forall eff state props action a. Context state props action -> Action eff state a -> Eff eff Unit
 
     setState :: forall eff state. state -> Action eff state Unit
 
@@ -83,89 +69,76 @@
 
 ### Values
 
-    event :: forall action event. String -> Context action -> (event -> action) -> Prop action
+    onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
 
-    onBlur :: forall action. Context action -> (FocusEvent -> action) -> Prop action
+    onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
 
-    onChange :: forall action. Context action -> (FormEvent -> action) -> Prop action
+    onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onClick :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
 
-    onCopy :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+    onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
 
-    onCut :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+    onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDoubleClick :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDrag :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragEnd :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragEnter :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragExit :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragLeave :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragOver :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDragStart :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onDrop :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
 
-    onFocus :: forall action. Context action -> (FocusEvent -> action) -> Prop action
+    onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
 
-    onInput :: forall action. Context action -> (FormEvent -> action) -> Prop action
+    onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
 
-    onKeyDown :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+    onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
 
-    onKeyPress :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+    onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
 
-    onKeyUp :: forall action. Context action -> (KeyboardEvent -> action) -> Prop action
+    onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseDown :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseEnter :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseLeave :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseMove :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseOut :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseOver :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
 
-    onMouseUp :: forall action. Context action -> (MouseEvent -> action) -> Prop action
+    onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
 
-    onPaste :: forall action. Context action -> (ClipboardEvent -> action) -> Prop action
+    onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Prop action
 
-    onScroll :: forall action. Context action -> (UIEvent -> action) -> Prop action
+    onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
 
-    onSubmit :: forall action. Context action -> (FormEvent -> action) -> Prop action
+    onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
 
-    onTouchCancel :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+    onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
 
-    onTouchEnd :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+    onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
 
-    onTouchMove :: forall action. Context action -> (TouchEvent -> action) -> Prop action
+    onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
 
-    onTouchStart :: forall action. Context action -> (TouchEvent -> action) -> Prop action
-
-    onWheel :: forall action. Context action -> (WheelEvent -> action) -> Prop action
+    onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Prop action
 
 
 ## Module Thermite.Html
-
-### Types
-
-    data Context :: * -> *
-
-    data Html :: * -> *
-
-    data Prop :: * -> *
-
-    type Props action = [Prop action]
-
 
 ### Values
 
@@ -197,8 +170,6 @@
     alt :: forall action. String -> Prop action
 
     async :: forall action. String -> Prop action
-
-    attribute :: forall action. String -> String -> Prop action
 
     autoComplete :: forall action. String -> Prop action
 
@@ -828,3 +799,48 @@
     wbr :: forall action. Props action -> [Html action] -> Html action
 
     wbr' :: forall action. [Html action] -> Html action
+
+
+## Module Thermite.Internal
+
+### Values
+
+    attribute :: forall action. String -> String -> Prop action
+
+    createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> SpecRecord m state props action -> ComponentClass props eff
+
+    createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
+
+    event :: forall state props action event. String -> Context state props action -> (event -> action) -> Prop action
+
+    getStateImpl :: forall eff state props action. Context state props action -> Eff eff state
+
+    renderImpl :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+
+    setStateImpl :: forall eff state props action. Context state props action -> state -> Eff eff Unit
+
+    textImpl :: forall action. String -> Html action
+
+
+## Module Thermite.Types
+
+### Types
+
+    data ComponentClass props (eff :: # !)
+
+    data Context state props action
+
+    data Html action
+
+    type PerformAction props action m = props -> action -> m Unit
+
+    data Prop action
+
+    type Props action = [Prop action]
+
+    type Render state props action = Context state props action -> state -> props -> Html action
+
+    newtype Spec m state props action where
+      Spec :: SpecRecord m state props action -> Spec m state props action
+
+    type SpecRecord m state props action = { render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }

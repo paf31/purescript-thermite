@@ -1,15 +1,8 @@
 module Thermite.Html.Attributes where
     
-import Thermite.Html
-    
-foreign import attribute """
-  function attribute(attr) {
-    return function(value) {
-      return [attr, value];
-    };
-  }   
-  """ :: forall action. String -> String -> Prop action
-  
+import Thermite.Types
+import Thermite.Internal
+
 accept :: forall action. String -> Prop action
 accept = attribute "accept"
 
