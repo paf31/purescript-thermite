@@ -14,13 +14,14 @@ data Action = Increment | Decrement
 
 type State = { counter :: Number }
 
-foreign import logMixin """
-  var logMixin = {
-    componentDidMount: function(){
-      console.log('Component did mount. Btw I\'m a mixin.');
-    }
-  };
-  """ :: T.Mixin
+foreign import logMixin
+"""
+var logMixin = {
+  componentDidMount: function(){
+    console.log('Component did mount. Btw I\'m a mixin.');
+  }
+};
+""" :: T.Mixin
 
 
 initialState :: State
