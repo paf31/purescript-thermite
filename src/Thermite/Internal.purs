@@ -71,6 +71,7 @@ foreign import createClassImpl """
   function createClassImpl(runAction) {
     return function(spec) {
       return React.createClass({
+        mixins: spec.mixins,
         getInitialState: function() {
           return spec.initialState;
         },

@@ -10,6 +10,8 @@ type Props action = [Prop action]
 
 data Html action
 
+data Mixin
+
 type PerformAction props action m = props -> action -> m Unit
 
 type Render state props action = Context state props action -> state -> props -> Html action
@@ -17,7 +19,8 @@ type Render state props action = Context state props action -> state -> props ->
 newtype Spec m state props action = Spec (SpecRecord m state props action)
 
 type SpecRecord m state props action =
-  { initialState  :: state
+  { mixins        :: [Mixin]
+  , initialState  :: state
   , performAction :: PerformAction props action m
   , render        :: Render state props action
   }

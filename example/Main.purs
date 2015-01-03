@@ -14,6 +14,16 @@ data Action = Increment | Decrement
 
 type State = { counter :: Number }
 
+foreign import logMixin
+"""
+var logMixin = {
+  componentDidMount: function(){
+    console.log('Component did mount. Btw I\'m a mixin.');
+  }
+};
+""" :: T.Mixin
+
+
 initialState :: State
 initialState = { counter: 0 }
 
@@ -41,7 +51,8 @@ performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
 performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 
 spec :: T.Spec _ State _ Action
-spec = T.Spec { initialState: initialState
+spec = T.Spec { mixins: [logMixin]
+              , initialState: initialState
               , performAction: performAction
               , render: render
               }

@@ -834,6 +834,8 @@
 
     data Html action
 
+    data Mixin
+
     type PerformAction props action m = props -> action -> m Unit
 
     data Prop action
@@ -845,4 +847,4 @@
     newtype Spec m state props action where
       Spec :: SpecRecord m state props action -> Spec m state props action
 
-    type SpecRecord m state props action = { render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }
+    type SpecRecord m state props action = { render :: Render state props action, performAction :: PerformAction props action m, initialState :: state, mixins :: [Mixin] }
