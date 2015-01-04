@@ -2,6 +2,8 @@ module Thermite.Internal where
 
 import DOM
 
+import Data.Maybe
+
 import Control.Monad.Eff
 
 import Thermite.Types
@@ -69,22 +71,33 @@ foreign import event """
 
 foreign import createClassImpl """
   function createClassImpl(runAction) {
-    return function(spec) {
-      return React.createClass({
-        getInitialState: function() {
-          return spec.initialState;
-        },
-        performAction: function(action) {
-          runAction(this)(spec.performAction(this)(action))();
-        },
-        render: function() {
-          return spec.render(this)(this.state)(this.props);
-        }
-      });
+    return function(maybe) {
+      return function(spec) {
+        return React.createClass({
+          getInitialState: function() {
+            return spec.initialState;
+          },
+          performAction: function(action) {
+            runAction(this)(spec.performAction(this)(action))();
+          },
+          render: function() {
+            return spec.render(this)(this.state)(this.props);
+          },
+          componentWillMount: function() {
+            var self = this;
+            maybe(function() { })(function(action) {
+              return function() {
+                self.performAction(action);
+              };
+            })(spec.componentWillMount)();
+          }
+        });
+      };
     }; 
   }
   """ :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) ->
-                                          SpecRecord m state props action ->
+                                          (forall a r. r -> (a -> r) -> Maybe a -> r) ->
+                                          Spec m state props action ->
                                           ComponentClass props eff
 
 foreign import renderImpl """

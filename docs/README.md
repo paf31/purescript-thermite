@@ -4,9 +4,13 @@
 
 ### Values
 
+    componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action
+
     createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+
+    simpleSpec :: forall m state props action. state -> PerformAction props action m -> Render state props action -> Spec m state props action
 
 
 ## Module Thermite.Action
@@ -809,7 +813,7 @@
 
 ### Values
 
-    createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> SpecRecord m state props action -> ComponentClass props eff
+    createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> (forall a r. r -> (a -> r) -> Maybe a -> r) -> Spec m state props action -> ComponentClass props eff
 
     createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
 
@@ -847,4 +851,4 @@
     newtype Spec m state props action where
       Spec :: SpecRecord m state props action -> Spec m state props action
 
-    type SpecRecord m state props action = { render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }
+    type SpecRecord m state props action = { componentWillMount :: Maybe action, render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }

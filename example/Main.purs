@@ -41,10 +41,8 @@ performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
 performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 
 spec :: T.Spec _ State _ Action
-spec = T.Spec { initialState: initialState
-              , performAction: performAction
-              , render: render
-              }
+spec = T.simpleSpec initialState performAction render
+         # T.componentWillMount Increment
 
 main = do
   let component = T.createClass spec

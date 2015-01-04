@@ -1,5 +1,7 @@
 module Thermite.Types where
 
+import Data.Maybe
+
 data Context state props action
 
 data ComponentClass props (eff :: # !)
@@ -17,8 +19,9 @@ type Render state props action = Context state props action -> state -> props ->
 newtype Spec m state props action = Spec (SpecRecord m state props action)
 
 type SpecRecord m state props action =
-  { initialState  :: state
-  , performAction :: PerformAction props action m
-  , render        :: Render state props action
+  { initialState       :: state
+  , performAction      :: PerformAction props action m
+  , render             :: Render state props action
+  , componentWillMount :: Maybe action
   }
 
