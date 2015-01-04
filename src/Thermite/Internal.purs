@@ -47,13 +47,13 @@ foreign import createElementImpl """
   }
   """ :: forall action. String -> Props action -> [Html action] -> Html action
 
-foreign import attribute """
-  function attribute(attr) {
+foreign import unsafeAttribute """
+  function unsafeAttribute(attr) {
     return function(value) {
       return [attr, value];
     };
   }   
-  """ :: forall action. String -> String -> Prop action
+  """ :: forall action attr. String -> attr -> Prop action
 
 foreign import event """
   function event(name) {

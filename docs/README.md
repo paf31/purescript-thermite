@@ -175,6 +175,8 @@
 
     autoComplete :: forall action. String -> Prop action
 
+    autoFocus :: forall action. Boolean -> Prop action
+
     autoPlay :: forall action. String -> Prop action
 
     cellPadding :: forall action. String -> Prop action
@@ -807,8 +809,6 @@
 
 ### Values
 
-    attribute :: forall action. String -> String -> Prop action
-
     createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> SpecRecord m state props action -> ComponentClass props eff
 
     createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
@@ -822,6 +822,8 @@
     setStateImpl :: forall eff state props action. Context state props action -> state -> Eff eff Unit
 
     textImpl :: forall action. String -> Html action
+
+    unsafeAttribute :: forall action attr. String -> attr -> Prop action
 
 
 ## Module Thermite.Types
