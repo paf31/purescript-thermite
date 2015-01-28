@@ -23,7 +23,7 @@ foreign import setStateImpl """
         ctx.setState(state);
       };
     };
-  } 
+  }
   """ :: forall eff state props action. Context state props action -> state -> Eff eff Unit
 
 foreign import textImpl """
@@ -54,7 +54,7 @@ foreign import unsafeAttribute """
     return function(value) {
       return [attr, value];
     };
-  }   
+  }
   """ :: forall action attr. String -> attr -> Prop action
 
 foreign import event """
@@ -90,10 +90,11 @@ foreign import createClassImpl """
                 self.performAction(action);
               };
             })(spec.componentWillMount)();
-          }
-        });
+          },
+          displayName: maybe(undefined)(function(a) { return a; })(spec.displayName)
+        })
       };
-    }; 
+    };
   }
   """ :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) ->
                                           (forall a r. r -> (a -> r) -> Maybe a -> r) ->

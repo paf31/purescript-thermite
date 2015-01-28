@@ -21,6 +21,7 @@ simpleSpec initialState performAction render = Spec { initialState: initialState
                                                     , performAction: performAction
                                                     , render: render
                                                     , componentWillMount: Nothing
+                                                    , displayName: Nothing
                                                     }
 
 componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action 

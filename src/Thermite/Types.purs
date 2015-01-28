@@ -23,5 +23,5 @@ type SpecRecord m state props action =
   , performAction      :: PerformAction props action m
   , render             :: Render state props action
   , componentWillMount :: Maybe action
+  , displayName        :: Maybe String
   }
-
