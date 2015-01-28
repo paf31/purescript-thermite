@@ -1,7 +1,8 @@
 module Thermite
   ( simpleSpec
-  , componentWillMount 
-  , createClass 
+  , componentWillMount
+  , createClass
+  , displayName
   , render
   ) where
 
