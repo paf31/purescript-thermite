@@ -1,7 +1,8 @@
 module Thermite
   ( simpleSpec
-  , componentWillMount 
-  , createClass 
+  , componentWillMount
+  , createClass
+  , displayName
   , render
   ) where
 
@@ -21,10 +22,14 @@ simpleSpec initialState performAction render = Spec { initialState: initialState
                                                     , performAction: performAction
                                                     , render: render
                                                     , componentWillMount: Nothing
+                                                    , displayName: Nothing
                                                     }
 
-componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action 
+componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action
 componentWillMount action (Spec spec) = Spec (spec { componentWillMount = Just action })
+
+displayName :: forall m state props action. String -> Spec m state props action -> Spec m state props action
+displayName name (Spec spec) = Spec (spec { displayName = Just name })
 
 createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 createClass = createClassImpl runAction maybe
