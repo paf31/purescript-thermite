@@ -1,5 +1,5 @@
-module Thermite.Html 
-  ( createElement  
+module Thermite.Html
+  ( createElement
   , text
   ) where
 
@@ -10,4 +10,4 @@ text :: forall action. String -> Html action
 text = textImpl
 
 createElement :: forall action. String -> Props action -> [Html action] -> Html action
-createElement = createElementImpl
+createElement = createElementFromTagName

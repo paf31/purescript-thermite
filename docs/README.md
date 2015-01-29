@@ -1205,10 +1205,13 @@
     createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> (forall a r. r -> (a -> r) -> Maybe a -> r) -> Spec m state props action -> ComponentClass props eff
 
 
+    createElementFn :: forall value action. Fn3 value (Props action) [Html action] (Html action)
+
+
     createElementFromClass :: forall eff props action. ComponentClass props eff -> Props action -> [Html action] -> Html action
 
 
-    createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
+    createElementFromTagName :: forall action. String -> Props action -> [Html action] -> Html action
 
 
     event :: forall state props action event. String -> Context state props action -> (event -> action) -> Prop action

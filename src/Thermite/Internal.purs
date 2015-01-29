@@ -2,6 +2,7 @@ module Thermite.Internal where
 
 import DOM
 
+import Data.Function
 import Data.Maybe
 
 import Control.Monad.Eff
@@ -32,41 +33,26 @@ foreign import textImpl """
   }
   """ :: forall action. String -> Html action
 
-foreign import createElementImpl """
-  function createElementImpl(name) {
-    return function(ps) {
-      return function(children) {
-        var props = {};
+foreign import createElementFn """
+  function createElementFromClass(value, ps, children) {
+    var props = {};
+    var n = ps.length;
+    var i = -1;
 
-        for (var i = 0; i < ps.length; i++) {
-          var p = ps[i];
-          props[p[0]] = p[1];
-        }
+    while (++i < n) {
+      var p = ps[i];
+      props[p[0]] = p[1];
+    }
 
-        return React.createElement(name, props, children);
-      };
-    };
+    return React.createElement(value, props, children);
   }
-  """ :: forall action. String -> Props action -> [Html action] -> Html action
+  """ :: forall value action. Fn3 value (Props action) ([Html action]) (Html action)
 
-foreign import createElementFromClass """
-  function createElementFromClass(clazz) {
-    return function(ps) {
-      return function(children) {
-        var props = {};
-        var n = ps.length;
-        var i = -1;
+createElementFromTagName :: forall action. String -> Props action -> [Html action] -> Html action
+createElementFromTagName = runFn3 createElementFn
 
-        while (++i < n) {
-          var p = ps[i];
-          props[p[0]] = p[1];
-        }
-
-        return React.createElement(clazz, props, children);
-      };
-    };
-  }
-  """ :: forall eff props action. ComponentClass props eff -> Props action -> [Html action] -> Html action
+createElementFromClass :: forall eff props action. ComponentClass props eff -> Props action -> [Html action] -> Html action
+createElementFromClass = runFn3 createElementFn
 
 foreign import unsafeAttribute """
   function unsafeAttribute(attr) {
