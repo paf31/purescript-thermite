@@ -49,6 +49,25 @@ foreign import createElementImpl """
   }
   """ :: forall action. String -> Props action -> [Html action] -> Html action
 
+foreign import createElementFromClass """
+  function createElementFromClass(clazz) {
+    return function(ps) {
+      return function(children) {
+        var props = {};
+        var n = ps.length;
+        var i = -1;
+
+        while (++i < n) {
+          var p = ps[i];
+          props[p[0]] = p[1];
+        }
+
+        return React.createElement(clazz, props, children);
+      };
+    };
+  }
+  """ :: forall eff props action. ComponentClass props eff -> Props action -> [Html action] -> Html action
+
 foreign import unsafeAttribute """
   function unsafeAttribute(attr) {
     return function(value) {

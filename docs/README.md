@@ -11,6 +11,9 @@
     createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 
 
+    displayName :: forall m state props action. String -> Spec m state props action -> Spec m state props action
+
+
     render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 
 
@@ -1200,6 +1203,9 @@
 
 
     createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> (forall a r. r -> (a -> r) -> Maybe a -> r) -> Spec m state props action -> ComponentClass props eff
+
+
+    createElementFromClass :: forall eff props action. ComponentClass props eff -> Props action -> [Html action] -> Html action
 
 
     createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
