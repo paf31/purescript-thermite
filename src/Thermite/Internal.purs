@@ -34,7 +34,7 @@ foreign import textImpl """
   """ :: forall action. String -> Html action
 
 foreign import createElementFn """
-  function createElementFromClass(value, ps, children) {
+  function createElementFn(value, ps, children) {
     var props = {};
     var n = ps.length;
     var i = -1;
