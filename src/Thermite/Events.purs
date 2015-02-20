@@ -119,4 +119,4 @@ onScroll = event "onScroll"
 foreign import data WheelEvent :: *
 
 onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Prop action
-onWheel = event "onTouchCancel"
+onWheel = event "onWheel"
