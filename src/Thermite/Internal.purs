@@ -78,7 +78,7 @@ foreign import createClassImpl """
             return spec.initialState;
           },
           performAction: function(action) {
-            runAction(this)(spec.performAction(this)(action))();
+            runAction(this)(spec.performAction(this.props)(action))();
           },
           render: function() {
             return spec.render(this)(this.state)(this.props);
