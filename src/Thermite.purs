@@ -4,6 +4,7 @@ module Thermite
   , createClass
   , displayName
   , render
+  , renderTo
   ) where
 
 import DOM
@@ -35,4 +36,9 @@ createClass :: forall eff state props action. Spec (Action eff state) state prop
 createClass = createClassImpl runAction maybe
 
 render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
-render = renderImpl
+render cc props = do
+  body <- documentBody
+  renderTo body cc props
+
+renderTo :: forall props eff. Node -> ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+renderTo = renderToImpl

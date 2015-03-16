@@ -101,13 +101,20 @@ foreign import createClassImpl """
                                           Spec m state props action ->
                                           ComponentClass props eff
 
-foreign import renderImpl """
-  function renderImpl(component) {
-    return function(props) {
-      return function() {
-        React.render(React.createElement(component, props), document.body);
-      };
-    };
+foreign import documentBody """
+  function documentBody(component) {
+    return document.body;
   }
-  """ :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+  """ :: forall props eff. Eff (dom :: DOM | eff) Node
 
+foreign import renderToImpl """
+  function renderToImpl(element) {
+    return function (component) {
+      return function(props) {
+        return function() {
+          React.render(React.createElement(component, props), element);
+        };
+      };
+    }
+  }
+  """ :: forall props eff. Node -> ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
