@@ -87,7 +87,7 @@ defer = unsafeAttribute "defer"
 dir :: forall action. String -> Prop action
 dir = unsafeAttribute "dir"
 
-disabled :: forall action. String -> Prop action
+disabled :: forall action. Boolean -> Prop action
 disabled = unsafeAttribute "disabled"
 
 download :: forall action. String -> Prop action
