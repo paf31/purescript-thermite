@@ -35,7 +35,7 @@ instance functorActionF :: Functor (ActionF eff state) where
 data Action eff state a = Pure a | Impure (ActionF eff state (Action eff state a))
 
 -- | Run a computation in the `Action` monad.
-runAction :: forall eff state props action a. Context state props action -> Action eff state a -> Eff eff Unit 
+runAction :: forall eff state props action a. Context state action -> Action eff state a -> Eff eff Unit 
 runAction ctx = go
   where
   go (Pure _) = return unit

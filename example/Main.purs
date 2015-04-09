@@ -17,8 +17,8 @@ type State = { counter :: Number }
 initialState :: State
 initialState = { counter: 0 }
 
-render :: T.Render State _ Action
-render ctx s _ = T.div' [counter, buttons]
+render :: T.Render _ State _ Action
+render ctx s _ _ = T.div' [counter, buttons]
   where
   counter :: T.Html _
   counter = 
@@ -36,7 +36,7 @@ render ctx s _ = T.div' [counter, buttons]
                  [ T.text "Decrement" ]
       ]
 
-performAction :: T.PerformAction _ Action (T.Action _ State) 
+performAction :: T.PerformAction _ State _ Action
 performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
 performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 

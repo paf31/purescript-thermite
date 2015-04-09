@@ -8,10 +8,49 @@ This module defines functions for working with React components at a high level:
 - `createClass` and `simpleSpec`, which can be used to create a component class
 - `render` and `renderTo`, which can be used to render a component class
 
+#### `PerformAction`
+
+``` purescript
+type PerformAction eff state props action = props -> action -> Action eff state Unit
+```
+
+A type synonym for action handlers, which take an action and the current properties
+for the component, and return a computation in some monad `m`.
+
+In practice, `m` will be the `Action` monad.
+
+#### `Render`
+
+``` purescript
+type Render eff state props action = Context state action -> state -> props -> [Html eff] -> Html eff
+```
+
+A rendering function, which takes a `Context`, the current state and properties, an array
+of child nodes and returns a HTML document.
+
+#### `Spec`
+
+``` purescript
+newtype Spec eff state props action
+```
+
+A component specification, which can be passed to `createClass`.
+
+A minimal `Spec` can be built using `simpleSpec`, and extended with optional arguments
+using functions in the `Thermite` module.
+
+#### `SpecRecord`
+
+``` purescript
+type SpecRecord eff state props action = { displayName :: Maybe String, componentWillMount :: Maybe action, render :: Render eff state props action, performAction :: PerformAction eff state props action, initialState :: state }
+```
+
+A type synonym for the record type which captures the functions which make up a `Spec`.
+
 #### `simpleSpec`
 
 ``` purescript
-simpleSpec :: forall m state props action. state -> PerformAction props action m -> Render state props action -> Spec m state props action
+simpleSpec :: forall eff state props action. state -> PerformAction eff state props action -> Render eff state props action -> Spec eff state props action
 ```
 
 Create a minimal `Spec`. The arguments are, in order:
@@ -26,7 +65,7 @@ in this module.
 #### `componentWillMount`
 
 ``` purescript
-componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action
+componentWillMount :: forall eff state props action. action -> Spec eff state props action -> Spec eff state props action
 ```
 
 Extend a `Spec` with an action to run when the component will be mounted.
@@ -34,7 +73,7 @@ Extend a `Spec` with an action to run when the component will be mounted.
 #### `displayName`
 
 ``` purescript
-displayName :: forall m state props action. String -> Spec m state props action -> Spec m state props action
+displayName :: forall eff state props action. String -> Spec eff state props action -> Spec eff state props action
 ```
 
 Extend a `Spec` with a display name.
@@ -42,7 +81,7 @@ Extend a `Spec` with a display name.
 #### `createClass`
 
 ``` purescript
-createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
+createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
 ```
 
 Create a component class from a `Spec`.
@@ -72,7 +111,7 @@ This module defines types used by the Thermite library.
 #### `Context`
 
 ``` purescript
-data Context state props action
+data Context state action
 ```
 
 The `Context` type represents React's `this` reference.
@@ -93,71 +132,30 @@ its action handlers can have.
 #### `Attr`
 
 ``` purescript
-data Attr action
+data Attr
 ```
 
-The type of HTML attributes, parameterised by the type of actions they can emit from 
-event handlers.
+The type of HTML attributes.
 
 #### `Html`
 
 ``` purescript
-data Html action
+data Html (eff :: # !)
 ```
 
 The type of HTML elements.
 
-#### `PerformAction`
-
-``` purescript
-type PerformAction props action m = props -> action -> m Unit
-```
-
-A type synonym for action handlers, which take an action and the current properties
-for the component, and return a computation in some monad `m`.
-
-In practice, `m` will be the `Action` monad.
-
-#### `Render`
-
-``` purescript
-type Render state props action = Context state props action -> state -> props -> Html action
-```
-
-A rendering function, which takes a `Context`, the current state and properties, and 
-returns a HTML document.
-
-#### `Spec`
-
-``` purescript
-newtype Spec m state props action
-  = Spec (SpecRecord m state props action)
-```
-
-A component specification, which can be passed to `createClass`.
-
-A minimal `Spec` can be built using `simpleSpec`, and extended with optional arguments
-using functions in the `Thermite` module.
-
-#### `SpecRecord`
-
-``` purescript
-type SpecRecord m state props action = { displayName :: Maybe String, componentWillMount :: Maybe action, render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }
-```
-
-A type synonym for the record type which captures the functions which make up a `Spec`.
-
 #### `semigroupAttr`
 
 ``` purescript
-instance semigroupAttr :: Semigroup (Attr action)
+instance semigroupAttr :: Semigroup Attr
 ```
 
 
 #### `monoidAttr`
 
 ``` purescript
-instance monoidAttr :: Monoid (Attr action)
+instance monoidAttr :: Monoid Attr
 ```
 
 
@@ -190,7 +188,7 @@ The `Action` monad, parameterized by
 #### `runAction`
 
 ``` purescript
-runAction :: forall eff state props action a. Context state props action -> Action eff state a -> Eff eff Unit
+runAction :: forall eff state props action a. Context state action -> Action eff state a -> Eff eff Unit
 ```
 
 Run a computation in the `Action` monad.
@@ -293,7 +291,7 @@ This module defines functions for creating simple HTML documents.
 #### `text`
 
 ``` purescript
-text :: forall action. String -> Html action
+text :: forall eff. String -> Html eff
 ```
 
 Create a text node.
@@ -301,10 +299,18 @@ Create a text node.
 #### `createElement`
 
 ``` purescript
-createElement :: forall action. String -> Attr action -> [Html action] -> Html action
+createElement :: forall eff. String -> Attr -> [Html eff] -> Html eff
 ```
 
 Create a HTML element from a tag name, a set of attributes and a collection of child nodes.
+
+#### `component`
+
+``` purescript
+component :: forall props eff eff. ComponentClass props eff -> props -> [Html eff] -> Html eff
+```
+
+Create a HTML document from a component class
 
 
 ## Module Thermite.Html.Attributes
@@ -315,700 +321,700 @@ This module defines helper functions for creating HTML attributes.
 #### `accept`
 
 ``` purescript
-accept :: forall action. String -> Attr action
+accept :: String -> Attr
 ```
 
 
 #### `acceptCharset`
 
 ``` purescript
-acceptCharset :: forall action. String -> Attr action
+acceptCharset :: String -> Attr
 ```
 
 
 #### `accessKey`
 
 ``` purescript
-accessKey :: forall action. String -> Attr action
+accessKey :: String -> Attr
 ```
 
 
 #### `action`
 
 ``` purescript
-action :: forall action. String -> Attr action
+action :: String -> Attr
 ```
 
 
 #### `allowFullScreen`
 
 ``` purescript
-allowFullScreen :: forall action. String -> Attr action
+allowFullScreen :: String -> Attr
 ```
 
 
 #### `allowTransparency`
 
 ``` purescript
-allowTransparency :: forall action. String -> Attr action
+allowTransparency :: String -> Attr
 ```
 
 
 #### `alt`
 
 ``` purescript
-alt :: forall action. String -> Attr action
+alt :: String -> Attr
 ```
 
 
 #### `async`
 
 ``` purescript
-async :: forall action. String -> Attr action
+async :: String -> Attr
 ```
 
 
 #### `autoComplete`
 
 ``` purescript
-autoComplete :: forall action. String -> Attr action
+autoComplete :: String -> Attr
 ```
 
 
 #### `autoFocus`
 
 ``` purescript
-autoFocus :: forall action. Boolean -> Attr action
+autoFocus :: Boolean -> Attr
 ```
 
 
 #### `autoPlay`
 
 ``` purescript
-autoPlay :: forall action. String -> Attr action
+autoPlay :: String -> Attr
 ```
 
 
 #### `cellPadding`
 
 ``` purescript
-cellPadding :: forall action. String -> Attr action
+cellPadding :: String -> Attr
 ```
 
 
 #### `cellSpacing`
 
 ``` purescript
-cellSpacing :: forall action. String -> Attr action
+cellSpacing :: String -> Attr
 ```
 
 
 #### `charSet`
 
 ``` purescript
-charSet :: forall action. String -> Attr action
+charSet :: String -> Attr
 ```
 
 
 #### `checked`
 
 ``` purescript
-checked :: forall action. String -> Attr action
+checked :: String -> Attr
 ```
 
 
 #### `classID`
 
 ``` purescript
-classID :: forall action. String -> Attr action
+classID :: String -> Attr
 ```
 
 
 #### `className`
 
 ``` purescript
-className :: forall action. String -> Attr action
+className :: String -> Attr
 ```
 
 
 #### `cols`
 
 ``` purescript
-cols :: forall action. String -> Attr action
+cols :: String -> Attr
 ```
 
 
 #### `colSpan`
 
 ``` purescript
-colSpan :: forall action. String -> Attr action
+colSpan :: String -> Attr
 ```
 
 
 #### `content`
 
 ``` purescript
-content :: forall action. String -> Attr action
+content :: String -> Attr
 ```
 
 
 #### `contentEditable`
 
 ``` purescript
-contentEditable :: forall action. String -> Attr action
+contentEditable :: String -> Attr
 ```
 
 
 #### `contextMenu`
 
 ``` purescript
-contextMenu :: forall action. String -> Attr action
+contextMenu :: String -> Attr
 ```
 
 
 #### `controls`
 
 ``` purescript
-controls :: forall action. String -> Attr action
+controls :: String -> Attr
 ```
 
 
 #### `coords`
 
 ``` purescript
-coords :: forall action. String -> Attr action
+coords :: String -> Attr
 ```
 
 
 #### `crossOrigin`
 
 ``` purescript
-crossOrigin :: forall action. String -> Attr action
+crossOrigin :: String -> Attr
 ```
 
 
 #### `dateTime`
 
 ``` purescript
-dateTime :: forall action. String -> Attr action
+dateTime :: String -> Attr
 ```
 
 
 #### `defer`
 
 ``` purescript
-defer :: forall action. String -> Attr action
+defer :: String -> Attr
 ```
 
 
 #### `dir`
 
 ``` purescript
-dir :: forall action. String -> Attr action
+dir :: String -> Attr
 ```
 
 
 #### `disabled`
 
 ``` purescript
-disabled :: forall action. Boolean -> Attr action
+disabled :: Boolean -> Attr
 ```
 
 
 #### `download`
 
 ``` purescript
-download :: forall action. String -> Attr action
+download :: String -> Attr
 ```
 
 
 #### `draggable`
 
 ``` purescript
-draggable :: forall action. String -> Attr action
+draggable :: String -> Attr
 ```
 
 
 #### `encType`
 
 ``` purescript
-encType :: forall action. String -> Attr action
+encType :: String -> Attr
 ```
 
 
 #### `form`
 
 ``` purescript
-form :: forall action. String -> Attr action
+form :: String -> Attr
 ```
 
 
 #### `formAction`
 
 ``` purescript
-formAction :: forall action. String -> Attr action
+formAction :: String -> Attr
 ```
 
 
 #### `formEncType`
 
 ``` purescript
-formEncType :: forall action. String -> Attr action
+formEncType :: String -> Attr
 ```
 
 
 #### `formMethod`
 
 ``` purescript
-formMethod :: forall action. String -> Attr action
+formMethod :: String -> Attr
 ```
 
 
 #### `formNoValidate`
 
 ``` purescript
-formNoValidate :: forall action. String -> Attr action
+formNoValidate :: String -> Attr
 ```
 
 
 #### `formTarget`
 
 ``` purescript
-formTarget :: forall action. String -> Attr action
+formTarget :: String -> Attr
 ```
 
 
 #### `frameBorder`
 
 ``` purescript
-frameBorder :: forall action. String -> Attr action
+frameBorder :: String -> Attr
 ```
 
 
 #### `height`
 
 ``` purescript
-height :: forall action. String -> Attr action
+height :: String -> Attr
 ```
 
 
 #### `hidden`
 
 ``` purescript
-hidden :: forall action. String -> Attr action
+hidden :: String -> Attr
 ```
 
 
 #### `href`
 
 ``` purescript
-href :: forall action. String -> Attr action
+href :: String -> Attr
 ```
 
 
 #### `hrefLang`
 
 ``` purescript
-hrefLang :: forall action. String -> Attr action
+hrefLang :: String -> Attr
 ```
 
 
 #### `htmlFor`
 
 ``` purescript
-htmlFor :: forall action. String -> Attr action
+htmlFor :: String -> Attr
 ```
 
 
 #### `httpEquiv`
 
 ``` purescript
-httpEquiv :: forall action. String -> Attr action
+httpEquiv :: String -> Attr
 ```
 
 
 #### `icon`
 
 ``` purescript
-icon :: forall action. String -> Attr action
+icon :: String -> Attr
 ```
 
 
 #### `_id`
 
 ``` purescript
-_id :: forall action. String -> Attr action
+_id :: String -> Attr
 ```
 
 
 #### `key`
 
 ``` purescript
-key :: forall action. String -> Attr action
+key :: String -> Attr
 ```
 
 
 #### `label`
 
 ``` purescript
-label :: forall action. String -> Attr action
+label :: String -> Attr
 ```
 
 
 #### `lang`
 
 ``` purescript
-lang :: forall action. String -> Attr action
+lang :: String -> Attr
 ```
 
 
 #### `list`
 
 ``` purescript
-list :: forall action. String -> Attr action
+list :: String -> Attr
 ```
 
 
 #### `loop`
 
 ``` purescript
-loop :: forall action. String -> Attr action
+loop :: String -> Attr
 ```
 
 
 #### `manifest`
 
 ``` purescript
-manifest :: forall action. String -> Attr action
+manifest :: String -> Attr
 ```
 
 
 #### `marginHeight`
 
 ``` purescript
-marginHeight :: forall action. String -> Attr action
+marginHeight :: String -> Attr
 ```
 
 
 #### `marginWidth`
 
 ``` purescript
-marginWidth :: forall action. String -> Attr action
+marginWidth :: String -> Attr
 ```
 
 
 #### `max`
 
 ``` purescript
-max :: forall action. String -> Attr action
+max :: String -> Attr
 ```
 
 
 #### `maxLength`
 
 ``` purescript
-maxLength :: forall action. String -> Attr action
+maxLength :: String -> Attr
 ```
 
 
 #### `media`
 
 ``` purescript
-media :: forall action. String -> Attr action
+media :: String -> Attr
 ```
 
 
 #### `mediaGroup`
 
 ``` purescript
-mediaGroup :: forall action. String -> Attr action
+mediaGroup :: String -> Attr
 ```
 
 
 #### `method`
 
 ``` purescript
-method :: forall action. String -> Attr action
+method :: String -> Attr
 ```
 
 
 #### `min`
 
 ``` purescript
-min :: forall action. String -> Attr action
+min :: String -> Attr
 ```
 
 
 #### `multiple`
 
 ``` purescript
-multiple :: forall action. String -> Attr action
+multiple :: String -> Attr
 ```
 
 
 #### `muted`
 
 ``` purescript
-muted :: forall action. String -> Attr action
+muted :: String -> Attr
 ```
 
 
 #### `name`
 
 ``` purescript
-name :: forall action. String -> Attr action
+name :: String -> Attr
 ```
 
 
 #### `noValidate`
 
 ``` purescript
-noValidate :: forall action. String -> Attr action
+noValidate :: String -> Attr
 ```
 
 
 #### `open`
 
 ``` purescript
-open :: forall action. String -> Attr action
+open :: String -> Attr
 ```
 
 
 #### `pattern`
 
 ``` purescript
-pattern :: forall action. String -> Attr action
+pattern :: String -> Attr
 ```
 
 
 #### `placeholder`
 
 ``` purescript
-placeholder :: forall action. String -> Attr action
+placeholder :: String -> Attr
 ```
 
 
 #### `poster`
 
 ``` purescript
-poster :: forall action. String -> Attr action
+poster :: String -> Attr
 ```
 
 
 #### `preload`
 
 ``` purescript
-preload :: forall action. String -> Attr action
+preload :: String -> Attr
 ```
 
 
 #### `radioGroup`
 
 ``` purescript
-radioGroup :: forall action. String -> Attr action
+radioGroup :: String -> Attr
 ```
 
 
 #### `readOnly`
 
 ``` purescript
-readOnly :: forall action. String -> Attr action
+readOnly :: String -> Attr
 ```
 
 
 #### `rel`
 
 ``` purescript
-rel :: forall action. String -> Attr action
+rel :: String -> Attr
 ```
 
 
 #### `required`
 
 ``` purescript
-required :: forall action. String -> Attr action
+required :: String -> Attr
 ```
 
 
 #### `role`
 
 ``` purescript
-role :: forall action. String -> Attr action
+role :: String -> Attr
 ```
 
 
 #### `rows`
 
 ``` purescript
-rows :: forall action. String -> Attr action
+rows :: String -> Attr
 ```
 
 
 #### `rowSpan`
 
 ``` purescript
-rowSpan :: forall action. String -> Attr action
+rowSpan :: String -> Attr
 ```
 
 
 #### `sandbox`
 
 ``` purescript
-sandbox :: forall action. String -> Attr action
+sandbox :: String -> Attr
 ```
 
 
 #### `scope`
 
 ``` purescript
-scope :: forall action. String -> Attr action
+scope :: String -> Attr
 ```
 
 
 #### `scrolling`
 
 ``` purescript
-scrolling :: forall action. String -> Attr action
+scrolling :: String -> Attr
 ```
 
 
 #### `seamless`
 
 ``` purescript
-seamless :: forall action. String -> Attr action
+seamless :: String -> Attr
 ```
 
 
 #### `selected`
 
 ``` purescript
-selected :: forall action. String -> Attr action
+selected :: String -> Attr
 ```
 
 
 #### `shape`
 
 ``` purescript
-shape :: forall action. String -> Attr action
+shape :: String -> Attr
 ```
 
 
 #### `size`
 
 ``` purescript
-size :: forall action. String -> Attr action
+size :: String -> Attr
 ```
 
 
 #### `sizes`
 
 ``` purescript
-sizes :: forall action. String -> Attr action
+sizes :: String -> Attr
 ```
 
 
 #### `span`
 
 ``` purescript
-span :: forall action. String -> Attr action
+span :: String -> Attr
 ```
 
 
 #### `spellCheck`
 
 ``` purescript
-spellCheck :: forall action. String -> Attr action
+spellCheck :: String -> Attr
 ```
 
 
 #### `src`
 
 ``` purescript
-src :: forall action. String -> Attr action
+src :: String -> Attr
 ```
 
 
 #### `srcDoc`
 
 ``` purescript
-srcDoc :: forall action. String -> Attr action
+srcDoc :: String -> Attr
 ```
 
 
 #### `srcSet`
 
 ``` purescript
-srcSet :: forall action. String -> Attr action
+srcSet :: String -> Attr
 ```
 
 
 #### `start`
 
 ``` purescript
-start :: forall action. String -> Attr action
+start :: String -> Attr
 ```
 
 
 #### `step`
 
 ``` purescript
-step :: forall action. String -> Attr action
+step :: String -> Attr
 ```
 
 
 #### `tabIndex`
 
 ``` purescript
-tabIndex :: forall action. String -> Attr action
+tabIndex :: String -> Attr
 ```
 
 
 #### `target`
 
 ``` purescript
-target :: forall action. String -> Attr action
+target :: String -> Attr
 ```
 
 
 #### `title`
 
 ``` purescript
-title :: forall action. String -> Attr action
+title :: String -> Attr
 ```
 
 
 #### `_type`
 
 ``` purescript
-_type :: forall action. String -> Attr action
+_type :: String -> Attr
 ```
 
 
 #### `useMap`
 
 ``` purescript
-useMap :: forall action. String -> Attr action
+useMap :: String -> Attr
 ```
 
 
 #### `value`
 
 ``` purescript
-value :: forall action. String -> Attr action
+value :: String -> Attr
 ```
 
 
 #### `width`
 
 ``` purescript
-width :: forall action. String -> Attr action
+width :: String -> Attr
 ```
 
 
 #### `wmode`
 
 ``` purescript
-wmode :: forall action. String -> Attr action
+wmode :: String -> Attr
 ```
 
 
@@ -1021,1568 +1027,1568 @@ This module defines helper functions for creating HTML elements.
 #### `a`
 
 ``` purescript
-a :: forall action. Attr action -> [Html action] -> Html action
+a :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `a'`
 
 ``` purescript
-a' :: forall action. [Html action] -> Html action
+a' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `abbr`
 
 ``` purescript
-abbr :: forall action. Attr action -> [Html action] -> Html action
+abbr :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `abbr'`
 
 ``` purescript
-abbr' :: forall action. [Html action] -> Html action
+abbr' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `address`
 
 ``` purescript
-address :: forall action. Attr action -> [Html action] -> Html action
+address :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `address'`
 
 ``` purescript
-address' :: forall action. [Html action] -> Html action
+address' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `area`
 
 ``` purescript
-area :: forall action. Attr action -> [Html action] -> Html action
+area :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `area'`
 
 ``` purescript
-area' :: forall action. [Html action] -> Html action
+area' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `article`
 
 ``` purescript
-article :: forall action. Attr action -> [Html action] -> Html action
+article :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `article'`
 
 ``` purescript
-article' :: forall action. [Html action] -> Html action
+article' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `aside`
 
 ``` purescript
-aside :: forall action. Attr action -> [Html action] -> Html action
+aside :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `aside'`
 
 ``` purescript
-aside' :: forall action. [Html action] -> Html action
+aside' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `audio`
 
 ``` purescript
-audio :: forall action. Attr action -> [Html action] -> Html action
+audio :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `audio'`
 
 ``` purescript
-audio' :: forall action. [Html action] -> Html action
+audio' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `b`
 
 ``` purescript
-b :: forall action. Attr action -> [Html action] -> Html action
+b :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `b'`
 
 ``` purescript
-b' :: forall action. [Html action] -> Html action
+b' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `base`
 
 ``` purescript
-base :: forall action. Attr action -> [Html action] -> Html action
+base :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `base'`
 
 ``` purescript
-base' :: forall action. [Html action] -> Html action
+base' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `bdi`
 
 ``` purescript
-bdi :: forall action. Attr action -> [Html action] -> Html action
+bdi :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `bdi'`
 
 ``` purescript
-bdi' :: forall action. [Html action] -> Html action
+bdi' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `bdo`
 
 ``` purescript
-bdo :: forall action. Attr action -> [Html action] -> Html action
+bdo :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `bdo'`
 
 ``` purescript
-bdo' :: forall action. [Html action] -> Html action
+bdo' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `big`
 
 ``` purescript
-big :: forall action. Attr action -> [Html action] -> Html action
+big :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `big'`
 
 ``` purescript
-big' :: forall action. [Html action] -> Html action
+big' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `blockquote`
 
 ``` purescript
-blockquote :: forall action. Attr action -> [Html action] -> Html action
+blockquote :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `blockquote'`
 
 ``` purescript
-blockquote' :: forall action. [Html action] -> Html action
+blockquote' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `body`
 
 ``` purescript
-body :: forall action. Attr action -> [Html action] -> Html action
+body :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `body'`
 
 ``` purescript
-body' :: forall action. [Html action] -> Html action
+body' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `br`
 
 ``` purescript
-br :: forall action. Attr action -> [Html action] -> Html action
+br :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `br'`
 
 ``` purescript
-br' :: forall action. [Html action] -> Html action
+br' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `button`
 
 ``` purescript
-button :: forall action. Attr action -> [Html action] -> Html action
+button :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `button'`
 
 ``` purescript
-button' :: forall action. [Html action] -> Html action
+button' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `canvas`
 
 ``` purescript
-canvas :: forall action. Attr action -> [Html action] -> Html action
+canvas :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `canvas'`
 
 ``` purescript
-canvas' :: forall action. [Html action] -> Html action
+canvas' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `caption`
 
 ``` purescript
-caption :: forall action. Attr action -> [Html action] -> Html action
+caption :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `caption'`
 
 ``` purescript
-caption' :: forall action. [Html action] -> Html action
+caption' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `cite`
 
 ``` purescript
-cite :: forall action. Attr action -> [Html action] -> Html action
+cite :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `cite'`
 
 ``` purescript
-cite' :: forall action. [Html action] -> Html action
+cite' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `code`
 
 ``` purescript
-code :: forall action. Attr action -> [Html action] -> Html action
+code :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `code'`
 
 ``` purescript
-code' :: forall action. [Html action] -> Html action
+code' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `col`
 
 ``` purescript
-col :: forall action. Attr action -> [Html action] -> Html action
+col :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `col'`
 
 ``` purescript
-col' :: forall action. [Html action] -> Html action
+col' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `colgroup`
 
 ``` purescript
-colgroup :: forall action. Attr action -> [Html action] -> Html action
+colgroup :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `colgroup'`
 
 ``` purescript
-colgroup' :: forall action. [Html action] -> Html action
+colgroup' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `_data`
 
 ``` purescript
-_data :: forall action. Attr action -> [Html action] -> Html action
+_data :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `_data'`
 
 ``` purescript
-_data' :: forall action. [Html action] -> Html action
+_data' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `datalist`
 
 ``` purescript
-datalist :: forall action. Attr action -> [Html action] -> Html action
+datalist :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `datalist'`
 
 ``` purescript
-datalist' :: forall action. [Html action] -> Html action
+datalist' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `dd`
 
 ``` purescript
-dd :: forall action. Attr action -> [Html action] -> Html action
+dd :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `dd'`
 
 ``` purescript
-dd' :: forall action. [Html action] -> Html action
+dd' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `del`
 
 ``` purescript
-del :: forall action. Attr action -> [Html action] -> Html action
+del :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `del'`
 
 ``` purescript
-del' :: forall action. [Html action] -> Html action
+del' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `details`
 
 ``` purescript
-details :: forall action. Attr action -> [Html action] -> Html action
+details :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `details'`
 
 ``` purescript
-details' :: forall action. [Html action] -> Html action
+details' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `dfn`
 
 ``` purescript
-dfn :: forall action. Attr action -> [Html action] -> Html action
+dfn :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `dfn'`
 
 ``` purescript
-dfn' :: forall action. [Html action] -> Html action
+dfn' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `dialog`
 
 ``` purescript
-dialog :: forall action. Attr action -> [Html action] -> Html action
+dialog :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `dialog'`
 
 ``` purescript
-dialog' :: forall action. [Html action] -> Html action
+dialog' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `div`
 
 ``` purescript
-div :: forall action. Attr action -> [Html action] -> Html action
+div :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `div'`
 
 ``` purescript
-div' :: forall action. [Html action] -> Html action
+div' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `dl`
 
 ``` purescript
-dl :: forall action. Attr action -> [Html action] -> Html action
+dl :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `dl'`
 
 ``` purescript
-dl' :: forall action. [Html action] -> Html action
+dl' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `dt`
 
 ``` purescript
-dt :: forall action. Attr action -> [Html action] -> Html action
+dt :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `dt'`
 
 ``` purescript
-dt' :: forall action. [Html action] -> Html action
+dt' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `em`
 
 ``` purescript
-em :: forall action. Attr action -> [Html action] -> Html action
+em :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `em'`
 
 ``` purescript
-em' :: forall action. [Html action] -> Html action
+em' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `embed`
 
 ``` purescript
-embed :: forall action. Attr action -> [Html action] -> Html action
+embed :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `embed'`
 
 ``` purescript
-embed' :: forall action. [Html action] -> Html action
+embed' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `fieldset`
 
 ``` purescript
-fieldset :: forall action. Attr action -> [Html action] -> Html action
+fieldset :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `fieldset'`
 
 ``` purescript
-fieldset' :: forall action. [Html action] -> Html action
+fieldset' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `figcaption`
 
 ``` purescript
-figcaption :: forall action. Attr action -> [Html action] -> Html action
+figcaption :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `figcaption'`
 
 ``` purescript
-figcaption' :: forall action. [Html action] -> Html action
+figcaption' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `figure`
 
 ``` purescript
-figure :: forall action. Attr action -> [Html action] -> Html action
+figure :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `figure'`
 
 ``` purescript
-figure' :: forall action. [Html action] -> Html action
+figure' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `footer`
 
 ``` purescript
-footer :: forall action. Attr action -> [Html action] -> Html action
+footer :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `footer'`
 
 ``` purescript
-footer' :: forall action. [Html action] -> Html action
+footer' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `form`
 
 ``` purescript
-form :: forall action. Attr action -> [Html action] -> Html action
+form :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `form'`
 
 ``` purescript
-form' :: forall action. [Html action] -> Html action
+form' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h1`
 
 ``` purescript
-h1 :: forall action. Attr action -> [Html action] -> Html action
+h1 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h1'`
 
 ``` purescript
-h1' :: forall action. [Html action] -> Html action
+h1' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h2`
 
 ``` purescript
-h2 :: forall action. Attr action -> [Html action] -> Html action
+h2 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h2'`
 
 ``` purescript
-h2' :: forall action. [Html action] -> Html action
+h2' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h3`
 
 ``` purescript
-h3 :: forall action. Attr action -> [Html action] -> Html action
+h3 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h3'`
 
 ``` purescript
-h3' :: forall action. [Html action] -> Html action
+h3' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h4`
 
 ``` purescript
-h4 :: forall action. Attr action -> [Html action] -> Html action
+h4 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h4'`
 
 ``` purescript
-h4' :: forall action. [Html action] -> Html action
+h4' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h5`
 
 ``` purescript
-h5 :: forall action. Attr action -> [Html action] -> Html action
+h5 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h5'`
 
 ``` purescript
-h5' :: forall action. [Html action] -> Html action
+h5' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `h6`
 
 ``` purescript
-h6 :: forall action. Attr action -> [Html action] -> Html action
+h6 :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `h6'`
 
 ``` purescript
-h6' :: forall action. [Html action] -> Html action
+h6' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `head`
 
 ``` purescript
-head :: forall action. Attr action -> [Html action] -> Html action
+head :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `head'`
 
 ``` purescript
-head' :: forall action. [Html action] -> Html action
+head' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `header`
 
 ``` purescript
-header :: forall action. Attr action -> [Html action] -> Html action
+header :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `header'`
 
 ``` purescript
-header' :: forall action. [Html action] -> Html action
+header' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `hr`
 
 ``` purescript
-hr :: forall action. Attr action -> [Html action] -> Html action
+hr :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `hr'`
 
 ``` purescript
-hr' :: forall action. [Html action] -> Html action
+hr' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `html`
 
 ``` purescript
-html :: forall action. Attr action -> [Html action] -> Html action
+html :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `html'`
 
 ``` purescript
-html' :: forall action. [Html action] -> Html action
+html' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `i`
 
 ``` purescript
-i :: forall action. Attr action -> [Html action] -> Html action
+i :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `i'`
 
 ``` purescript
-i' :: forall action. [Html action] -> Html action
+i' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `iframe`
 
 ``` purescript
-iframe :: forall action. Attr action -> [Html action] -> Html action
+iframe :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `iframe'`
 
 ``` purescript
-iframe' :: forall action. [Html action] -> Html action
+iframe' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `img`
 
 ``` purescript
-img :: forall action. Attr action -> [Html action] -> Html action
+img :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `img'`
 
 ``` purescript
-img' :: forall action. [Html action] -> Html action
+img' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `input`
 
 ``` purescript
-input :: forall action. Attr action -> [Html action] -> Html action
+input :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `input'`
 
 ``` purescript
-input' :: forall action. [Html action] -> Html action
+input' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `ins`
 
 ``` purescript
-ins :: forall action. Attr action -> [Html action] -> Html action
+ins :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `ins'`
 
 ``` purescript
-ins' :: forall action. [Html action] -> Html action
+ins' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `kbd`
 
 ``` purescript
-kbd :: forall action. Attr action -> [Html action] -> Html action
+kbd :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `kbd'`
 
 ``` purescript
-kbd' :: forall action. [Html action] -> Html action
+kbd' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `keygen`
 
 ``` purescript
-keygen :: forall action. Attr action -> [Html action] -> Html action
+keygen :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `keygen'`
 
 ``` purescript
-keygen' :: forall action. [Html action] -> Html action
+keygen' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `label`
 
 ``` purescript
-label :: forall action. Attr action -> [Html action] -> Html action
+label :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `label'`
 
 ``` purescript
-label' :: forall action. [Html action] -> Html action
+label' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `legend`
 
 ``` purescript
-legend :: forall action. Attr action -> [Html action] -> Html action
+legend :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `legend'`
 
 ``` purescript
-legend' :: forall action. [Html action] -> Html action
+legend' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `li`
 
 ``` purescript
-li :: forall action. Attr action -> [Html action] -> Html action
+li :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `li'`
 
 ``` purescript
-li' :: forall action. [Html action] -> Html action
+li' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `link`
 
 ``` purescript
-link :: forall action. Attr action -> [Html action] -> Html action
+link :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `link'`
 
 ``` purescript
-link' :: forall action. [Html action] -> Html action
+link' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `main`
 
 ``` purescript
-main :: forall action. Attr action -> [Html action] -> Html action
+main :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `main'`
 
 ``` purescript
-main' :: forall action. [Html action] -> Html action
+main' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `map`
 
 ``` purescript
-map :: forall action. Attr action -> [Html action] -> Html action
+map :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `map'`
 
 ``` purescript
-map' :: forall action. [Html action] -> Html action
+map' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `mark`
 
 ``` purescript
-mark :: forall action. Attr action -> [Html action] -> Html action
+mark :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `mark'`
 
 ``` purescript
-mark' :: forall action. [Html action] -> Html action
+mark' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `menu`
 
 ``` purescript
-menu :: forall action. Attr action -> [Html action] -> Html action
+menu :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `menu'`
 
 ``` purescript
-menu' :: forall action. [Html action] -> Html action
+menu' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `menuitem`
 
 ``` purescript
-menuitem :: forall action. Attr action -> [Html action] -> Html action
+menuitem :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `menuitem'`
 
 ``` purescript
-menuitem' :: forall action. [Html action] -> Html action
+menuitem' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `meta`
 
 ``` purescript
-meta :: forall action. Attr action -> [Html action] -> Html action
+meta :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `meta'`
 
 ``` purescript
-meta' :: forall action. [Html action] -> Html action
+meta' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `meter`
 
 ``` purescript
-meter :: forall action. Attr action -> [Html action] -> Html action
+meter :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `meter'`
 
 ``` purescript
-meter' :: forall action. [Html action] -> Html action
+meter' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `nav`
 
 ``` purescript
-nav :: forall action. Attr action -> [Html action] -> Html action
+nav :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `nav'`
 
 ``` purescript
-nav' :: forall action. [Html action] -> Html action
+nav' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `noscript`
 
 ``` purescript
-noscript :: forall action. Attr action -> [Html action] -> Html action
+noscript :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `noscript'`
 
 ``` purescript
-noscript' :: forall action. [Html action] -> Html action
+noscript' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `object`
 
 ``` purescript
-object :: forall action. Attr action -> [Html action] -> Html action
+object :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `object'`
 
 ``` purescript
-object' :: forall action. [Html action] -> Html action
+object' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `ol`
 
 ``` purescript
-ol :: forall action. Attr action -> [Html action] -> Html action
+ol :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `ol'`
 
 ``` purescript
-ol' :: forall action. [Html action] -> Html action
+ol' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `optgroup`
 
 ``` purescript
-optgroup :: forall action. Attr action -> [Html action] -> Html action
+optgroup :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `optgroup'`
 
 ``` purescript
-optgroup' :: forall action. [Html action] -> Html action
+optgroup' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `option`
 
 ``` purescript
-option :: forall action. Attr action -> [Html action] -> Html action
+option :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `option'`
 
 ``` purescript
-option' :: forall action. [Html action] -> Html action
+option' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `output`
 
 ``` purescript
-output :: forall action. Attr action -> [Html action] -> Html action
+output :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `output'`
 
 ``` purescript
-output' :: forall action. [Html action] -> Html action
+output' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `p`
 
 ``` purescript
-p :: forall action. Attr action -> [Html action] -> Html action
+p :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `p'`
 
 ``` purescript
-p' :: forall action. [Html action] -> Html action
+p' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `param`
 
 ``` purescript
-param :: forall action. Attr action -> [Html action] -> Html action
+param :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `param'`
 
 ``` purescript
-param' :: forall action. [Html action] -> Html action
+param' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `picture`
 
 ``` purescript
-picture :: forall action. Attr action -> [Html action] -> Html action
+picture :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `picture'`
 
 ``` purescript
-picture' :: forall action. [Html action] -> Html action
+picture' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `pre`
 
 ``` purescript
-pre :: forall action. Attr action -> [Html action] -> Html action
+pre :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `pre'`
 
 ``` purescript
-pre' :: forall action. [Html action] -> Html action
+pre' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `progress`
 
 ``` purescript
-progress :: forall action. Attr action -> [Html action] -> Html action
+progress :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `progress'`
 
 ``` purescript
-progress' :: forall action. [Html action] -> Html action
+progress' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `q`
 
 ``` purescript
-q :: forall action. Attr action -> [Html action] -> Html action
+q :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `q'`
 
 ``` purescript
-q' :: forall action. [Html action] -> Html action
+q' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `rp`
 
 ``` purescript
-rp :: forall action. Attr action -> [Html action] -> Html action
+rp :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `rp'`
 
 ``` purescript
-rp' :: forall action. [Html action] -> Html action
+rp' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `rt`
 
 ``` purescript
-rt :: forall action. Attr action -> [Html action] -> Html action
+rt :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `rt'`
 
 ``` purescript
-rt' :: forall action. [Html action] -> Html action
+rt' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `ruby`
 
 ``` purescript
-ruby :: forall action. Attr action -> [Html action] -> Html action
+ruby :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `ruby'`
 
 ``` purescript
-ruby' :: forall action. [Html action] -> Html action
+ruby' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `s`
 
 ``` purescript
-s :: forall action. Attr action -> [Html action] -> Html action
+s :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `s'`
 
 ``` purescript
-s' :: forall action. [Html action] -> Html action
+s' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `samp`
 
 ``` purescript
-samp :: forall action. Attr action -> [Html action] -> Html action
+samp :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `samp'`
 
 ``` purescript
-samp' :: forall action. [Html action] -> Html action
+samp' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `script`
 
 ``` purescript
-script :: forall action. Attr action -> [Html action] -> Html action
+script :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `script'`
 
 ``` purescript
-script' :: forall action. [Html action] -> Html action
+script' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `section`
 
 ``` purescript
-section :: forall action. Attr action -> [Html action] -> Html action
+section :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `section'`
 
 ``` purescript
-section' :: forall action. [Html action] -> Html action
+section' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `select`
 
 ``` purescript
-select :: forall action. Attr action -> [Html action] -> Html action
+select :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `select'`
 
 ``` purescript
-select' :: forall action. [Html action] -> Html action
+select' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `small`
 
 ``` purescript
-small :: forall action. Attr action -> [Html action] -> Html action
+small :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `small'`
 
 ``` purescript
-small' :: forall action. [Html action] -> Html action
+small' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `source`
 
 ``` purescript
-source :: forall action. Attr action -> [Html action] -> Html action
+source :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `source'`
 
 ``` purescript
-source' :: forall action. [Html action] -> Html action
+source' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `span`
 
 ``` purescript
-span :: forall action. Attr action -> [Html action] -> Html action
+span :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `span'`
 
 ``` purescript
-span' :: forall action. [Html action] -> Html action
+span' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `strong`
 
 ``` purescript
-strong :: forall action. Attr action -> [Html action] -> Html action
+strong :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `strong'`
 
 ``` purescript
-strong' :: forall action. [Html action] -> Html action
+strong' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `style`
 
 ``` purescript
-style :: forall action. Attr action -> [Html action] -> Html action
+style :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `style'`
 
 ``` purescript
-style' :: forall action. [Html action] -> Html action
+style' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `sub`
 
 ``` purescript
-sub :: forall action. Attr action -> [Html action] -> Html action
+sub :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `sub'`
 
 ``` purescript
-sub' :: forall action. [Html action] -> Html action
+sub' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `summary`
 
 ``` purescript
-summary :: forall action. Attr action -> [Html action] -> Html action
+summary :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `summary'`
 
 ``` purescript
-summary' :: forall action. [Html action] -> Html action
+summary' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `sup`
 
 ``` purescript
-sup :: forall action. Attr action -> [Html action] -> Html action
+sup :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `sup'`
 
 ``` purescript
-sup' :: forall action. [Html action] -> Html action
+sup' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `table`
 
 ``` purescript
-table :: forall action. Attr action -> [Html action] -> Html action
+table :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `table'`
 
 ``` purescript
-table' :: forall action. [Html action] -> Html action
+table' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `tbody`
 
 ``` purescript
-tbody :: forall action. Attr action -> [Html action] -> Html action
+tbody :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `tbody'`
 
 ``` purescript
-tbody' :: forall action. [Html action] -> Html action
+tbody' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `td`
 
 ``` purescript
-td :: forall action. Attr action -> [Html action] -> Html action
+td :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `td'`
 
 ``` purescript
-td' :: forall action. [Html action] -> Html action
+td' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `textarea`
 
 ``` purescript
-textarea :: forall action. Attr action -> [Html action] -> Html action
+textarea :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `textarea'`
 
 ``` purescript
-textarea' :: forall action. [Html action] -> Html action
+textarea' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `tfoot`
 
 ``` purescript
-tfoot :: forall action. Attr action -> [Html action] -> Html action
+tfoot :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `tfoot'`
 
 ``` purescript
-tfoot' :: forall action. [Html action] -> Html action
+tfoot' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `th`
 
 ``` purescript
-th :: forall action. Attr action -> [Html action] -> Html action
+th :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `th'`
 
 ``` purescript
-th' :: forall action. [Html action] -> Html action
+th' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `thead`
 
 ``` purescript
-thead :: forall action. Attr action -> [Html action] -> Html action
+thead :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `thead'`
 
 ``` purescript
-thead' :: forall action. [Html action] -> Html action
+thead' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `time`
 
 ``` purescript
-time :: forall action. Attr action -> [Html action] -> Html action
+time :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `time'`
 
 ``` purescript
-time' :: forall action. [Html action] -> Html action
+time' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `title`
 
 ``` purescript
-title :: forall action. Attr action -> [Html action] -> Html action
+title :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `title'`
 
 ``` purescript
-title' :: forall action. [Html action] -> Html action
+title' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `tr`
 
 ``` purescript
-tr :: forall action. Attr action -> [Html action] -> Html action
+tr :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `tr'`
 
 ``` purescript
-tr' :: forall action. [Html action] -> Html action
+tr' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `track`
 
 ``` purescript
-track :: forall action. Attr action -> [Html action] -> Html action
+track :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `track'`
 
 ``` purescript
-track' :: forall action. [Html action] -> Html action
+track' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `u`
 
 ``` purescript
-u :: forall action. Attr action -> [Html action] -> Html action
+u :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `u'`
 
 ``` purescript
-u' :: forall action. [Html action] -> Html action
+u' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `ul`
 
 ``` purescript
-ul :: forall action. Attr action -> [Html action] -> Html action
+ul :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `ul'`
 
 ``` purescript
-ul' :: forall action. [Html action] -> Html action
+ul' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `var`
 
 ``` purescript
-var :: forall action. Attr action -> [Html action] -> Html action
+var :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `var'`
 
 ``` purescript
-var' :: forall action. [Html action] -> Html action
+var' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `video`
 
 ``` purescript
-video :: forall action. Attr action -> [Html action] -> Html action
+video :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `video'`
 
 ``` purescript
-video' :: forall action. [Html action] -> Html action
+video' :: forall eff. [Html eff] -> Html eff
 ```
 
 
 #### `wbr`
 
 ``` purescript
-wbr :: forall action. Attr action -> [Html action] -> Html action
+wbr :: forall eff. Attr -> [Html eff] -> Html eff
 ```
 
 
 #### `wbr'`
 
 ``` purescript
-wbr' :: forall action. [Html action] -> Html action
+wbr' :: forall eff. [Html eff] -> Html eff
 ```
 
 
@@ -2602,21 +2608,21 @@ data ClipboardEvent :: *
 #### `onCopy`
 
 ``` purescript
-onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
+onCopy :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
 ```
 
 
 #### `onCut`
 
 ``` purescript
-onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
+onCut :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
 ```
 
 
 #### `onPaste`
 
 ``` purescript
-onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
+onPaste :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
 ```
 
 
@@ -2630,21 +2636,21 @@ data KeyboardEvent :: *
 #### `onKeyDown`
 
 ``` purescript
-onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
+onKeyDown :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
 ```
 
 
 #### `onKeyPress`
 
 ``` purescript
-onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
+onKeyPress :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
 ```
 
 
 #### `onKeyUp`
 
 ``` purescript
-onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
+onKeyUp :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
 ```
 
 
@@ -2658,14 +2664,14 @@ data FocusEvent :: *
 #### `onFocus`
 
 ``` purescript
-onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
+onFocus :: forall state props action. Context state action -> (FocusEvent -> action) -> Attr
 ```
 
 
 #### `onBlur`
 
 ``` purescript
-onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
+onBlur :: forall state props action. Context state action -> (FocusEvent -> action) -> Attr
 ```
 
 
@@ -2679,21 +2685,21 @@ data FormEvent :: *
 #### `onChange`
 
 ``` purescript
-onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
+onChange :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
 ```
 
 
 #### `onInput`
 
 ``` purescript
-onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
+onInput :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
 ```
 
 
 #### `onSubmit`
 
 ``` purescript
-onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
+onSubmit :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
 ```
 
 
@@ -2707,119 +2713,119 @@ data MouseEvent :: *
 #### `onClick`
 
 ``` purescript
-onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onClick :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDoubleClick`
 
 ``` purescript
-onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDoubleClick :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDrag`
 
 ``` purescript
-onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDrag :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragEnd`
 
 ``` purescript
-onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragEnd :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragEnter`
 
 ``` purescript
-onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragEnter :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragExit`
 
 ``` purescript
-onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragExit :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragLeave`
 
 ``` purescript
-onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragLeave :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragOver`
 
 ``` purescript
-onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragOver :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDragStart`
 
 ``` purescript
-onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDragStart :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onDrop`
 
 ``` purescript
-onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onDrop :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseDown`
 
 ``` purescript
-onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseDown :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseEnter`
 
 ``` purescript
-onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseEnter :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseLeave`
 
 ``` purescript
-onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseLeave :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseMove`
 
 ``` purescript
-onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseMove :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseOut`
 
 ``` purescript
-onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseOut :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseOver`
 
 ``` purescript
-onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseOver :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
 #### `onMouseUp`
 
 ``` purescript
-onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+onMouseUp :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
 ```
 
 
@@ -2833,28 +2839,28 @@ data TouchEvent :: *
 #### `onTouchCancel`
 
 ``` purescript
-onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+onTouchCancel :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
 ```
 
 
 #### `onTouchEnd`
 
 ``` purescript
-onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+onTouchEnd :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
 ```
 
 
 #### `onTouchMove`
 
 ``` purescript
-onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+onTouchMove :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
 ```
 
 
 #### `onTouchStart`
 
 ``` purescript
-onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+onTouchStart :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
 ```
 
 
@@ -2868,7 +2874,7 @@ data UIEvent :: *
 #### `onScroll`
 
 ``` purescript
-onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Attr action
+onScroll :: forall state props action. Context state action -> (UIEvent -> action) -> Attr
 ```
 
 
@@ -2882,5 +2888,5 @@ data WheelEvent :: *
 #### `onWheel`
 
 ``` purescript
-onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Attr action
+onWheel :: forall state props action. Context state action -> (WheelEvent -> action) -> Attr
 ```

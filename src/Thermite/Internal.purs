@@ -14,7 +14,7 @@ foreign import getStateImpl """
       return ctx.state;
     };
   }
-  """ :: forall eff state props action. Context state props action -> Eff eff state
+  """ :: forall eff state props action. Context state action -> Eff eff state
 
 foreign import setStateImpl """
   function setStateImpl(ctx) {
@@ -24,23 +24,23 @@ foreign import setStateImpl """
       };
     };
   }
-  """ :: forall eff state props action. Context state props action -> state -> Eff eff Unit
+  """ :: forall eff state props action. Context state action -> state -> Eff eff Unit
 
 foreign import textImpl """
   function textImpl(s) {
     return s;
   }
-  """ :: forall action. String -> Html action
+  """ :: forall eff. String -> Html eff
 
 foreign import createElementImpl """
-  function createElementImpl(name) {
-    return function(attr) {
+  function createElementImpl(element) {
+    return function(props) {
       return function(children) {
-        return React.createElement(name, attr, children);
+        return React.createElement(element, props, children);
       };
     };
   }
-  """ :: forall action. String -> Attr action -> [Html action] -> Html action
+  """ :: forall element props eff. element -> props -> [Html eff] -> Html eff
 
 foreign import unsafeAttribute """
   function unsafeAttribute(k) {
@@ -50,7 +50,7 @@ foreign import unsafeAttribute """
       return o;
     };
   }
-  """ :: forall action attr. String -> attr -> Attr action
+  """ :: forall attr. String -> attr -> Attr
 
 foreign import event """
   function event(name) {
@@ -64,39 +64,7 @@ foreign import event """
       };
     };
   }
-  """ :: forall state props action event. String -> Context state props action -> (event -> action) -> Attr action
-
-foreign import createClassImpl """
-  function createClassImpl(runAction) {
-    return function(maybe) {
-      return function(spec) {
-        return React.createClass({
-          getInitialState: function() {
-            return spec.initialState;
-          },
-          performAction: function(action) {
-            runAction(this)(spec.performAction(this.props)(action))();
-          },
-          render: function() {
-            return spec.render(this)(this.state)(this.props);
-          },
-          componentWillMount: function() {
-            var self = this;
-            maybe(function() { })(function(action) {
-              return function() {
-                self.performAction(action);
-              };
-            })(spec.componentWillMount)();
-          },
-          displayName: maybe(undefined)(function(a) { return a; })(spec.displayName)
-        })
-      };
-    };
-  }
-  """ :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) ->
-                                          (forall a r. r -> (a -> r) -> Maybe a -> r) ->
-                                          Spec m state props action ->
-                                          ComponentClass props eff
+  """ :: forall state action event. String -> Context state action -> (event -> action) -> Attr
 
 foreign import documentBody """
   function documentBody(component) {

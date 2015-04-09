@@ -5,303 +5,303 @@ module Thermite.Html.Attributes where
 import Thermite.Types
 import Thermite.Internal
 
-accept :: forall action. String -> Attr action
+accept :: String -> Attr
 accept = unsafeAttribute "accept"
 
-acceptCharset :: forall action. String -> Attr action
+acceptCharset :: String -> Attr
 acceptCharset = unsafeAttribute "acceptCharset"
 
-accessKey :: forall action. String -> Attr action
+accessKey :: String -> Attr
 accessKey = unsafeAttribute "accessKey"
 
-action :: forall action. String -> Attr action
+action :: String -> Attr
 action = unsafeAttribute "action"
 
-allowFullScreen :: forall action. String -> Attr action
+allowFullScreen :: String -> Attr
 allowFullScreen = unsafeAttribute "allowFullScreen"
 
-allowTransparency :: forall action. String -> Attr action
+allowTransparency :: String -> Attr
 allowTransparency = unsafeAttribute "allowTransparency"
 
-alt :: forall action. String -> Attr action
+alt :: String -> Attr
 alt = unsafeAttribute "alt"
 
-async :: forall action. String -> Attr action
+async :: String -> Attr
 async = unsafeAttribute "async"
 
-autoComplete :: forall action. String -> Attr action
+autoComplete :: String -> Attr
 autoComplete = unsafeAttribute "autoComplete"
 
-autoFocus :: forall action. Boolean -> Attr action
+autoFocus :: Boolean -> Attr
 autoFocus = unsafeAttribute "autoFocus"
 
-autoPlay :: forall action. String -> Attr action
+autoPlay :: String -> Attr
 autoPlay = unsafeAttribute "autoPlay"
 
-cellPadding :: forall action. String -> Attr action
+cellPadding :: String -> Attr
 cellPadding = unsafeAttribute "cellPadding"
 
-cellSpacing :: forall action. String -> Attr action
+cellSpacing :: String -> Attr
 cellSpacing = unsafeAttribute "cellSpacing"
 
-charSet :: forall action. String -> Attr action
+charSet :: String -> Attr
 charSet = unsafeAttribute "charSet"
 
-checked :: forall action. String -> Attr action
+checked :: String -> Attr
 checked = unsafeAttribute "checked"
 
-classID :: forall action. String -> Attr action
+classID :: String -> Attr
 classID = unsafeAttribute "classID"
 
-className :: forall action. String -> Attr action
+className :: String -> Attr
 className = unsafeAttribute "className"
 
-cols :: forall action. String -> Attr action
+cols :: String -> Attr
 cols = unsafeAttribute "cols"
 
-colSpan :: forall action. String -> Attr action
+colSpan :: String -> Attr
 colSpan = unsafeAttribute "colSpan"
 
-content :: forall action. String -> Attr action
+content :: String -> Attr
 content = unsafeAttribute "content"
 
-contentEditable :: forall action. String -> Attr action
+contentEditable :: String -> Attr
 contentEditable = unsafeAttribute "contentEditable"
 
-contextMenu :: forall action. String -> Attr action
+contextMenu :: String -> Attr
 contextMenu = unsafeAttribute "contextMenu"
 
-controls :: forall action. String -> Attr action
+controls :: String -> Attr
 controls = unsafeAttribute "controls"
 
-coords :: forall action. String -> Attr action
+coords :: String -> Attr
 coords = unsafeAttribute "coords"
 
-crossOrigin :: forall action. String -> Attr action
+crossOrigin :: String -> Attr
 crossOrigin = unsafeAttribute "crossOrigin"
 
-dateTime :: forall action. String -> Attr action
+dateTime :: String -> Attr
 dateTime = unsafeAttribute "dateTime"
 
-defer :: forall action. String -> Attr action
+defer :: String -> Attr
 defer = unsafeAttribute "defer"
 
-dir :: forall action. String -> Attr action
+dir :: String -> Attr
 dir = unsafeAttribute "dir"
 
-disabled :: forall action. Boolean -> Attr action
+disabled :: Boolean -> Attr
 disabled = unsafeAttribute "disabled"
 
-download :: forall action. String -> Attr action
+download :: String -> Attr
 download = unsafeAttribute "download"
 
-draggable :: forall action. String -> Attr action
+draggable :: String -> Attr
 draggable = unsafeAttribute "draggable"
 
-encType :: forall action. String -> Attr action
+encType :: String -> Attr
 encType = unsafeAttribute "encType"
 
-form :: forall action. String -> Attr action
+form :: String -> Attr
 form = unsafeAttribute "form"
 
-formAction :: forall action. String -> Attr action
+formAction :: String -> Attr
 formAction = unsafeAttribute "formAction"
 
-formEncType :: forall action. String -> Attr action
+formEncType :: String -> Attr
 formEncType = unsafeAttribute "formEncType"
 
-formMethod :: forall action. String -> Attr action
+formMethod :: String -> Attr
 formMethod = unsafeAttribute "formMethod"
 
-formNoValidate :: forall action. String -> Attr action
+formNoValidate :: String -> Attr
 formNoValidate = unsafeAttribute "formNoValidate"
 
-formTarget :: forall action. String -> Attr action
+formTarget :: String -> Attr
 formTarget = unsafeAttribute "formTarget"
 
-frameBorder :: forall action. String -> Attr action
+frameBorder :: String -> Attr
 frameBorder = unsafeAttribute "frameBorder"
 
-height :: forall action. String -> Attr action
+height :: String -> Attr
 height = unsafeAttribute "height"
 
-hidden :: forall action. String -> Attr action
+hidden :: String -> Attr
 hidden = unsafeAttribute "hidden"
 
-href :: forall action. String -> Attr action
+href :: String -> Attr
 href = unsafeAttribute "href"
 
-hrefLang :: forall action. String -> Attr action
+hrefLang :: String -> Attr
 hrefLang = unsafeAttribute "hrefLang"
 
-htmlFor :: forall action. String -> Attr action
+htmlFor :: String -> Attr
 htmlFor = unsafeAttribute "htmlFor"
 
-httpEquiv :: forall action. String -> Attr action
+httpEquiv :: String -> Attr
 httpEquiv = unsafeAttribute "httpEquiv"
 
-icon :: forall action. String -> Attr action
+icon :: String -> Attr
 icon = unsafeAttribute "icon"
 
-_id :: forall action. String -> Attr action
+_id :: String -> Attr
 _id = unsafeAttribute "id"
 
-key :: forall action. String -> Attr action
+key :: String -> Attr
 key = unsafeAttribute "key"
 
-label :: forall action. String -> Attr action
+label :: String -> Attr
 label = unsafeAttribute "label"
 
-lang :: forall action. String -> Attr action
+lang :: String -> Attr
 lang = unsafeAttribute "lang"
 
-list :: forall action. String -> Attr action
+list :: String -> Attr
 list = unsafeAttribute "list"
 
-loop :: forall action. String -> Attr action
+loop :: String -> Attr
 loop = unsafeAttribute "loop"
 
-manifest :: forall action. String -> Attr action
+manifest :: String -> Attr
 manifest = unsafeAttribute "manifest"
 
-marginHeight :: forall action. String -> Attr action
+marginHeight :: String -> Attr
 marginHeight = unsafeAttribute "marginHeight"
 
-marginWidth :: forall action. String -> Attr action
+marginWidth :: String -> Attr
 marginWidth = unsafeAttribute "marginWidth"
 
-max :: forall action. String -> Attr action
+max :: String -> Attr
 max = unsafeAttribute "max"
 
-maxLength :: forall action. String -> Attr action
+maxLength :: String -> Attr
 maxLength = unsafeAttribute "maxLength"
 
-media :: forall action. String -> Attr action
+media :: String -> Attr
 media = unsafeAttribute "media"
 
-mediaGroup :: forall action. String -> Attr action
+mediaGroup :: String -> Attr
 mediaGroup = unsafeAttribute "mediaGroup"
 
-method :: forall action. String -> Attr action
+method :: String -> Attr
 method = unsafeAttribute "method"
 
-min :: forall action. String -> Attr action
+min :: String -> Attr
 min = unsafeAttribute "min"
 
-multiple :: forall action. String -> Attr action
+multiple :: String -> Attr
 multiple = unsafeAttribute "multiple"
 
-muted :: forall action. String -> Attr action
+muted :: String -> Attr
 muted = unsafeAttribute "muted"
 
-name :: forall action. String -> Attr action
+name :: String -> Attr
 name = unsafeAttribute "name"
 
-noValidate :: forall action. String -> Attr action
+noValidate :: String -> Attr
 noValidate = unsafeAttribute "noValidate"
 
-open :: forall action. String -> Attr action
+open :: String -> Attr
 open = unsafeAttribute "open"
 
-pattern :: forall action. String -> Attr action
+pattern :: String -> Attr
 pattern = unsafeAttribute "pattern"
 
-placeholder :: forall action. String -> Attr action
+placeholder :: String -> Attr
 placeholder = unsafeAttribute "placeholder"
 
-poster :: forall action. String -> Attr action
+poster :: String -> Attr
 poster = unsafeAttribute "poster"
 
-preload :: forall action. String -> Attr action
+preload :: String -> Attr
 preload = unsafeAttribute "preload"
 
-radioGroup :: forall action. String -> Attr action
+radioGroup :: String -> Attr
 radioGroup = unsafeAttribute "radioGroup"
 
-readOnly :: forall action. String -> Attr action
+readOnly :: String -> Attr
 readOnly = unsafeAttribute "readOnly"
 
-rel :: forall action. String -> Attr action
+rel :: String -> Attr
 rel = unsafeAttribute "rel"
 
-required :: forall action. String -> Attr action
+required :: String -> Attr
 required = unsafeAttribute "required"
 
-role :: forall action. String -> Attr action
+role :: String -> Attr
 role = unsafeAttribute "role"
 
-rows :: forall action. String -> Attr action
+rows :: String -> Attr
 rows = unsafeAttribute "rows"
 
-rowSpan :: forall action. String -> Attr action
+rowSpan :: String -> Attr
 rowSpan = unsafeAttribute "rowSpan"
 
-sandbox :: forall action. String -> Attr action
+sandbox :: String -> Attr
 sandbox = unsafeAttribute "sandbox"
 
-scope :: forall action. String -> Attr action
+scope :: String -> Attr
 scope = unsafeAttribute "scope"
 
-scrolling :: forall action. String -> Attr action
+scrolling :: String -> Attr
 scrolling = unsafeAttribute "scrolling"
 
-seamless :: forall action. String -> Attr action
+seamless :: String -> Attr
 seamless = unsafeAttribute "seamless"
 
-selected :: forall action. String -> Attr action
+selected :: String -> Attr
 selected = unsafeAttribute "selected"
 
-shape :: forall action. String -> Attr action
+shape :: String -> Attr
 shape = unsafeAttribute "shape"
 
-size :: forall action. String -> Attr action
+size :: String -> Attr
 size = unsafeAttribute "size"
 
-sizes :: forall action. String -> Attr action
+sizes :: String -> Attr
 sizes = unsafeAttribute "sizes"
 
-span :: forall action. String -> Attr action
+span :: String -> Attr
 span = unsafeAttribute "span"
 
-spellCheck :: forall action. String -> Attr action
+spellCheck :: String -> Attr
 spellCheck = unsafeAttribute "spellCheck"
 
-src :: forall action. String -> Attr action
+src :: String -> Attr
 src = unsafeAttribute "src"
 
-srcDoc :: forall action. String -> Attr action
+srcDoc :: String -> Attr
 srcDoc = unsafeAttribute "srcDoc"
 
-srcSet :: forall action. String -> Attr action
+srcSet :: String -> Attr
 srcSet = unsafeAttribute "srcSet"
 
-start :: forall action. String -> Attr action
+start :: String -> Attr
 start = unsafeAttribute "start"
 
-step :: forall action. String -> Attr action
+step :: String -> Attr
 step = unsafeAttribute "step"
 
-tabIndex :: forall action. String -> Attr action
+tabIndex :: String -> Attr
 tabIndex = unsafeAttribute "tabIndex"
 
-target :: forall action. String -> Attr action
+target :: String -> Attr
 target = unsafeAttribute "target"
 
-title :: forall action. String -> Attr action
+title :: String -> Attr
 title = unsafeAttribute "title"
 
-_type :: forall action. String -> Attr action
+_type :: String -> Attr
 _type = unsafeAttribute "type"
 
-useMap :: forall action. String -> Attr action
+useMap :: String -> Attr
 useMap = unsafeAttribute "useMap"
 
-value :: forall action. String -> Attr action
+value :: String -> Attr
 value = unsafeAttribute "value"
 
-width :: forall action. String -> Attr action
+width :: String -> Attr
 width = unsafeAttribute "width"
 
-wmode :: forall action. String -> Attr action
+wmode :: String -> Attr
 wmode = unsafeAttribute "wmode"
 

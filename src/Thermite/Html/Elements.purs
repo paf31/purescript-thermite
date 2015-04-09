@@ -7,674 +7,674 @@ import Data.Monoid
 import Thermite.Types
 import Thermite.Internal
     
-a :: forall action. Attr action -> [Html action] -> Html action
+a :: forall eff. Attr -> [Html eff] -> Html eff
 a = createElementImpl "a"
 
-a' :: forall action. [Html action] -> Html action
+a' :: forall eff. [Html eff] -> Html eff
 a' = a mempty
 
-abbr :: forall action. Attr action -> [Html action] -> Html action
+abbr :: forall eff. Attr -> [Html eff] -> Html eff
 abbr = createElementImpl "abbr"
 
-abbr' :: forall action. [Html action] -> Html action
+abbr' :: forall eff. [Html eff] -> Html eff
 abbr' = abbr mempty
 
-address :: forall action. Attr action -> [Html action] -> Html action
+address :: forall eff. Attr -> [Html eff] -> Html eff
 address = createElementImpl "address"
 
-address' :: forall action. [Html action] -> Html action
+address' :: forall eff. [Html eff] -> Html eff
 address' = address mempty
 
-area :: forall action. Attr action -> [Html action] -> Html action
+area :: forall eff. Attr -> [Html eff] -> Html eff
 area = createElementImpl "area"
 
-area' :: forall action. [Html action] -> Html action
+area' :: forall eff. [Html eff] -> Html eff
 area' = area mempty
 
-article :: forall action. Attr action -> [Html action] -> Html action
+article :: forall eff. Attr -> [Html eff] -> Html eff
 article = createElementImpl "article"
 
-article' :: forall action. [Html action] -> Html action
+article' :: forall eff. [Html eff] -> Html eff
 article' = article mempty
 
-aside :: forall action. Attr action -> [Html action] -> Html action
+aside :: forall eff. Attr -> [Html eff] -> Html eff
 aside = createElementImpl "aside"
 
-aside' :: forall action. [Html action] -> Html action
+aside' :: forall eff. [Html eff] -> Html eff
 aside' = aside mempty
 
-audio :: forall action. Attr action -> [Html action] -> Html action
+audio :: forall eff. Attr -> [Html eff] -> Html eff
 audio = createElementImpl "audio"
 
-audio' :: forall action. [Html action] -> Html action
+audio' :: forall eff. [Html eff] -> Html eff
 audio' = audio mempty
 
-b :: forall action. Attr action -> [Html action] -> Html action
+b :: forall eff. Attr -> [Html eff] -> Html eff
 b = createElementImpl "b"
 
-b' :: forall action. [Html action] -> Html action
+b' :: forall eff. [Html eff] -> Html eff
 b' = b mempty
 
-base :: forall action. Attr action -> [Html action] -> Html action
+base :: forall eff. Attr -> [Html eff] -> Html eff
 base = createElementImpl "base"
 
-base' :: forall action. [Html action] -> Html action
+base' :: forall eff. [Html eff] -> Html eff
 base' = base mempty
 
-bdi :: forall action. Attr action -> [Html action] -> Html action
+bdi :: forall eff. Attr -> [Html eff] -> Html eff
 bdi = createElementImpl "bdi"
 
-bdi' :: forall action. [Html action] -> Html action
+bdi' :: forall eff. [Html eff] -> Html eff
 bdi' = bdi mempty
 
-bdo :: forall action. Attr action -> [Html action] -> Html action
+bdo :: forall eff. Attr -> [Html eff] -> Html eff
 bdo = createElementImpl "bdo"
 
-bdo' :: forall action. [Html action] -> Html action
+bdo' :: forall eff. [Html eff] -> Html eff
 bdo' = bdo mempty
 
-big :: forall action. Attr action -> [Html action] -> Html action
+big :: forall eff. Attr -> [Html eff] -> Html eff
 big = createElementImpl "big"
 
-big' :: forall action. [Html action] -> Html action
+big' :: forall eff. [Html eff] -> Html eff
 big' = big mempty
 
-blockquote :: forall action. Attr action -> [Html action] -> Html action
+blockquote :: forall eff. Attr -> [Html eff] -> Html eff
 blockquote = createElementImpl "blockquote"
 
-blockquote' :: forall action. [Html action] -> Html action
+blockquote' :: forall eff. [Html eff] -> Html eff
 blockquote' = blockquote mempty
 
-body :: forall action. Attr action -> [Html action] -> Html action
+body :: forall eff. Attr -> [Html eff] -> Html eff
 body = createElementImpl "body"
 
-body' :: forall action. [Html action] -> Html action
+body' :: forall eff. [Html eff] -> Html eff
 body' = body mempty
 
-br :: forall action. Attr action -> [Html action] -> Html action
+br :: forall eff. Attr -> [Html eff] -> Html eff
 br = createElementImpl "br"
 
-br' :: forall action. [Html action] -> Html action
+br' :: forall eff. [Html eff] -> Html eff
 br' = br mempty
 
-button :: forall action. Attr action -> [Html action] -> Html action
+button :: forall eff. Attr -> [Html eff] -> Html eff
 button = createElementImpl "button"
 
-button' :: forall action. [Html action] -> Html action
+button' :: forall eff. [Html eff] -> Html eff
 button' = button mempty
 
-canvas :: forall action. Attr action -> [Html action] -> Html action
+canvas :: forall eff. Attr -> [Html eff] -> Html eff
 canvas = createElementImpl "canvas"
 
-canvas' :: forall action. [Html action] -> Html action
+canvas' :: forall eff. [Html eff] -> Html eff
 canvas' = canvas mempty
 
-caption :: forall action. Attr action -> [Html action] -> Html action
+caption :: forall eff. Attr -> [Html eff] -> Html eff
 caption = createElementImpl "caption"
 
-caption' :: forall action. [Html action] -> Html action
+caption' :: forall eff. [Html eff] -> Html eff
 caption' = caption mempty
 
-cite :: forall action. Attr action -> [Html action] -> Html action
+cite :: forall eff. Attr -> [Html eff] -> Html eff
 cite = createElementImpl "cite"
 
-cite' :: forall action. [Html action] -> Html action
+cite' :: forall eff. [Html eff] -> Html eff
 cite' = cite mempty
 
-code :: forall action. Attr action -> [Html action] -> Html action
+code :: forall eff. Attr -> [Html eff] -> Html eff
 code = createElementImpl "code"
 
-code' :: forall action. [Html action] -> Html action
+code' :: forall eff. [Html eff] -> Html eff
 code' = code mempty
 
-col :: forall action. Attr action -> [Html action] -> Html action
+col :: forall eff. Attr -> [Html eff] -> Html eff
 col = createElementImpl "col"
 
-col' :: forall action. [Html action] -> Html action
+col' :: forall eff. [Html eff] -> Html eff
 col' = col mempty
 
-colgroup :: forall action. Attr action -> [Html action] -> Html action
+colgroup :: forall eff. Attr -> [Html eff] -> Html eff
 colgroup = createElementImpl "colgroup"
 
-colgroup' :: forall action. [Html action] -> Html action
+colgroup' :: forall eff. [Html eff] -> Html eff
 colgroup' = colgroup mempty
 
-_data :: forall action. Attr action -> [Html action] -> Html action
+_data :: forall eff. Attr -> [Html eff] -> Html eff
 _data = createElementImpl "data"
 
-_data' :: forall action. [Html action] -> Html action
+_data' :: forall eff. [Html eff] -> Html eff
 _data' = _data mempty
 
-datalist :: forall action. Attr action -> [Html action] -> Html action
+datalist :: forall eff. Attr -> [Html eff] -> Html eff
 datalist = createElementImpl "datalist"
 
-datalist' :: forall action. [Html action] -> Html action
+datalist' :: forall eff. [Html eff] -> Html eff
 datalist' = datalist mempty
 
-dd :: forall action. Attr action -> [Html action] -> Html action
+dd :: forall eff. Attr -> [Html eff] -> Html eff
 dd = createElementImpl "dd"
 
-dd' :: forall action. [Html action] -> Html action
+dd' :: forall eff. [Html eff] -> Html eff
 dd' = dd mempty
 
-del :: forall action. Attr action -> [Html action] -> Html action
+del :: forall eff. Attr -> [Html eff] -> Html eff
 del = createElementImpl "del"
 
-del' :: forall action. [Html action] -> Html action
+del' :: forall eff. [Html eff] -> Html eff
 del' = del mempty
 
-details :: forall action. Attr action -> [Html action] -> Html action
+details :: forall eff. Attr -> [Html eff] -> Html eff
 details = createElementImpl "details"
 
-details' :: forall action. [Html action] -> Html action
+details' :: forall eff. [Html eff] -> Html eff
 details' = details mempty
 
-dfn :: forall action. Attr action -> [Html action] -> Html action
+dfn :: forall eff. Attr -> [Html eff] -> Html eff
 dfn = createElementImpl "dfn"
 
-dfn' :: forall action. [Html action] -> Html action
+dfn' :: forall eff. [Html eff] -> Html eff
 dfn' = dfn mempty
 
-dialog :: forall action. Attr action -> [Html action] -> Html action
+dialog :: forall eff. Attr -> [Html eff] -> Html eff
 dialog = createElementImpl "dialog"
 
-dialog' :: forall action. [Html action] -> Html action
+dialog' :: forall eff. [Html eff] -> Html eff
 dialog' = dialog mempty
 
-div :: forall action. Attr action -> [Html action] -> Html action
+div :: forall eff. Attr -> [Html eff] -> Html eff
 div = createElementImpl "div"
 
-div' :: forall action. [Html action] -> Html action
+div' :: forall eff. [Html eff] -> Html eff
 div' = div mempty
 
-dl :: forall action. Attr action -> [Html action] -> Html action
+dl :: forall eff. Attr -> [Html eff] -> Html eff
 dl = createElementImpl "dl"
 
-dl' :: forall action. [Html action] -> Html action
+dl' :: forall eff. [Html eff] -> Html eff
 dl' = dl mempty
 
-dt :: forall action. Attr action -> [Html action] -> Html action
+dt :: forall eff. Attr -> [Html eff] -> Html eff
 dt = createElementImpl "dt"
 
-dt' :: forall action. [Html action] -> Html action
+dt' :: forall eff. [Html eff] -> Html eff
 dt' = dt mempty
 
-em :: forall action. Attr action -> [Html action] -> Html action
+em :: forall eff. Attr -> [Html eff] -> Html eff
 em = createElementImpl "em"
 
-em' :: forall action. [Html action] -> Html action
+em' :: forall eff. [Html eff] -> Html eff
 em' = em mempty
 
-embed :: forall action. Attr action -> [Html action] -> Html action
+embed :: forall eff. Attr -> [Html eff] -> Html eff
 embed = createElementImpl "embed"
 
-embed' :: forall action. [Html action] -> Html action
+embed' :: forall eff. [Html eff] -> Html eff
 embed' = embed mempty
 
-fieldset :: forall action. Attr action -> [Html action] -> Html action
+fieldset :: forall eff. Attr -> [Html eff] -> Html eff
 fieldset = createElementImpl "fieldset"
 
-fieldset' :: forall action. [Html action] -> Html action
+fieldset' :: forall eff. [Html eff] -> Html eff
 fieldset' = fieldset mempty
 
-figcaption :: forall action. Attr action -> [Html action] -> Html action
+figcaption :: forall eff. Attr -> [Html eff] -> Html eff
 figcaption = createElementImpl "figcaption"
 
-figcaption' :: forall action. [Html action] -> Html action
+figcaption' :: forall eff. [Html eff] -> Html eff
 figcaption' = figcaption mempty
 
-figure :: forall action. Attr action -> [Html action] -> Html action
+figure :: forall eff. Attr -> [Html eff] -> Html eff
 figure = createElementImpl "figure"
 
-figure' :: forall action. [Html action] -> Html action
+figure' :: forall eff. [Html eff] -> Html eff
 figure' = figure mempty
 
-footer :: forall action. Attr action -> [Html action] -> Html action
+footer :: forall eff. Attr -> [Html eff] -> Html eff
 footer = createElementImpl "footer"
 
-footer' :: forall action. [Html action] -> Html action
+footer' :: forall eff. [Html eff] -> Html eff
 footer' = footer mempty
 
-form :: forall action. Attr action -> [Html action] -> Html action
+form :: forall eff. Attr -> [Html eff] -> Html eff
 form = createElementImpl "form"
 
-form' :: forall action. [Html action] -> Html action
+form' :: forall eff. [Html eff] -> Html eff
 form' = form mempty
 
-h1 :: forall action. Attr action -> [Html action] -> Html action
+h1 :: forall eff. Attr -> [Html eff] -> Html eff
 h1 = createElementImpl "h1"
 
-h1' :: forall action. [Html action] -> Html action
+h1' :: forall eff. [Html eff] -> Html eff
 h1' = h1 mempty
 
-h2 :: forall action. Attr action -> [Html action] -> Html action
+h2 :: forall eff. Attr -> [Html eff] -> Html eff
 h2 = createElementImpl "h2"
 
-h2' :: forall action. [Html action] -> Html action
+h2' :: forall eff. [Html eff] -> Html eff
 h2' = h2 mempty
 
-h3 :: forall action. Attr action -> [Html action] -> Html action
+h3 :: forall eff. Attr -> [Html eff] -> Html eff
 h3 = createElementImpl "h3"
 
-h3' :: forall action. [Html action] -> Html action
+h3' :: forall eff. [Html eff] -> Html eff
 h3' = h3 mempty
 
-h4 :: forall action. Attr action -> [Html action] -> Html action
+h4 :: forall eff. Attr -> [Html eff] -> Html eff
 h4 = createElementImpl "h4"
 
-h4' :: forall action. [Html action] -> Html action
+h4' :: forall eff. [Html eff] -> Html eff
 h4' = h4 mempty
 
-h5 :: forall action. Attr action -> [Html action] -> Html action
+h5 :: forall eff. Attr -> [Html eff] -> Html eff
 h5 = createElementImpl "h5"
 
-h5' :: forall action. [Html action] -> Html action
+h5' :: forall eff. [Html eff] -> Html eff
 h5' = h5 mempty
 
-h6 :: forall action. Attr action -> [Html action] -> Html action
+h6 :: forall eff. Attr -> [Html eff] -> Html eff
 h6 = createElementImpl "h6"
 
-h6' :: forall action. [Html action] -> Html action
+h6' :: forall eff. [Html eff] -> Html eff
 h6' = h6 mempty
 
-head :: forall action. Attr action -> [Html action] -> Html action
+head :: forall eff. Attr -> [Html eff] -> Html eff
 head = createElementImpl "head"
 
-head' :: forall action. [Html action] -> Html action
+head' :: forall eff. [Html eff] -> Html eff
 head' = head mempty
 
-header :: forall action. Attr action -> [Html action] -> Html action
+header :: forall eff. Attr -> [Html eff] -> Html eff
 header = createElementImpl "header"
 
-header' :: forall action. [Html action] -> Html action
+header' :: forall eff. [Html eff] -> Html eff
 header' = header mempty
 
-hr :: forall action. Attr action -> [Html action] -> Html action
+hr :: forall eff. Attr -> [Html eff] -> Html eff
 hr = createElementImpl "hr"
 
-hr' :: forall action. [Html action] -> Html action
+hr' :: forall eff. [Html eff] -> Html eff
 hr' = hr mempty
 
-html :: forall action. Attr action -> [Html action] -> Html action
+html :: forall eff. Attr -> [Html eff] -> Html eff
 html = createElementImpl "html"
 
-html' :: forall action. [Html action] -> Html action
+html' :: forall eff. [Html eff] -> Html eff
 html' = html mempty
 
-i :: forall action. Attr action -> [Html action] -> Html action
+i :: forall eff. Attr -> [Html eff] -> Html eff
 i = createElementImpl "i"
 
-i' :: forall action. [Html action] -> Html action
+i' :: forall eff. [Html eff] -> Html eff
 i' = i mempty
 
-iframe :: forall action. Attr action -> [Html action] -> Html action
+iframe :: forall eff. Attr -> [Html eff] -> Html eff
 iframe = createElementImpl "iframe"
 
-iframe' :: forall action. [Html action] -> Html action
+iframe' :: forall eff. [Html eff] -> Html eff
 iframe' = iframe mempty
 
-img :: forall action. Attr action -> [Html action] -> Html action
+img :: forall eff. Attr -> [Html eff] -> Html eff
 img = createElementImpl "img"
 
-img' :: forall action. [Html action] -> Html action
+img' :: forall eff. [Html eff] -> Html eff
 img' = img mempty
 
-input :: forall action. Attr action -> [Html action] -> Html action
+input :: forall eff. Attr -> [Html eff] -> Html eff
 input = createElementImpl "input"
 
-input' :: forall action. [Html action] -> Html action
+input' :: forall eff. [Html eff] -> Html eff
 input' = input mempty
 
-ins :: forall action. Attr action -> [Html action] -> Html action
+ins :: forall eff. Attr -> [Html eff] -> Html eff
 ins = createElementImpl "ins"
 
-ins' :: forall action. [Html action] -> Html action
+ins' :: forall eff. [Html eff] -> Html eff
 ins' = ins mempty
 
-kbd :: forall action. Attr action -> [Html action] -> Html action
+kbd :: forall eff. Attr -> [Html eff] -> Html eff
 kbd = createElementImpl "kbd"
 
-kbd' :: forall action. [Html action] -> Html action
+kbd' :: forall eff. [Html eff] -> Html eff
 kbd' = kbd mempty
 
-keygen :: forall action. Attr action -> [Html action] -> Html action
+keygen :: forall eff. Attr -> [Html eff] -> Html eff
 keygen = createElementImpl "keygen"
 
-keygen' :: forall action. [Html action] -> Html action
+keygen' :: forall eff. [Html eff] -> Html eff
 keygen' = keygen mempty
 
-label :: forall action. Attr action -> [Html action] -> Html action
+label :: forall eff. Attr -> [Html eff] -> Html eff
 label = createElementImpl "label"
 
-label' :: forall action. [Html action] -> Html action
+label' :: forall eff. [Html eff] -> Html eff
 label' = label mempty
 
-legend :: forall action. Attr action -> [Html action] -> Html action
+legend :: forall eff. Attr -> [Html eff] -> Html eff
 legend = createElementImpl "legend"
 
-legend' :: forall action. [Html action] -> Html action
+legend' :: forall eff. [Html eff] -> Html eff
 legend' = legend mempty
 
-li :: forall action. Attr action -> [Html action] -> Html action
+li :: forall eff. Attr -> [Html eff] -> Html eff
 li = createElementImpl "li"
 
-li' :: forall action. [Html action] -> Html action
+li' :: forall eff. [Html eff] -> Html eff
 li' = li mempty
 
-link :: forall action. Attr action -> [Html action] -> Html action
+link :: forall eff. Attr -> [Html eff] -> Html eff
 link = createElementImpl "link"
 
-link' :: forall action. [Html action] -> Html action
+link' :: forall eff. [Html eff] -> Html eff
 link' = body mempty
 
-main :: forall action. Attr action -> [Html action] -> Html action
+main :: forall eff. Attr -> [Html eff] -> Html eff
 main = createElementImpl "main"
 
-main' :: forall action. [Html action] -> Html action
+main' :: forall eff. [Html eff] -> Html eff
 main' = main mempty
 
-map :: forall action. Attr action -> [Html action] -> Html action
+map :: forall eff. Attr -> [Html eff] -> Html eff
 map = createElementImpl "map"
 
-map' :: forall action. [Html action] -> Html action
+map' :: forall eff. [Html eff] -> Html eff
 map' = map mempty
 
-mark :: forall action. Attr action -> [Html action] -> Html action
+mark :: forall eff. Attr -> [Html eff] -> Html eff
 mark = createElementImpl "mark"
 
-mark' :: forall action. [Html action] -> Html action
+mark' :: forall eff. [Html eff] -> Html eff
 mark' = mark mempty
 
-menu :: forall action. Attr action -> [Html action] -> Html action
+menu :: forall eff. Attr -> [Html eff] -> Html eff
 menu = createElementImpl "menu"
 
-menu' :: forall action. [Html action] -> Html action
+menu' :: forall eff. [Html eff] -> Html eff
 menu' = menu mempty
 
-menuitem :: forall action. Attr action -> [Html action] -> Html action
+menuitem :: forall eff. Attr -> [Html eff] -> Html eff
 menuitem = createElementImpl "menuitem"
 
-menuitem' :: forall action. [Html action] -> Html action
+menuitem' :: forall eff. [Html eff] -> Html eff
 menuitem' = menuitem mempty
 
-meta :: forall action. Attr action -> [Html action] -> Html action
+meta :: forall eff. Attr -> [Html eff] -> Html eff
 meta = createElementImpl "meta"
 
-meta' :: forall action. [Html action] -> Html action
+meta' :: forall eff. [Html eff] -> Html eff
 meta' = meta mempty
 
-meter :: forall action. Attr action -> [Html action] -> Html action
+meter :: forall eff. Attr -> [Html eff] -> Html eff
 meter = createElementImpl "meter"
 
-meter' :: forall action. [Html action] -> Html action
+meter' :: forall eff. [Html eff] -> Html eff
 meter' = meter mempty
 
-nav :: forall action. Attr action -> [Html action] -> Html action
+nav :: forall eff. Attr -> [Html eff] -> Html eff
 nav = createElementImpl "nav"
 
-nav' :: forall action. [Html action] -> Html action
+nav' :: forall eff. [Html eff] -> Html eff
 nav' = nav mempty
 
-noscript :: forall action. Attr action -> [Html action] -> Html action
+noscript :: forall eff. Attr -> [Html eff] -> Html eff
 noscript = createElementImpl "noscript"
 
-noscript' :: forall action. [Html action] -> Html action
+noscript' :: forall eff. [Html eff] -> Html eff
 noscript' = noscript mempty
 
-object :: forall action. Attr action -> [Html action] -> Html action
+object :: forall eff. Attr -> [Html eff] -> Html eff
 object = createElementImpl "object"
 
-object' :: forall action. [Html action] -> Html action
+object' :: forall eff. [Html eff] -> Html eff
 object' = object mempty
 
-ol :: forall action. Attr action -> [Html action] -> Html action
+ol :: forall eff. Attr -> [Html eff] -> Html eff
 ol = createElementImpl "ol"
 
-ol' :: forall action. [Html action] -> Html action
+ol' :: forall eff. [Html eff] -> Html eff
 ol' = ol mempty
 
-optgroup :: forall action. Attr action -> [Html action] -> Html action
+optgroup :: forall eff. Attr -> [Html eff] -> Html eff
 optgroup = createElementImpl "optgroup"
 
-optgroup' :: forall action. [Html action] -> Html action
+optgroup' :: forall eff. [Html eff] -> Html eff
 optgroup' = optgroup mempty
 
-option :: forall action. Attr action -> [Html action] -> Html action
+option :: forall eff. Attr -> [Html eff] -> Html eff
 option = createElementImpl "option"
 
-option' :: forall action. [Html action] -> Html action
+option' :: forall eff. [Html eff] -> Html eff
 option' = option mempty
 
-output :: forall action. Attr action -> [Html action] -> Html action
+output :: forall eff. Attr -> [Html eff] -> Html eff
 output = createElementImpl "output"
 
-output' :: forall action. [Html action] -> Html action
+output' :: forall eff. [Html eff] -> Html eff
 output' = output mempty
 
-p :: forall action. Attr action -> [Html action] -> Html action
+p :: forall eff. Attr -> [Html eff] -> Html eff
 p = createElementImpl "p"
 
-p' :: forall action. [Html action] -> Html action
+p' :: forall eff. [Html eff] -> Html eff
 p' = p mempty
 
-param :: forall action. Attr action -> [Html action] -> Html action
+param :: forall eff. Attr -> [Html eff] -> Html eff
 param = createElementImpl "param"
 
-param' :: forall action. [Html action] -> Html action
+param' :: forall eff. [Html eff] -> Html eff
 param' = param mempty
 
-picture :: forall action. Attr action -> [Html action] -> Html action
+picture :: forall eff. Attr -> [Html eff] -> Html eff
 picture = createElementImpl "picture"
 
-picture' :: forall action. [Html action] -> Html action
+picture' :: forall eff. [Html eff] -> Html eff
 picture' = picture mempty
 
-pre :: forall action. Attr action -> [Html action] -> Html action
+pre :: forall eff. Attr -> [Html eff] -> Html eff
 pre = createElementImpl "pre"
 
-pre' :: forall action. [Html action] -> Html action
+pre' :: forall eff. [Html eff] -> Html eff
 pre' = pre mempty
 
-progress :: forall action. Attr action -> [Html action] -> Html action
+progress :: forall eff. Attr -> [Html eff] -> Html eff
 progress = createElementImpl "progress"
 
-progress' :: forall action. [Html action] -> Html action
+progress' :: forall eff. [Html eff] -> Html eff
 progress' = progress mempty
 
-q :: forall action. Attr action -> [Html action] -> Html action
+q :: forall eff. Attr -> [Html eff] -> Html eff
 q = createElementImpl "q"
 
-q' :: forall action. [Html action] -> Html action
+q' :: forall eff. [Html eff] -> Html eff
 q' = q mempty
 
-rp :: forall action. Attr action -> [Html action] -> Html action
+rp :: forall eff. Attr -> [Html eff] -> Html eff
 rp = createElementImpl "rp"
 
-rp' :: forall action. [Html action] -> Html action
+rp' :: forall eff. [Html eff] -> Html eff
 rp' = rp mempty
 
-rt :: forall action. Attr action -> [Html action] -> Html action
+rt :: forall eff. Attr -> [Html eff] -> Html eff
 rt = createElementImpl "rt"
 
-rt' :: forall action. [Html action] -> Html action
+rt' :: forall eff. [Html eff] -> Html eff
 rt' = rt mempty
 
-ruby :: forall action. Attr action -> [Html action] -> Html action
+ruby :: forall eff. Attr -> [Html eff] -> Html eff
 ruby = createElementImpl "ruby"
 
-ruby' :: forall action. [Html action] -> Html action
+ruby' :: forall eff. [Html eff] -> Html eff
 ruby' = ruby mempty
 
-s :: forall action. Attr action -> [Html action] -> Html action
+s :: forall eff. Attr -> [Html eff] -> Html eff
 s = createElementImpl "s"
 
-s' :: forall action. [Html action] -> Html action
+s' :: forall eff. [Html eff] -> Html eff
 s' = s mempty
 
-samp :: forall action. Attr action -> [Html action] -> Html action
+samp :: forall eff. Attr -> [Html eff] -> Html eff
 samp = createElementImpl "samp"
 
-samp' :: forall action. [Html action] -> Html action
+samp' :: forall eff. [Html eff] -> Html eff
 samp' = samp mempty
 
-script :: forall action. Attr action -> [Html action] -> Html action
+script :: forall eff. Attr -> [Html eff] -> Html eff
 script = createElementImpl "script"
 
-script' :: forall action. [Html action] -> Html action
+script' :: forall eff. [Html eff] -> Html eff
 script' = script mempty
 
-section :: forall action. Attr action -> [Html action] -> Html action
+section :: forall eff. Attr -> [Html eff] -> Html eff
 section = createElementImpl "section"
 
-section' :: forall action. [Html action] -> Html action
+section' :: forall eff. [Html eff] -> Html eff
 section' = section mempty
 
-select :: forall action. Attr action -> [Html action] -> Html action
+select :: forall eff. Attr -> [Html eff] -> Html eff
 select = createElementImpl "select"
 
-select' :: forall action. [Html action] -> Html action
+select' :: forall eff. [Html eff] -> Html eff
 select' = select mempty
 
-small :: forall action. Attr action -> [Html action] -> Html action
+small :: forall eff. Attr -> [Html eff] -> Html eff
 small = createElementImpl "small"
 
-small' :: forall action. [Html action] -> Html action
+small' :: forall eff. [Html eff] -> Html eff
 small' = small mempty
 
-source :: forall action. Attr action -> [Html action] -> Html action
+source :: forall eff. Attr -> [Html eff] -> Html eff
 source = createElementImpl "source"
 
-source' :: forall action. [Html action] -> Html action
+source' :: forall eff. [Html eff] -> Html eff
 source' = source mempty
 
-span :: forall action. Attr action -> [Html action] -> Html action
+span :: forall eff. Attr -> [Html eff] -> Html eff
 span = createElementImpl "span"
 
-span' :: forall action. [Html action] -> Html action
+span' :: forall eff. [Html eff] -> Html eff
 span' = span mempty
 
-strong :: forall action. Attr action -> [Html action] -> Html action
+strong :: forall eff. Attr -> [Html eff] -> Html eff
 strong = createElementImpl "strong"
 
-strong' :: forall action. [Html action] -> Html action
+strong' :: forall eff. [Html eff] -> Html eff
 strong' = strong mempty
 
-style :: forall action. Attr action -> [Html action] -> Html action
+style :: forall eff. Attr -> [Html eff] -> Html eff
 style = createElementImpl "style"
 
-style' :: forall action. [Html action] -> Html action
+style' :: forall eff. [Html eff] -> Html eff
 style' = style mempty
 
-sub :: forall action. Attr action -> [Html action] -> Html action
+sub :: forall eff. Attr -> [Html eff] -> Html eff
 sub = createElementImpl "sub"
 
-sub' :: forall action. [Html action] -> Html action
+sub' :: forall eff. [Html eff] -> Html eff
 sub' = sub mempty
 
-summary :: forall action. Attr action -> [Html action] -> Html action
+summary :: forall eff. Attr -> [Html eff] -> Html eff
 summary = createElementImpl "summary"
 
-summary' :: forall action. [Html action] -> Html action
+summary' :: forall eff. [Html eff] -> Html eff
 summary' = summary mempty
 
-sup :: forall action. Attr action -> [Html action] -> Html action
+sup :: forall eff. Attr -> [Html eff] -> Html eff
 sup = createElementImpl "sup"
 
-sup' :: forall action. [Html action] -> Html action
+sup' :: forall eff. [Html eff] -> Html eff
 sup' = sup mempty
 
-table :: forall action. Attr action -> [Html action] -> Html action
+table :: forall eff. Attr -> [Html eff] -> Html eff
 table = createElementImpl "table"
 
-table' :: forall action. [Html action] -> Html action
+table' :: forall eff. [Html eff] -> Html eff
 table' = table mempty
 
-tbody :: forall action. Attr action -> [Html action] -> Html action
+tbody :: forall eff. Attr -> [Html eff] -> Html eff
 tbody = createElementImpl "tbody"
 
-tbody' :: forall action. [Html action] -> Html action
+tbody' :: forall eff. [Html eff] -> Html eff
 tbody' = tbody mempty
 
-td :: forall action. Attr action -> [Html action] -> Html action
+td :: forall eff. Attr -> [Html eff] -> Html eff
 td = createElementImpl "td"
 
-td' :: forall action. [Html action] -> Html action
+td' :: forall eff. [Html eff] -> Html eff
 td' = td mempty
 
-textarea :: forall action. Attr action -> [Html action] -> Html action
+textarea :: forall eff. Attr -> [Html eff] -> Html eff
 textarea = createElementImpl "textarea"
 
-textarea' :: forall action. [Html action] -> Html action
+textarea' :: forall eff. [Html eff] -> Html eff
 textarea' = textarea mempty
 
-tfoot :: forall action. Attr action -> [Html action] -> Html action
+tfoot :: forall eff. Attr -> [Html eff] -> Html eff
 tfoot = createElementImpl "tfoot"
 
-tfoot' :: forall action. [Html action] -> Html action
+tfoot' :: forall eff. [Html eff] -> Html eff
 tfoot' = tfoot mempty
 
-th :: forall action. Attr action -> [Html action] -> Html action
+th :: forall eff. Attr -> [Html eff] -> Html eff
 th = createElementImpl "th"
 
-th' :: forall action. [Html action] -> Html action
+th' :: forall eff. [Html eff] -> Html eff
 th' = th mempty
 
-thead :: forall action. Attr action -> [Html action] -> Html action
+thead :: forall eff. Attr -> [Html eff] -> Html eff
 thead = createElementImpl "thead"
 
-thead' :: forall action. [Html action] -> Html action
+thead' :: forall eff. [Html eff] -> Html eff
 thead' = thead mempty
 
-time :: forall action. Attr action -> [Html action] -> Html action
+time :: forall eff. Attr -> [Html eff] -> Html eff
 time = createElementImpl "time"
 
-time' :: forall action. [Html action] -> Html action
+time' :: forall eff. [Html eff] -> Html eff
 time' = time mempty
 
-title :: forall action. Attr action -> [Html action] -> Html action
+title :: forall eff. Attr -> [Html eff] -> Html eff
 title = createElementImpl "title"
 
-title' :: forall action. [Html action] -> Html action
+title' :: forall eff. [Html eff] -> Html eff
 title' = title mempty
 
-tr :: forall action. Attr action -> [Html action] -> Html action
+tr :: forall eff. Attr -> [Html eff] -> Html eff
 tr = createElementImpl "tr"
 
-tr' :: forall action. [Html action] -> Html action
+tr' :: forall eff. [Html eff] -> Html eff
 tr' = tr mempty
 
-track :: forall action. Attr action -> [Html action] -> Html action
+track :: forall eff. Attr -> [Html eff] -> Html eff
 track = createElementImpl "track"
 
-track' :: forall action. [Html action] -> Html action
+track' :: forall eff. [Html eff] -> Html eff
 track' = track mempty
 
-u :: forall action. Attr action -> [Html action] -> Html action
+u :: forall eff. Attr -> [Html eff] -> Html eff
 u = createElementImpl "u"
 
-u' :: forall action. [Html action] -> Html action
+u' :: forall eff. [Html eff] -> Html eff
 u' = u mempty
 
-ul :: forall action. Attr action -> [Html action] -> Html action
+ul :: forall eff. Attr -> [Html eff] -> Html eff
 ul = createElementImpl "ul"
 
-ul' :: forall action. [Html action] -> Html action
+ul' :: forall eff. [Html eff] -> Html eff
 ul' = ul mempty
 
-var :: forall action. Attr action -> [Html action] -> Html action
+var :: forall eff. Attr -> [Html eff] -> Html eff
 var = createElementImpl "var"
 
-var' :: forall action. [Html action] -> Html action
+var' :: forall eff. [Html eff] -> Html eff
 var' = var mempty
 
-video :: forall action. Attr action -> [Html action] -> Html action
+video :: forall eff. Attr -> [Html eff] -> Html eff
 video = createElementImpl "video"
 
-video' :: forall action. [Html action] -> Html action
+video' :: forall eff. [Html eff] -> Html eff
 video' = video mempty
 
-wbr :: forall action. Attr action -> [Html action] -> Html action
+wbr :: forall eff. Attr -> [Html eff] -> Html eff
 wbr = createElementImpl "body"
 
-wbr' :: forall action. [Html action] -> Html action
+wbr' :: forall eff. [Html eff] -> Html eff
 wbr' = wbr mempty
