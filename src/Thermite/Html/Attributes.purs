@@ -144,6 +144,9 @@ icon = unsafeAttribute "icon"
 _id :: forall action. String -> Prop action
 _id = unsafeAttribute "id"
 
+key :: forall action. String -> Prop action
+key = unsafeAttribute "key"
+
 label :: forall action. String -> Prop action
 label = unsafeAttribute "label"
 
