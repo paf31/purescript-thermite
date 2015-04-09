@@ -43,10 +43,10 @@ foreign import createElementImpl """
   """ :: forall action. String -> Attr action -> [Html action] -> Html action
 
 foreign import unsafeAttribute """
-  function unsafeAttribute(attr) {
+  function unsafeAttribute(k) {
     return function(value) {
       var o = {};
-      o.attr = value;
+      o[k] = value;
       return o;
     };
   }
