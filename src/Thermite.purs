@@ -28,9 +28,7 @@ import Thermite.Types
 import Thermite.Action
 
 -- | A type synonym for action handlers, which take an action and the current properties
--- | for the component, and return a computation in some monad `m`.
--- |
--- | In practice, `m` will be the `Action` monad.
+-- | for the component, and return a computation in the `Action` monad.
 type PerformAction eff state props action = props -> action -> Action eff state Unit
 
 -- | A rendering function, which takes a `Context`, the current state and properties, an array
