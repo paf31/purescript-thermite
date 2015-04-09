@@ -30,9 +30,9 @@ render ctx s _ = T.div' [counter, buttons]
   buttons :: T.Html _
   buttons = 
     T.p'
-      [ T.button [ T.onClick ctx (\_ -> Increment) ] 
+      [ T.button (T.onClick ctx (\_ -> Increment))
                  [ T.text "Increment" ]
-      , T.button [ T.onClick ctx (\_ -> Decrement) ] 
+      , T.button (T.onClick ctx (\_ -> Decrement))
                  [ T.text "Decrement" ]
       ]
 

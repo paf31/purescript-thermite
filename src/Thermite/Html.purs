@@ -9,5 +9,5 @@ import Thermite.Internal
 text :: forall action. String -> Html action
 text = textImpl
 
-createElement :: forall action. String -> Props action -> [Html action] -> Html action
+createElement :: forall action. String -> Attr action -> [Html action] -> Html action
 createElement = createElementImpl

@@ -5,118 +5,118 @@ import Thermite.Internal
 
 foreign import data ClipboardEvent :: *
 
-onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 onCopy = event "onCopy"
 
-onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 onCut = event "onCut"
 
-onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 onPaste = event "onPaste"
 
 foreign import data KeyboardEvent :: *
 
-onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 onKeyDown = event "onKeyDown"
 
-onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 onKeyPress = event "onKeyPress"
 
-onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 onKeyUp = event "onKeyUp"
 
 foreign import data FocusEvent :: *
 
-onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
+onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 onFocus = event "onFocus"
 
-onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
+onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 onBlur = event "onBlur"
 
 foreign import data FormEvent :: *
 
-onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 onChange = event "onChange"
 
-onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 onInput = event "onInput"
 
-onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 onSubmit = event "onSubmit"
 
 foreign import data MouseEvent :: *
 
-onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onClick = event "onClick"
 
-onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDoubleClick = event "onDoubleClick"
 
-onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDrag = event "onDrag"
 
-onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragEnd = event "onDragEnd"
 
-onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragEnter = event "onDragEnter"
 
-onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragExit = event "onDragExit"
 
-onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragLeave = event "onDragLeave"
 
-onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragOver = event "onDragOver"
 
-onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDragStart = event "onDragStart"
 
-onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onDrop = event "onDrop"
 
-onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseDown = event "onMouseDown"
 
-onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseEnter = event "onMouseEnter"
 
-onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseLeave = event "onMouseLeave"
 
-onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseMove = event "onMouseMove"
 
-onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseOut = event "onMouseOut"
 
-onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseOver = event "onMouseOver"
 
-onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 onMouseUp = event "onMouseUp"
 
 foreign import data TouchEvent :: *
 
-onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 onTouchCancel = event "onTouchCancel"
 
-onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 onTouchEnd = event "onTouchEnd"
 
-onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 onTouchMove = event "onTouchMove"
 
-onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 onTouchStart = event "onTouchStart"
 
 foreign import data UIEvent :: *
 
-onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Prop action
+onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Attr action
 onScroll = event "onScroll"
 
 foreign import data WheelEvent :: *
 
-onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Prop action
+onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Attr action
 onWheel = event "onWheel"

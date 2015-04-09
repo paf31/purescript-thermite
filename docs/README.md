@@ -158,21 +158,21 @@ data ClipboardEvent :: *
 #### `onCopy`
 
 ``` purescript
-onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
 #### `onCut`
 
 ``` purescript
-onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
 #### `onPaste`
 
 ``` purescript
-onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Prop action
+onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
@@ -186,21 +186,21 @@ data KeyboardEvent :: *
 #### `onKeyDown`
 
 ``` purescript
-onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
 #### `onKeyPress`
 
 ``` purescript
-onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
 #### `onKeyUp`
 
 ``` purescript
-onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Prop action
+onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
@@ -214,14 +214,14 @@ data FocusEvent :: *
 #### `onFocus`
 
 ``` purescript
-onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
+onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 ```
 
 
 #### `onBlur`
 
 ``` purescript
-onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Prop action
+onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 ```
 
 
@@ -235,21 +235,21 @@ data FormEvent :: *
 #### `onChange`
 
 ``` purescript
-onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
 #### `onInput`
 
 ``` purescript
-onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
 #### `onSubmit`
 
 ``` purescript
-onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Prop action
+onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
@@ -263,119 +263,119 @@ data MouseEvent :: *
 #### `onClick`
 
 ``` purescript
-onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDoubleClick`
 
 ``` purescript
-onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDrag`
 
 ``` purescript
-onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragEnd`
 
 ``` purescript
-onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragEnter`
 
 ``` purescript
-onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragExit`
 
 ``` purescript
-onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragLeave`
 
 ``` purescript
-onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragOver`
 
 ``` purescript
-onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDragStart`
 
 ``` purescript
-onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onDrop`
 
 ``` purescript
-onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseDown`
 
 ``` purescript
-onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseEnter`
 
 ``` purescript
-onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseLeave`
 
 ``` purescript
-onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseMove`
 
 ``` purescript
-onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseOut`
 
 ``` purescript
-onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseOver`
 
 ``` purescript
-onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
 #### `onMouseUp`
 
 ``` purescript
-onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Prop action
+onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
@@ -389,28 +389,28 @@ data TouchEvent :: *
 #### `onTouchCancel`
 
 ``` purescript
-onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 ```
 
 
 #### `onTouchEnd`
 
 ``` purescript
-onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 ```
 
 
 #### `onTouchMove`
 
 ``` purescript
-onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 ```
 
 
 #### `onTouchStart`
 
 ``` purescript
-onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Prop action
+onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
 ```
 
 
@@ -424,7 +424,7 @@ data UIEvent :: *
 #### `onScroll`
 
 ``` purescript
-onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Prop action
+onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Attr action
 ```
 
 
@@ -438,7 +438,7 @@ data WheelEvent :: *
 #### `onWheel`
 
 ``` purescript
-onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Prop action
+onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Attr action
 ```
 
 
@@ -455,7 +455,7 @@ text :: forall action. String -> Html action
 #### `createElement`
 
 ``` purescript
-createElement :: forall action. String -> Props action -> [Html action] -> Html action
+createElement :: forall action. String -> Attr action -> [Html action] -> Html action
 ```
 
 
@@ -465,693 +465,700 @@ createElement :: forall action. String -> Props action -> [Html action] -> Html 
 #### `accept`
 
 ``` purescript
-accept :: forall action. String -> Prop action
+accept :: forall action. String -> Attr action
 ```
 
 
 #### `acceptCharset`
 
 ``` purescript
-acceptCharset :: forall action. String -> Prop action
+acceptCharset :: forall action. String -> Attr action
 ```
 
 
 #### `accessKey`
 
 ``` purescript
-accessKey :: forall action. String -> Prop action
+accessKey :: forall action. String -> Attr action
 ```
 
 
 #### `action`
 
 ``` purescript
-action :: forall action. String -> Prop action
+action :: forall action. String -> Attr action
 ```
 
 
 #### `allowFullScreen`
 
 ``` purescript
-allowFullScreen :: forall action. String -> Prop action
+allowFullScreen :: forall action. String -> Attr action
 ```
 
 
 #### `allowTransparency`
 
 ``` purescript
-allowTransparency :: forall action. String -> Prop action
+allowTransparency :: forall action. String -> Attr action
 ```
 
 
 #### `alt`
 
 ``` purescript
-alt :: forall action. String -> Prop action
+alt :: forall action. String -> Attr action
 ```
 
 
 #### `async`
 
 ``` purescript
-async :: forall action. String -> Prop action
+async :: forall action. String -> Attr action
 ```
 
 
 #### `autoComplete`
 
 ``` purescript
-autoComplete :: forall action. String -> Prop action
+autoComplete :: forall action. String -> Attr action
 ```
 
 
 #### `autoFocus`
 
 ``` purescript
-autoFocus :: forall action. Boolean -> Prop action
+autoFocus :: forall action. Boolean -> Attr action
 ```
 
 
 #### `autoPlay`
 
 ``` purescript
-autoPlay :: forall action. String -> Prop action
+autoPlay :: forall action. String -> Attr action
 ```
 
 
 #### `cellPadding`
 
 ``` purescript
-cellPadding :: forall action. String -> Prop action
+cellPadding :: forall action. String -> Attr action
 ```
 
 
 #### `cellSpacing`
 
 ``` purescript
-cellSpacing :: forall action. String -> Prop action
+cellSpacing :: forall action. String -> Attr action
 ```
 
 
 #### `charSet`
 
 ``` purescript
-charSet :: forall action. String -> Prop action
+charSet :: forall action. String -> Attr action
 ```
 
 
 #### `checked`
 
 ``` purescript
-checked :: forall action. String -> Prop action
+checked :: forall action. String -> Attr action
 ```
 
 
 #### `classID`
 
 ``` purescript
-classID :: forall action. String -> Prop action
+classID :: forall action. String -> Attr action
 ```
 
 
 #### `className`
 
 ``` purescript
-className :: forall action. String -> Prop action
+className :: forall action. String -> Attr action
 ```
 
 
 #### `cols`
 
 ``` purescript
-cols :: forall action. String -> Prop action
+cols :: forall action. String -> Attr action
 ```
 
 
 #### `colSpan`
 
 ``` purescript
-colSpan :: forall action. String -> Prop action
+colSpan :: forall action. String -> Attr action
 ```
 
 
 #### `content`
 
 ``` purescript
-content :: forall action. String -> Prop action
+content :: forall action. String -> Attr action
 ```
 
 
 #### `contentEditable`
 
 ``` purescript
-contentEditable :: forall action. String -> Prop action
+contentEditable :: forall action. String -> Attr action
 ```
 
 
 #### `contextMenu`
 
 ``` purescript
-contextMenu :: forall action. String -> Prop action
+contextMenu :: forall action. String -> Attr action
 ```
 
 
 #### `controls`
 
 ``` purescript
-controls :: forall action. String -> Prop action
+controls :: forall action. String -> Attr action
 ```
 
 
 #### `coords`
 
 ``` purescript
-coords :: forall action. String -> Prop action
+coords :: forall action. String -> Attr action
 ```
 
 
 #### `crossOrigin`
 
 ``` purescript
-crossOrigin :: forall action. String -> Prop action
+crossOrigin :: forall action. String -> Attr action
 ```
 
 
 #### `dateTime`
 
 ``` purescript
-dateTime :: forall action. String -> Prop action
+dateTime :: forall action. String -> Attr action
 ```
 
 
 #### `defer`
 
 ``` purescript
-defer :: forall action. String -> Prop action
+defer :: forall action. String -> Attr action
 ```
 
 
 #### `dir`
 
 ``` purescript
-dir :: forall action. String -> Prop action
+dir :: forall action. String -> Attr action
 ```
 
 
 #### `disabled`
 
 ``` purescript
-disabled :: forall action. String -> Prop action
+disabled :: forall action. Boolean -> Attr action
 ```
 
 
 #### `download`
 
 ``` purescript
-download :: forall action. String -> Prop action
+download :: forall action. String -> Attr action
 ```
 
 
 #### `draggable`
 
 ``` purescript
-draggable :: forall action. String -> Prop action
+draggable :: forall action. String -> Attr action
 ```
 
 
 #### `encType`
 
 ``` purescript
-encType :: forall action. String -> Prop action
+encType :: forall action. String -> Attr action
 ```
 
 
 #### `form`
 
 ``` purescript
-form :: forall action. String -> Prop action
+form :: forall action. String -> Attr action
 ```
 
 
 #### `formAction`
 
 ``` purescript
-formAction :: forall action. String -> Prop action
+formAction :: forall action. String -> Attr action
 ```
 
 
 #### `formEncType`
 
 ``` purescript
-formEncType :: forall action. String -> Prop action
+formEncType :: forall action. String -> Attr action
 ```
 
 
 #### `formMethod`
 
 ``` purescript
-formMethod :: forall action. String -> Prop action
+formMethod :: forall action. String -> Attr action
 ```
 
 
 #### `formNoValidate`
 
 ``` purescript
-formNoValidate :: forall action. String -> Prop action
+formNoValidate :: forall action. String -> Attr action
 ```
 
 
 #### `formTarget`
 
 ``` purescript
-formTarget :: forall action. String -> Prop action
+formTarget :: forall action. String -> Attr action
 ```
 
 
 #### `frameBorder`
 
 ``` purescript
-frameBorder :: forall action. String -> Prop action
+frameBorder :: forall action. String -> Attr action
 ```
 
 
 #### `height`
 
 ``` purescript
-height :: forall action. String -> Prop action
+height :: forall action. String -> Attr action
 ```
 
 
 #### `hidden`
 
 ``` purescript
-hidden :: forall action. String -> Prop action
+hidden :: forall action. String -> Attr action
 ```
 
 
 #### `href`
 
 ``` purescript
-href :: forall action. String -> Prop action
+href :: forall action. String -> Attr action
 ```
 
 
 #### `hrefLang`
 
 ``` purescript
-hrefLang :: forall action. String -> Prop action
+hrefLang :: forall action. String -> Attr action
 ```
 
 
 #### `htmlFor`
 
 ``` purescript
-htmlFor :: forall action. String -> Prop action
+htmlFor :: forall action. String -> Attr action
 ```
 
 
 #### `httpEquiv`
 
 ``` purescript
-httpEquiv :: forall action. String -> Prop action
+httpEquiv :: forall action. String -> Attr action
 ```
 
 
 #### `icon`
 
 ``` purescript
-icon :: forall action. String -> Prop action
+icon :: forall action. String -> Attr action
 ```
 
 
 #### `_id`
 
 ``` purescript
-_id :: forall action. String -> Prop action
+_id :: forall action. String -> Attr action
+```
+
+
+#### `key`
+
+``` purescript
+key :: forall action. String -> Attr action
 ```
 
 
 #### `label`
 
 ``` purescript
-label :: forall action. String -> Prop action
+label :: forall action. String -> Attr action
 ```
 
 
 #### `lang`
 
 ``` purescript
-lang :: forall action. String -> Prop action
+lang :: forall action. String -> Attr action
 ```
 
 
 #### `list`
 
 ``` purescript
-list :: forall action. String -> Prop action
+list :: forall action. String -> Attr action
 ```
 
 
 #### `loop`
 
 ``` purescript
-loop :: forall action. String -> Prop action
+loop :: forall action. String -> Attr action
 ```
 
 
 #### `manifest`
 
 ``` purescript
-manifest :: forall action. String -> Prop action
+manifest :: forall action. String -> Attr action
 ```
 
 
 #### `marginHeight`
 
 ``` purescript
-marginHeight :: forall action. String -> Prop action
+marginHeight :: forall action. String -> Attr action
 ```
 
 
 #### `marginWidth`
 
 ``` purescript
-marginWidth :: forall action. String -> Prop action
+marginWidth :: forall action. String -> Attr action
 ```
 
 
 #### `max`
 
 ``` purescript
-max :: forall action. String -> Prop action
+max :: forall action. String -> Attr action
 ```
 
 
 #### `maxLength`
 
 ``` purescript
-maxLength :: forall action. String -> Prop action
+maxLength :: forall action. String -> Attr action
 ```
 
 
 #### `media`
 
 ``` purescript
-media :: forall action. String -> Prop action
+media :: forall action. String -> Attr action
 ```
 
 
 #### `mediaGroup`
 
 ``` purescript
-mediaGroup :: forall action. String -> Prop action
+mediaGroup :: forall action. String -> Attr action
 ```
 
 
 #### `method`
 
 ``` purescript
-method :: forall action. String -> Prop action
+method :: forall action. String -> Attr action
 ```
 
 
 #### `min`
 
 ``` purescript
-min :: forall action. String -> Prop action
+min :: forall action. String -> Attr action
 ```
 
 
 #### `multiple`
 
 ``` purescript
-multiple :: forall action. String -> Prop action
+multiple :: forall action. String -> Attr action
 ```
 
 
 #### `muted`
 
 ``` purescript
-muted :: forall action. String -> Prop action
+muted :: forall action. String -> Attr action
 ```
 
 
 #### `name`
 
 ``` purescript
-name :: forall action. String -> Prop action
+name :: forall action. String -> Attr action
 ```
 
 
 #### `noValidate`
 
 ``` purescript
-noValidate :: forall action. String -> Prop action
+noValidate :: forall action. String -> Attr action
 ```
 
 
 #### `open`
 
 ``` purescript
-open :: forall action. String -> Prop action
+open :: forall action. String -> Attr action
 ```
 
 
 #### `pattern`
 
 ``` purescript
-pattern :: forall action. String -> Prop action
+pattern :: forall action. String -> Attr action
 ```
 
 
 #### `placeholder`
 
 ``` purescript
-placeholder :: forall action. String -> Prop action
+placeholder :: forall action. String -> Attr action
 ```
 
 
 #### `poster`
 
 ``` purescript
-poster :: forall action. String -> Prop action
+poster :: forall action. String -> Attr action
 ```
 
 
 #### `preload`
 
 ``` purescript
-preload :: forall action. String -> Prop action
+preload :: forall action. String -> Attr action
 ```
 
 
 #### `radioGroup`
 
 ``` purescript
-radioGroup :: forall action. String -> Prop action
+radioGroup :: forall action. String -> Attr action
 ```
 
 
 #### `readOnly`
 
 ``` purescript
-readOnly :: forall action. String -> Prop action
+readOnly :: forall action. String -> Attr action
 ```
 
 
 #### `rel`
 
 ``` purescript
-rel :: forall action. String -> Prop action
+rel :: forall action. String -> Attr action
 ```
 
 
 #### `required`
 
 ``` purescript
-required :: forall action. String -> Prop action
+required :: forall action. String -> Attr action
 ```
 
 
 #### `role`
 
 ``` purescript
-role :: forall action. String -> Prop action
+role :: forall action. String -> Attr action
 ```
 
 
 #### `rows`
 
 ``` purescript
-rows :: forall action. String -> Prop action
+rows :: forall action. String -> Attr action
 ```
 
 
 #### `rowSpan`
 
 ``` purescript
-rowSpan :: forall action. String -> Prop action
+rowSpan :: forall action. String -> Attr action
 ```
 
 
 #### `sandbox`
 
 ``` purescript
-sandbox :: forall action. String -> Prop action
+sandbox :: forall action. String -> Attr action
 ```
 
 
 #### `scope`
 
 ``` purescript
-scope :: forall action. String -> Prop action
+scope :: forall action. String -> Attr action
 ```
 
 
 #### `scrolling`
 
 ``` purescript
-scrolling :: forall action. String -> Prop action
+scrolling :: forall action. String -> Attr action
 ```
 
 
 #### `seamless`
 
 ``` purescript
-seamless :: forall action. String -> Prop action
+seamless :: forall action. String -> Attr action
 ```
 
 
 #### `selected`
 
 ``` purescript
-selected :: forall action. String -> Prop action
+selected :: forall action. String -> Attr action
 ```
 
 
 #### `shape`
 
 ``` purescript
-shape :: forall action. String -> Prop action
+shape :: forall action. String -> Attr action
 ```
 
 
 #### `size`
 
 ``` purescript
-size :: forall action. String -> Prop action
+size :: forall action. String -> Attr action
 ```
 
 
 #### `sizes`
 
 ``` purescript
-sizes :: forall action. String -> Prop action
+sizes :: forall action. String -> Attr action
 ```
 
 
 #### `span`
 
 ``` purescript
-span :: forall action. String -> Prop action
+span :: forall action. String -> Attr action
 ```
 
 
 #### `spellCheck`
 
 ``` purescript
-spellCheck :: forall action. String -> Prop action
+spellCheck :: forall action. String -> Attr action
 ```
 
 
 #### `src`
 
 ``` purescript
-src :: forall action. String -> Prop action
+src :: forall action. String -> Attr action
 ```
 
 
 #### `srcDoc`
 
 ``` purescript
-srcDoc :: forall action. String -> Prop action
+srcDoc :: forall action. String -> Attr action
 ```
 
 
 #### `srcSet`
 
 ``` purescript
-srcSet :: forall action. String -> Prop action
+srcSet :: forall action. String -> Attr action
 ```
 
 
 #### `start`
 
 ``` purescript
-start :: forall action. String -> Prop action
+start :: forall action. String -> Attr action
 ```
 
 
 #### `step`
 
 ``` purescript
-step :: forall action. String -> Prop action
+step :: forall action. String -> Attr action
 ```
 
 
 #### `tabIndex`
 
 ``` purescript
-tabIndex :: forall action. String -> Prop action
+tabIndex :: forall action. String -> Attr action
 ```
 
 
 #### `target`
 
 ``` purescript
-target :: forall action. String -> Prop action
+target :: forall action. String -> Attr action
 ```
 
 
 #### `title`
 
 ``` purescript
-title :: forall action. String -> Prop action
+title :: forall action. String -> Attr action
 ```
 
 
 #### `_type`
 
 ``` purescript
-_type :: forall action. String -> Prop action
+_type :: forall action. String -> Attr action
 ```
 
 
 #### `useMap`
 
 ``` purescript
-useMap :: forall action. String -> Prop action
+useMap :: forall action. String -> Attr action
 ```
 
 
 #### `value`
 
 ``` purescript
-value :: forall action. String -> Prop action
+value :: forall action. String -> Attr action
 ```
 
 
 #### `width`
 
 ``` purescript
-width :: forall action. String -> Prop action
+width :: forall action. String -> Attr action
 ```
 
 
 #### `wmode`
 
 ``` purescript
-wmode :: forall action. String -> Prop action
+wmode :: forall action. String -> Attr action
 ```
 
 
@@ -1161,7 +1168,7 @@ wmode :: forall action. String -> Prop action
 #### `a`
 
 ``` purescript
-a :: forall action. Props action -> [Html action] -> Html action
+a :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1175,7 +1182,7 @@ a' :: forall action. [Html action] -> Html action
 #### `abbr`
 
 ``` purescript
-abbr :: forall action. Props action -> [Html action] -> Html action
+abbr :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1189,7 +1196,7 @@ abbr' :: forall action. [Html action] -> Html action
 #### `address`
 
 ``` purescript
-address :: forall action. Props action -> [Html action] -> Html action
+address :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1203,7 +1210,7 @@ address' :: forall action. [Html action] -> Html action
 #### `area`
 
 ``` purescript
-area :: forall action. Props action -> [Html action] -> Html action
+area :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1217,7 +1224,7 @@ area' :: forall action. [Html action] -> Html action
 #### `article`
 
 ``` purescript
-article :: forall action. Props action -> [Html action] -> Html action
+article :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1231,7 +1238,7 @@ article' :: forall action. [Html action] -> Html action
 #### `aside`
 
 ``` purescript
-aside :: forall action. Props action -> [Html action] -> Html action
+aside :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1245,7 +1252,7 @@ aside' :: forall action. [Html action] -> Html action
 #### `audio`
 
 ``` purescript
-audio :: forall action. Props action -> [Html action] -> Html action
+audio :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1259,7 +1266,7 @@ audio' :: forall action. [Html action] -> Html action
 #### `b`
 
 ``` purescript
-b :: forall action. Props action -> [Html action] -> Html action
+b :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1273,7 +1280,7 @@ b' :: forall action. [Html action] -> Html action
 #### `base`
 
 ``` purescript
-base :: forall action. Props action -> [Html action] -> Html action
+base :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1287,7 +1294,7 @@ base' :: forall action. [Html action] -> Html action
 #### `bdi`
 
 ``` purescript
-bdi :: forall action. Props action -> [Html action] -> Html action
+bdi :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1301,7 +1308,7 @@ bdi' :: forall action. [Html action] -> Html action
 #### `bdo`
 
 ``` purescript
-bdo :: forall action. Props action -> [Html action] -> Html action
+bdo :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1315,7 +1322,7 @@ bdo' :: forall action. [Html action] -> Html action
 #### `big`
 
 ``` purescript
-big :: forall action. Props action -> [Html action] -> Html action
+big :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1329,7 +1336,7 @@ big' :: forall action. [Html action] -> Html action
 #### `blockquote`
 
 ``` purescript
-blockquote :: forall action. Props action -> [Html action] -> Html action
+blockquote :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1343,7 +1350,7 @@ blockquote' :: forall action. [Html action] -> Html action
 #### `body`
 
 ``` purescript
-body :: forall action. Props action -> [Html action] -> Html action
+body :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1357,7 +1364,7 @@ body' :: forall action. [Html action] -> Html action
 #### `br`
 
 ``` purescript
-br :: forall action. Props action -> [Html action] -> Html action
+br :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1371,7 +1378,7 @@ br' :: forall action. [Html action] -> Html action
 #### `button`
 
 ``` purescript
-button :: forall action. Props action -> [Html action] -> Html action
+button :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1385,7 +1392,7 @@ button' :: forall action. [Html action] -> Html action
 #### `canvas`
 
 ``` purescript
-canvas :: forall action. Props action -> [Html action] -> Html action
+canvas :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1399,7 +1406,7 @@ canvas' :: forall action. [Html action] -> Html action
 #### `caption`
 
 ``` purescript
-caption :: forall action. Props action -> [Html action] -> Html action
+caption :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1413,7 +1420,7 @@ caption' :: forall action. [Html action] -> Html action
 #### `cite`
 
 ``` purescript
-cite :: forall action. Props action -> [Html action] -> Html action
+cite :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1427,7 +1434,7 @@ cite' :: forall action. [Html action] -> Html action
 #### `code`
 
 ``` purescript
-code :: forall action. Props action -> [Html action] -> Html action
+code :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1441,7 +1448,7 @@ code' :: forall action. [Html action] -> Html action
 #### `col`
 
 ``` purescript
-col :: forall action. Props action -> [Html action] -> Html action
+col :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1455,7 +1462,7 @@ col' :: forall action. [Html action] -> Html action
 #### `colgroup`
 
 ``` purescript
-colgroup :: forall action. Props action -> [Html action] -> Html action
+colgroup :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1469,7 +1476,7 @@ colgroup' :: forall action. [Html action] -> Html action
 #### `_data`
 
 ``` purescript
-_data :: forall action. Props action -> [Html action] -> Html action
+_data :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1483,7 +1490,7 @@ _data' :: forall action. [Html action] -> Html action
 #### `datalist`
 
 ``` purescript
-datalist :: forall action. Props action -> [Html action] -> Html action
+datalist :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1497,7 +1504,7 @@ datalist' :: forall action. [Html action] -> Html action
 #### `dd`
 
 ``` purescript
-dd :: forall action. Props action -> [Html action] -> Html action
+dd :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1511,7 +1518,7 @@ dd' :: forall action. [Html action] -> Html action
 #### `del`
 
 ``` purescript
-del :: forall action. Props action -> [Html action] -> Html action
+del :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1525,7 +1532,7 @@ del' :: forall action. [Html action] -> Html action
 #### `details`
 
 ``` purescript
-details :: forall action. Props action -> [Html action] -> Html action
+details :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1539,7 +1546,7 @@ details' :: forall action. [Html action] -> Html action
 #### `dfn`
 
 ``` purescript
-dfn :: forall action. Props action -> [Html action] -> Html action
+dfn :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1553,7 +1560,7 @@ dfn' :: forall action. [Html action] -> Html action
 #### `dialog`
 
 ``` purescript
-dialog :: forall action. Props action -> [Html action] -> Html action
+dialog :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1567,7 +1574,7 @@ dialog' :: forall action. [Html action] -> Html action
 #### `div`
 
 ``` purescript
-div :: forall action. Props action -> [Html action] -> Html action
+div :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1581,7 +1588,7 @@ div' :: forall action. [Html action] -> Html action
 #### `dl`
 
 ``` purescript
-dl :: forall action. Props action -> [Html action] -> Html action
+dl :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1595,7 +1602,7 @@ dl' :: forall action. [Html action] -> Html action
 #### `dt`
 
 ``` purescript
-dt :: forall action. Props action -> [Html action] -> Html action
+dt :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1609,7 +1616,7 @@ dt' :: forall action. [Html action] -> Html action
 #### `em`
 
 ``` purescript
-em :: forall action. Props action -> [Html action] -> Html action
+em :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1623,7 +1630,7 @@ em' :: forall action. [Html action] -> Html action
 #### `embed`
 
 ``` purescript
-embed :: forall action. Props action -> [Html action] -> Html action
+embed :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1637,7 +1644,7 @@ embed' :: forall action. [Html action] -> Html action
 #### `fieldset`
 
 ``` purescript
-fieldset :: forall action. Props action -> [Html action] -> Html action
+fieldset :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1651,7 +1658,7 @@ fieldset' :: forall action. [Html action] -> Html action
 #### `figcaption`
 
 ``` purescript
-figcaption :: forall action. Props action -> [Html action] -> Html action
+figcaption :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1665,7 +1672,7 @@ figcaption' :: forall action. [Html action] -> Html action
 #### `figure`
 
 ``` purescript
-figure :: forall action. Props action -> [Html action] -> Html action
+figure :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1679,7 +1686,7 @@ figure' :: forall action. [Html action] -> Html action
 #### `footer`
 
 ``` purescript
-footer :: forall action. Props action -> [Html action] -> Html action
+footer :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1693,7 +1700,7 @@ footer' :: forall action. [Html action] -> Html action
 #### `form`
 
 ``` purescript
-form :: forall action. Props action -> [Html action] -> Html action
+form :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1707,7 +1714,7 @@ form' :: forall action. [Html action] -> Html action
 #### `h1`
 
 ``` purescript
-h1 :: forall action. Props action -> [Html action] -> Html action
+h1 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1721,7 +1728,7 @@ h1' :: forall action. [Html action] -> Html action
 #### `h2`
 
 ``` purescript
-h2 :: forall action. Props action -> [Html action] -> Html action
+h2 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1735,7 +1742,7 @@ h2' :: forall action. [Html action] -> Html action
 #### `h3`
 
 ``` purescript
-h3 :: forall action. Props action -> [Html action] -> Html action
+h3 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1749,7 +1756,7 @@ h3' :: forall action. [Html action] -> Html action
 #### `h4`
 
 ``` purescript
-h4 :: forall action. Props action -> [Html action] -> Html action
+h4 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1763,7 +1770,7 @@ h4' :: forall action. [Html action] -> Html action
 #### `h5`
 
 ``` purescript
-h5 :: forall action. Props action -> [Html action] -> Html action
+h5 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1777,7 +1784,7 @@ h5' :: forall action. [Html action] -> Html action
 #### `h6`
 
 ``` purescript
-h6 :: forall action. Props action -> [Html action] -> Html action
+h6 :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1791,7 +1798,7 @@ h6' :: forall action. [Html action] -> Html action
 #### `head`
 
 ``` purescript
-head :: forall action. Props action -> [Html action] -> Html action
+head :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1805,7 +1812,7 @@ head' :: forall action. [Html action] -> Html action
 #### `header`
 
 ``` purescript
-header :: forall action. Props action -> [Html action] -> Html action
+header :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1819,7 +1826,7 @@ header' :: forall action. [Html action] -> Html action
 #### `hr`
 
 ``` purescript
-hr :: forall action. Props action -> [Html action] -> Html action
+hr :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1833,7 +1840,7 @@ hr' :: forall action. [Html action] -> Html action
 #### `html`
 
 ``` purescript
-html :: forall action. Props action -> [Html action] -> Html action
+html :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1847,7 +1854,7 @@ html' :: forall action. [Html action] -> Html action
 #### `i`
 
 ``` purescript
-i :: forall action. Props action -> [Html action] -> Html action
+i :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1861,7 +1868,7 @@ i' :: forall action. [Html action] -> Html action
 #### `iframe`
 
 ``` purescript
-iframe :: forall action. Props action -> [Html action] -> Html action
+iframe :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1875,7 +1882,7 @@ iframe' :: forall action. [Html action] -> Html action
 #### `img`
 
 ``` purescript
-img :: forall action. Props action -> [Html action] -> Html action
+img :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1889,7 +1896,7 @@ img' :: forall action. [Html action] -> Html action
 #### `input`
 
 ``` purescript
-input :: forall action. Props action -> [Html action] -> Html action
+input :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1903,7 +1910,7 @@ input' :: forall action. [Html action] -> Html action
 #### `ins`
 
 ``` purescript
-ins :: forall action. Props action -> [Html action] -> Html action
+ins :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1917,7 +1924,7 @@ ins' :: forall action. [Html action] -> Html action
 #### `kbd`
 
 ``` purescript
-kbd :: forall action. Props action -> [Html action] -> Html action
+kbd :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1931,7 +1938,7 @@ kbd' :: forall action. [Html action] -> Html action
 #### `keygen`
 
 ``` purescript
-keygen :: forall action. Props action -> [Html action] -> Html action
+keygen :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1945,7 +1952,7 @@ keygen' :: forall action. [Html action] -> Html action
 #### `label`
 
 ``` purescript
-label :: forall action. Props action -> [Html action] -> Html action
+label :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1959,7 +1966,7 @@ label' :: forall action. [Html action] -> Html action
 #### `legend`
 
 ``` purescript
-legend :: forall action. Props action -> [Html action] -> Html action
+legend :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1973,7 +1980,7 @@ legend' :: forall action. [Html action] -> Html action
 #### `li`
 
 ``` purescript
-li :: forall action. Props action -> [Html action] -> Html action
+li :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -1987,7 +1994,7 @@ li' :: forall action. [Html action] -> Html action
 #### `link`
 
 ``` purescript
-link :: forall action. Props action -> [Html action] -> Html action
+link :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2001,7 +2008,7 @@ link' :: forall action. [Html action] -> Html action
 #### `main`
 
 ``` purescript
-main :: forall action. Props action -> [Html action] -> Html action
+main :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2015,7 +2022,7 @@ main' :: forall action. [Html action] -> Html action
 #### `map`
 
 ``` purescript
-map :: forall action. Props action -> [Html action] -> Html action
+map :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2029,7 +2036,7 @@ map' :: forall action. [Html action] -> Html action
 #### `mark`
 
 ``` purescript
-mark :: forall action. Props action -> [Html action] -> Html action
+mark :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2043,7 +2050,7 @@ mark' :: forall action. [Html action] -> Html action
 #### `menu`
 
 ``` purescript
-menu :: forall action. Props action -> [Html action] -> Html action
+menu :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2057,7 +2064,7 @@ menu' :: forall action. [Html action] -> Html action
 #### `menuitem`
 
 ``` purescript
-menuitem :: forall action. Props action -> [Html action] -> Html action
+menuitem :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2071,7 +2078,7 @@ menuitem' :: forall action. [Html action] -> Html action
 #### `meta`
 
 ``` purescript
-meta :: forall action. Props action -> [Html action] -> Html action
+meta :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2085,7 +2092,7 @@ meta' :: forall action. [Html action] -> Html action
 #### `meter`
 
 ``` purescript
-meter :: forall action. Props action -> [Html action] -> Html action
+meter :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2099,7 +2106,7 @@ meter' :: forall action. [Html action] -> Html action
 #### `nav`
 
 ``` purescript
-nav :: forall action. Props action -> [Html action] -> Html action
+nav :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2113,7 +2120,7 @@ nav' :: forall action. [Html action] -> Html action
 #### `noscript`
 
 ``` purescript
-noscript :: forall action. Props action -> [Html action] -> Html action
+noscript :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2127,7 +2134,7 @@ noscript' :: forall action. [Html action] -> Html action
 #### `object`
 
 ``` purescript
-object :: forall action. Props action -> [Html action] -> Html action
+object :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2141,7 +2148,7 @@ object' :: forall action. [Html action] -> Html action
 #### `ol`
 
 ``` purescript
-ol :: forall action. Props action -> [Html action] -> Html action
+ol :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2155,7 +2162,7 @@ ol' :: forall action. [Html action] -> Html action
 #### `optgroup`
 
 ``` purescript
-optgroup :: forall action. Props action -> [Html action] -> Html action
+optgroup :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2169,7 +2176,7 @@ optgroup' :: forall action. [Html action] -> Html action
 #### `option`
 
 ``` purescript
-option :: forall action. Props action -> [Html action] -> Html action
+option :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2183,7 +2190,7 @@ option' :: forall action. [Html action] -> Html action
 #### `output`
 
 ``` purescript
-output :: forall action. Props action -> [Html action] -> Html action
+output :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2197,7 +2204,7 @@ output' :: forall action. [Html action] -> Html action
 #### `p`
 
 ``` purescript
-p :: forall action. Props action -> [Html action] -> Html action
+p :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2211,7 +2218,7 @@ p' :: forall action. [Html action] -> Html action
 #### `param`
 
 ``` purescript
-param :: forall action. Props action -> [Html action] -> Html action
+param :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2225,7 +2232,7 @@ param' :: forall action. [Html action] -> Html action
 #### `picture`
 
 ``` purescript
-picture :: forall action. Props action -> [Html action] -> Html action
+picture :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2239,7 +2246,7 @@ picture' :: forall action. [Html action] -> Html action
 #### `pre`
 
 ``` purescript
-pre :: forall action. Props action -> [Html action] -> Html action
+pre :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2253,7 +2260,7 @@ pre' :: forall action. [Html action] -> Html action
 #### `progress`
 
 ``` purescript
-progress :: forall action. Props action -> [Html action] -> Html action
+progress :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2267,7 +2274,7 @@ progress' :: forall action. [Html action] -> Html action
 #### `q`
 
 ``` purescript
-q :: forall action. Props action -> [Html action] -> Html action
+q :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2281,7 +2288,7 @@ q' :: forall action. [Html action] -> Html action
 #### `rp`
 
 ``` purescript
-rp :: forall action. Props action -> [Html action] -> Html action
+rp :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2295,7 +2302,7 @@ rp' :: forall action. [Html action] -> Html action
 #### `rt`
 
 ``` purescript
-rt :: forall action. Props action -> [Html action] -> Html action
+rt :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2309,7 +2316,7 @@ rt' :: forall action. [Html action] -> Html action
 #### `ruby`
 
 ``` purescript
-ruby :: forall action. Props action -> [Html action] -> Html action
+ruby :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2323,7 +2330,7 @@ ruby' :: forall action. [Html action] -> Html action
 #### `s`
 
 ``` purescript
-s :: forall action. Props action -> [Html action] -> Html action
+s :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2337,7 +2344,7 @@ s' :: forall action. [Html action] -> Html action
 #### `samp`
 
 ``` purescript
-samp :: forall action. Props action -> [Html action] -> Html action
+samp :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2351,7 +2358,7 @@ samp' :: forall action. [Html action] -> Html action
 #### `script`
 
 ``` purescript
-script :: forall action. Props action -> [Html action] -> Html action
+script :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2365,7 +2372,7 @@ script' :: forall action. [Html action] -> Html action
 #### `section`
 
 ``` purescript
-section :: forall action. Props action -> [Html action] -> Html action
+section :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2379,7 +2386,7 @@ section' :: forall action. [Html action] -> Html action
 #### `select`
 
 ``` purescript
-select :: forall action. Props action -> [Html action] -> Html action
+select :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2393,7 +2400,7 @@ select' :: forall action. [Html action] -> Html action
 #### `small`
 
 ``` purescript
-small :: forall action. Props action -> [Html action] -> Html action
+small :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2407,7 +2414,7 @@ small' :: forall action. [Html action] -> Html action
 #### `source`
 
 ``` purescript
-source :: forall action. Props action -> [Html action] -> Html action
+source :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2421,7 +2428,7 @@ source' :: forall action. [Html action] -> Html action
 #### `span`
 
 ``` purescript
-span :: forall action. Props action -> [Html action] -> Html action
+span :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2435,7 +2442,7 @@ span' :: forall action. [Html action] -> Html action
 #### `strong`
 
 ``` purescript
-strong :: forall action. Props action -> [Html action] -> Html action
+strong :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2449,7 +2456,7 @@ strong' :: forall action. [Html action] -> Html action
 #### `style`
 
 ``` purescript
-style :: forall action. Props action -> [Html action] -> Html action
+style :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2463,7 +2470,7 @@ style' :: forall action. [Html action] -> Html action
 #### `sub`
 
 ``` purescript
-sub :: forall action. Props action -> [Html action] -> Html action
+sub :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2477,7 +2484,7 @@ sub' :: forall action. [Html action] -> Html action
 #### `summary`
 
 ``` purescript
-summary :: forall action. Props action -> [Html action] -> Html action
+summary :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2491,7 +2498,7 @@ summary' :: forall action. [Html action] -> Html action
 #### `sup`
 
 ``` purescript
-sup :: forall action. Props action -> [Html action] -> Html action
+sup :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2505,7 +2512,7 @@ sup' :: forall action. [Html action] -> Html action
 #### `table`
 
 ``` purescript
-table :: forall action. Props action -> [Html action] -> Html action
+table :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2519,7 +2526,7 @@ table' :: forall action. [Html action] -> Html action
 #### `tbody`
 
 ``` purescript
-tbody :: forall action. Props action -> [Html action] -> Html action
+tbody :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2533,7 +2540,7 @@ tbody' :: forall action. [Html action] -> Html action
 #### `td`
 
 ``` purescript
-td :: forall action. Props action -> [Html action] -> Html action
+td :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2547,7 +2554,7 @@ td' :: forall action. [Html action] -> Html action
 #### `textarea`
 
 ``` purescript
-textarea :: forall action. Props action -> [Html action] -> Html action
+textarea :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2561,7 +2568,7 @@ textarea' :: forall action. [Html action] -> Html action
 #### `tfoot`
 
 ``` purescript
-tfoot :: forall action. Props action -> [Html action] -> Html action
+tfoot :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2575,7 +2582,7 @@ tfoot' :: forall action. [Html action] -> Html action
 #### `th`
 
 ``` purescript
-th :: forall action. Props action -> [Html action] -> Html action
+th :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2589,7 +2596,7 @@ th' :: forall action. [Html action] -> Html action
 #### `thead`
 
 ``` purescript
-thead :: forall action. Props action -> [Html action] -> Html action
+thead :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2603,7 +2610,7 @@ thead' :: forall action. [Html action] -> Html action
 #### `time`
 
 ``` purescript
-time :: forall action. Props action -> [Html action] -> Html action
+time :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2617,7 +2624,7 @@ time' :: forall action. [Html action] -> Html action
 #### `title`
 
 ``` purescript
-title :: forall action. Props action -> [Html action] -> Html action
+title :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2631,7 +2638,7 @@ title' :: forall action. [Html action] -> Html action
 #### `tr`
 
 ``` purescript
-tr :: forall action. Props action -> [Html action] -> Html action
+tr :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2645,7 +2652,7 @@ tr' :: forall action. [Html action] -> Html action
 #### `track`
 
 ``` purescript
-track :: forall action. Props action -> [Html action] -> Html action
+track :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2659,7 +2666,7 @@ track' :: forall action. [Html action] -> Html action
 #### `u`
 
 ``` purescript
-u :: forall action. Props action -> [Html action] -> Html action
+u :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2673,7 +2680,7 @@ u' :: forall action. [Html action] -> Html action
 #### `ul`
 
 ``` purescript
-ul :: forall action. Props action -> [Html action] -> Html action
+ul :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2687,7 +2694,7 @@ ul' :: forall action. [Html action] -> Html action
 #### `var`
 
 ``` purescript
-var :: forall action. Props action -> [Html action] -> Html action
+var :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2701,7 +2708,7 @@ var' :: forall action. [Html action] -> Html action
 #### `video`
 
 ``` purescript
-video :: forall action. Props action -> [Html action] -> Html action
+video :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2715,7 +2722,7 @@ video' :: forall action. [Html action] -> Html action
 #### `wbr`
 
 ``` purescript
-wbr :: forall action. Props action -> [Html action] -> Html action
+wbr :: forall action. Attr action -> [Html action] -> Html action
 ```
 
 
@@ -2753,21 +2760,21 @@ textImpl :: forall action. String -> Html action
 #### `createElementImpl`
 
 ``` purescript
-createElementImpl :: forall action. String -> Props action -> [Html action] -> Html action
+createElementImpl :: forall action. String -> Attr action -> [Html action] -> Html action
 ```
 
 
 #### `unsafeAttribute`
 
 ``` purescript
-unsafeAttribute :: forall action attr. String -> attr -> Prop action
+unsafeAttribute :: forall action attr. String -> attr -> Attr action
 ```
 
 
 #### `event`
 
 ``` purescript
-event :: forall state props action event. String -> Context state props action -> (event -> action) -> Prop action
+event :: forall state props action event. String -> Context state props action -> (event -> action) -> Attr action
 ```
 
 
@@ -2809,17 +2816,10 @@ data ComponentClass props (eff :: # !)
 ```
 
 
-#### `Prop`
+#### `Attr`
 
 ``` purescript
-data Prop action
-```
-
-
-#### `Props`
-
-``` purescript
-type Props action = [Prop action]
+data Attr action
 ```
 
 
@@ -2859,5 +2859,29 @@ type SpecRecord m state props action = { displayName :: Maybe String, componentW
 ```
 
 
+#### `emptyAttr`
+
+``` purescript
+emptyAttr :: forall action. Attr action
+```
 
 
+#### `appendAttr`
+
+``` purescript
+appendAttr :: forall action. Attr action -> Attr action -> Attr action
+```
+
+
+#### `semigroupAttr`
+
+``` purescript
+instance semigroupAttr :: Semigroup (Attr action)
+```
+
+
+#### `monoidAttr`
+
+``` purescript
+instance monoidAttr :: Monoid (Attr action)
+```

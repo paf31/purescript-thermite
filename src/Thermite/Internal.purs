@@ -34,40 +34,37 @@ foreign import textImpl """
 
 foreign import createElementImpl """
   function createElementImpl(name) {
-    return function(ps) {
+    return function(attr) {
       return function(children) {
-        var props = {};
-
-        for (var i = 0; i < ps.length; i++) {
-          var p = ps[i];
-          props[p[0]] = p[1];
-        }
-
-        return React.createElement(name, props, children);
+        return React.createElement(name, attr, children);
       };
     };
   }
-  """ :: forall action. String -> Props action -> [Html action] -> Html action
+  """ :: forall action. String -> Attr action -> [Html action] -> Html action
 
 foreign import unsafeAttribute """
   function unsafeAttribute(attr) {
     return function(value) {
-      return [attr, value];
+      var o = {};
+      o.attr = value;
+      return o;
     };
   }
-  """ :: forall action attr. String -> attr -> Prop action
+  """ :: forall action attr. String -> attr -> Attr action
 
 foreign import event """
   function event(name) {
     return function(context) {
       return function(f) {
-        return [name, function(e) {
+        var o = {}; 
+        o[name] = function(e) {
           context.performAction(f(e));
-        }];
+        };
+        return o;
       };
     };
   }
-  """ :: forall state props action event. String -> Context state props action -> (event -> action) -> Prop action
+  """ :: forall state props action event. String -> Context state props action -> (event -> action) -> Attr action
 
 foreign import createClassImpl """
   function createClassImpl(runAction) {

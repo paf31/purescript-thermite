@@ -1,676 +1,678 @@
 module Thermite.Html.Elements where
-    
+
+import Data.Monoid
+
 import Thermite.Types
 import Thermite.Internal
     
-a :: forall action. Props action -> [Html action] -> Html action
+a :: forall action. Attr action -> [Html action] -> Html action
 a = createElementImpl "a"
 
 a' :: forall action. [Html action] -> Html action
-a' = a []
+a' = a mempty
 
-abbr :: forall action. Props action -> [Html action] -> Html action
+abbr :: forall action. Attr action -> [Html action] -> Html action
 abbr = createElementImpl "abbr"
 
 abbr' :: forall action. [Html action] -> Html action
-abbr' = abbr []
+abbr' = abbr mempty
 
-address :: forall action. Props action -> [Html action] -> Html action
+address :: forall action. Attr action -> [Html action] -> Html action
 address = createElementImpl "address"
 
 address' :: forall action. [Html action] -> Html action
-address' = address []
+address' = address mempty
 
-area :: forall action. Props action -> [Html action] -> Html action
+area :: forall action. Attr action -> [Html action] -> Html action
 area = createElementImpl "area"
 
 area' :: forall action. [Html action] -> Html action
-area' = area []
+area' = area mempty
 
-article :: forall action. Props action -> [Html action] -> Html action
+article :: forall action. Attr action -> [Html action] -> Html action
 article = createElementImpl "article"
 
 article' :: forall action. [Html action] -> Html action
-article' = article []
+article' = article mempty
 
-aside :: forall action. Props action -> [Html action] -> Html action
+aside :: forall action. Attr action -> [Html action] -> Html action
 aside = createElementImpl "aside"
 
 aside' :: forall action. [Html action] -> Html action
-aside' = aside []
+aside' = aside mempty
 
-audio :: forall action. Props action -> [Html action] -> Html action
+audio :: forall action. Attr action -> [Html action] -> Html action
 audio = createElementImpl "audio"
 
 audio' :: forall action. [Html action] -> Html action
-audio' = audio []
+audio' = audio mempty
 
-b :: forall action. Props action -> [Html action] -> Html action
+b :: forall action. Attr action -> [Html action] -> Html action
 b = createElementImpl "b"
 
 b' :: forall action. [Html action] -> Html action
-b' = b []
+b' = b mempty
 
-base :: forall action. Props action -> [Html action] -> Html action
+base :: forall action. Attr action -> [Html action] -> Html action
 base = createElementImpl "base"
 
 base' :: forall action. [Html action] -> Html action
-base' = base []
+base' = base mempty
 
-bdi :: forall action. Props action -> [Html action] -> Html action
+bdi :: forall action. Attr action -> [Html action] -> Html action
 bdi = createElementImpl "bdi"
 
 bdi' :: forall action. [Html action] -> Html action
-bdi' = bdi []
+bdi' = bdi mempty
 
-bdo :: forall action. Props action -> [Html action] -> Html action
+bdo :: forall action. Attr action -> [Html action] -> Html action
 bdo = createElementImpl "bdo"
 
 bdo' :: forall action. [Html action] -> Html action
-bdo' = bdo []
+bdo' = bdo mempty
 
-big :: forall action. Props action -> [Html action] -> Html action
+big :: forall action. Attr action -> [Html action] -> Html action
 big = createElementImpl "big"
 
 big' :: forall action. [Html action] -> Html action
-big' = big []
+big' = big mempty
 
-blockquote :: forall action. Props action -> [Html action] -> Html action
+blockquote :: forall action. Attr action -> [Html action] -> Html action
 blockquote = createElementImpl "blockquote"
 
 blockquote' :: forall action. [Html action] -> Html action
-blockquote' = blockquote []
+blockquote' = blockquote mempty
 
-body :: forall action. Props action -> [Html action] -> Html action
+body :: forall action. Attr action -> [Html action] -> Html action
 body = createElementImpl "body"
 
 body' :: forall action. [Html action] -> Html action
-body' = body []
+body' = body mempty
 
-br :: forall action. Props action -> [Html action] -> Html action
+br :: forall action. Attr action -> [Html action] -> Html action
 br = createElementImpl "br"
 
 br' :: forall action. [Html action] -> Html action
-br' = br []
+br' = br mempty
 
-button :: forall action. Props action -> [Html action] -> Html action
+button :: forall action. Attr action -> [Html action] -> Html action
 button = createElementImpl "button"
 
 button' :: forall action. [Html action] -> Html action
-button' = button []
+button' = button mempty
 
-canvas :: forall action. Props action -> [Html action] -> Html action
+canvas :: forall action. Attr action -> [Html action] -> Html action
 canvas = createElementImpl "canvas"
 
 canvas' :: forall action. [Html action] -> Html action
-canvas' = canvas []
+canvas' = canvas mempty
 
-caption :: forall action. Props action -> [Html action] -> Html action
+caption :: forall action. Attr action -> [Html action] -> Html action
 caption = createElementImpl "caption"
 
 caption' :: forall action. [Html action] -> Html action
-caption' = caption []
+caption' = caption mempty
 
-cite :: forall action. Props action -> [Html action] -> Html action
+cite :: forall action. Attr action -> [Html action] -> Html action
 cite = createElementImpl "cite"
 
 cite' :: forall action. [Html action] -> Html action
-cite' = cite []
+cite' = cite mempty
 
-code :: forall action. Props action -> [Html action] -> Html action
+code :: forall action. Attr action -> [Html action] -> Html action
 code = createElementImpl "code"
 
 code' :: forall action. [Html action] -> Html action
-code' = code []
+code' = code mempty
 
-col :: forall action. Props action -> [Html action] -> Html action
+col :: forall action. Attr action -> [Html action] -> Html action
 col = createElementImpl "col"
 
 col' :: forall action. [Html action] -> Html action
-col' = col []
+col' = col mempty
 
-colgroup :: forall action. Props action -> [Html action] -> Html action
+colgroup :: forall action. Attr action -> [Html action] -> Html action
 colgroup = createElementImpl "colgroup"
 
 colgroup' :: forall action. [Html action] -> Html action
-colgroup' = colgroup []
+colgroup' = colgroup mempty
 
-_data :: forall action. Props action -> [Html action] -> Html action
+_data :: forall action. Attr action -> [Html action] -> Html action
 _data = createElementImpl "data"
 
 _data' :: forall action. [Html action] -> Html action
-_data' = _data []
+_data' = _data mempty
 
-datalist :: forall action. Props action -> [Html action] -> Html action
+datalist :: forall action. Attr action -> [Html action] -> Html action
 datalist = createElementImpl "datalist"
 
 datalist' :: forall action. [Html action] -> Html action
-datalist' = datalist []
+datalist' = datalist mempty
 
-dd :: forall action. Props action -> [Html action] -> Html action
+dd :: forall action. Attr action -> [Html action] -> Html action
 dd = createElementImpl "dd"
 
 dd' :: forall action. [Html action] -> Html action
-dd' = dd []
+dd' = dd mempty
 
-del :: forall action. Props action -> [Html action] -> Html action
+del :: forall action. Attr action -> [Html action] -> Html action
 del = createElementImpl "del"
 
 del' :: forall action. [Html action] -> Html action
-del' = del []
+del' = del mempty
 
-details :: forall action. Props action -> [Html action] -> Html action
+details :: forall action. Attr action -> [Html action] -> Html action
 details = createElementImpl "details"
 
 details' :: forall action. [Html action] -> Html action
-details' = details []
+details' = details mempty
 
-dfn :: forall action. Props action -> [Html action] -> Html action
+dfn :: forall action. Attr action -> [Html action] -> Html action
 dfn = createElementImpl "dfn"
 
 dfn' :: forall action. [Html action] -> Html action
-dfn' = dfn []
+dfn' = dfn mempty
 
-dialog :: forall action. Props action -> [Html action] -> Html action
+dialog :: forall action. Attr action -> [Html action] -> Html action
 dialog = createElementImpl "dialog"
 
 dialog' :: forall action. [Html action] -> Html action
-dialog' = dialog []
+dialog' = dialog mempty
 
-div :: forall action. Props action -> [Html action] -> Html action
+div :: forall action. Attr action -> [Html action] -> Html action
 div = createElementImpl "div"
 
 div' :: forall action. [Html action] -> Html action
-div' = div []
+div' = div mempty
 
-dl :: forall action. Props action -> [Html action] -> Html action
+dl :: forall action. Attr action -> [Html action] -> Html action
 dl = createElementImpl "dl"
 
 dl' :: forall action. [Html action] -> Html action
-dl' = dl []
+dl' = dl mempty
 
-dt :: forall action. Props action -> [Html action] -> Html action
+dt :: forall action. Attr action -> [Html action] -> Html action
 dt = createElementImpl "dt"
 
 dt' :: forall action. [Html action] -> Html action
-dt' = dt []
+dt' = dt mempty
 
-em :: forall action. Props action -> [Html action] -> Html action
+em :: forall action. Attr action -> [Html action] -> Html action
 em = createElementImpl "em"
 
 em' :: forall action. [Html action] -> Html action
-em' = em []
+em' = em mempty
 
-embed :: forall action. Props action -> [Html action] -> Html action
+embed :: forall action. Attr action -> [Html action] -> Html action
 embed = createElementImpl "embed"
 
 embed' :: forall action. [Html action] -> Html action
-embed' = embed []
+embed' = embed mempty
 
-fieldset :: forall action. Props action -> [Html action] -> Html action
+fieldset :: forall action. Attr action -> [Html action] -> Html action
 fieldset = createElementImpl "fieldset"
 
 fieldset' :: forall action. [Html action] -> Html action
-fieldset' = fieldset []
+fieldset' = fieldset mempty
 
-figcaption :: forall action. Props action -> [Html action] -> Html action
+figcaption :: forall action. Attr action -> [Html action] -> Html action
 figcaption = createElementImpl "figcaption"
 
 figcaption' :: forall action. [Html action] -> Html action
-figcaption' = figcaption []
+figcaption' = figcaption mempty
 
-figure :: forall action. Props action -> [Html action] -> Html action
+figure :: forall action. Attr action -> [Html action] -> Html action
 figure = createElementImpl "figure"
 
 figure' :: forall action. [Html action] -> Html action
-figure' = figure []
+figure' = figure mempty
 
-footer :: forall action. Props action -> [Html action] -> Html action
+footer :: forall action. Attr action -> [Html action] -> Html action
 footer = createElementImpl "footer"
 
 footer' :: forall action. [Html action] -> Html action
-footer' = footer []
+footer' = footer mempty
 
-form :: forall action. Props action -> [Html action] -> Html action
+form :: forall action. Attr action -> [Html action] -> Html action
 form = createElementImpl "form"
 
 form' :: forall action. [Html action] -> Html action
-form' = form []
+form' = form mempty
 
-h1 :: forall action. Props action -> [Html action] -> Html action
+h1 :: forall action. Attr action -> [Html action] -> Html action
 h1 = createElementImpl "h1"
 
 h1' :: forall action. [Html action] -> Html action
-h1' = h1 []
+h1' = h1 mempty
 
-h2 :: forall action. Props action -> [Html action] -> Html action
+h2 :: forall action. Attr action -> [Html action] -> Html action
 h2 = createElementImpl "h2"
 
 h2' :: forall action. [Html action] -> Html action
-h2' = h2 []
+h2' = h2 mempty
 
-h3 :: forall action. Props action -> [Html action] -> Html action
+h3 :: forall action. Attr action -> [Html action] -> Html action
 h3 = createElementImpl "h3"
 
 h3' :: forall action. [Html action] -> Html action
-h3' = h3 []
+h3' = h3 mempty
 
-h4 :: forall action. Props action -> [Html action] -> Html action
+h4 :: forall action. Attr action -> [Html action] -> Html action
 h4 = createElementImpl "h4"
 
 h4' :: forall action. [Html action] -> Html action
-h4' = h4 []
+h4' = h4 mempty
 
-h5 :: forall action. Props action -> [Html action] -> Html action
+h5 :: forall action. Attr action -> [Html action] -> Html action
 h5 = createElementImpl "h5"
 
 h5' :: forall action. [Html action] -> Html action
-h5' = h5 []
+h5' = h5 mempty
 
-h6 :: forall action. Props action -> [Html action] -> Html action
+h6 :: forall action. Attr action -> [Html action] -> Html action
 h6 = createElementImpl "h6"
 
 h6' :: forall action. [Html action] -> Html action
-h6' = h6 []
+h6' = h6 mempty
 
-head :: forall action. Props action -> [Html action] -> Html action
+head :: forall action. Attr action -> [Html action] -> Html action
 head = createElementImpl "head"
 
 head' :: forall action. [Html action] -> Html action
-head' = head []
+head' = head mempty
 
-header :: forall action. Props action -> [Html action] -> Html action
+header :: forall action. Attr action -> [Html action] -> Html action
 header = createElementImpl "header"
 
 header' :: forall action. [Html action] -> Html action
-header' = header []
+header' = header mempty
 
-hr :: forall action. Props action -> [Html action] -> Html action
+hr :: forall action. Attr action -> [Html action] -> Html action
 hr = createElementImpl "hr"
 
 hr' :: forall action. [Html action] -> Html action
-hr' = hr []
+hr' = hr mempty
 
-html :: forall action. Props action -> [Html action] -> Html action
+html :: forall action. Attr action -> [Html action] -> Html action
 html = createElementImpl "html"
 
 html' :: forall action. [Html action] -> Html action
-html' = html []
+html' = html mempty
 
-i :: forall action. Props action -> [Html action] -> Html action
+i :: forall action. Attr action -> [Html action] -> Html action
 i = createElementImpl "i"
 
 i' :: forall action. [Html action] -> Html action
-i' = i []
+i' = i mempty
 
-iframe :: forall action. Props action -> [Html action] -> Html action
+iframe :: forall action. Attr action -> [Html action] -> Html action
 iframe = createElementImpl "iframe"
 
 iframe' :: forall action. [Html action] -> Html action
-iframe' = iframe []
+iframe' = iframe mempty
 
-img :: forall action. Props action -> [Html action] -> Html action
+img :: forall action. Attr action -> [Html action] -> Html action
 img = createElementImpl "img"
 
 img' :: forall action. [Html action] -> Html action
-img' = img []
+img' = img mempty
 
-input :: forall action. Props action -> [Html action] -> Html action
+input :: forall action. Attr action -> [Html action] -> Html action
 input = createElementImpl "input"
 
 input' :: forall action. [Html action] -> Html action
-input' = input []
+input' = input mempty
 
-ins :: forall action. Props action -> [Html action] -> Html action
+ins :: forall action. Attr action -> [Html action] -> Html action
 ins = createElementImpl "ins"
 
 ins' :: forall action. [Html action] -> Html action
-ins' = ins []
+ins' = ins mempty
 
-kbd :: forall action. Props action -> [Html action] -> Html action
+kbd :: forall action. Attr action -> [Html action] -> Html action
 kbd = createElementImpl "kbd"
 
 kbd' :: forall action. [Html action] -> Html action
-kbd' = kbd []
+kbd' = kbd mempty
 
-keygen :: forall action. Props action -> [Html action] -> Html action
+keygen :: forall action. Attr action -> [Html action] -> Html action
 keygen = createElementImpl "keygen"
 
 keygen' :: forall action. [Html action] -> Html action
-keygen' = keygen []
+keygen' = keygen mempty
 
-label :: forall action. Props action -> [Html action] -> Html action
+label :: forall action. Attr action -> [Html action] -> Html action
 label = createElementImpl "label"
 
 label' :: forall action. [Html action] -> Html action
-label' = label []
+label' = label mempty
 
-legend :: forall action. Props action -> [Html action] -> Html action
+legend :: forall action. Attr action -> [Html action] -> Html action
 legend = createElementImpl "legend"
 
 legend' :: forall action. [Html action] -> Html action
-legend' = legend []
+legend' = legend mempty
 
-li :: forall action. Props action -> [Html action] -> Html action
+li :: forall action. Attr action -> [Html action] -> Html action
 li = createElementImpl "li"
 
 li' :: forall action. [Html action] -> Html action
-li' = li []
+li' = li mempty
 
-link :: forall action. Props action -> [Html action] -> Html action
+link :: forall action. Attr action -> [Html action] -> Html action
 link = createElementImpl "link"
 
 link' :: forall action. [Html action] -> Html action
-link' = body []
+link' = body mempty
 
-main :: forall action. Props action -> [Html action] -> Html action
+main :: forall action. Attr action -> [Html action] -> Html action
 main = createElementImpl "main"
 
 main' :: forall action. [Html action] -> Html action
-main' = main []
+main' = main mempty
 
-map :: forall action. Props action -> [Html action] -> Html action
+map :: forall action. Attr action -> [Html action] -> Html action
 map = createElementImpl "map"
 
 map' :: forall action. [Html action] -> Html action
-map' = map []
+map' = map mempty
 
-mark :: forall action. Props action -> [Html action] -> Html action
+mark :: forall action. Attr action -> [Html action] -> Html action
 mark = createElementImpl "mark"
 
 mark' :: forall action. [Html action] -> Html action
-mark' = mark []
+mark' = mark mempty
 
-menu :: forall action. Props action -> [Html action] -> Html action
+menu :: forall action. Attr action -> [Html action] -> Html action
 menu = createElementImpl "menu"
 
 menu' :: forall action. [Html action] -> Html action
-menu' = menu []
+menu' = menu mempty
 
-menuitem :: forall action. Props action -> [Html action] -> Html action
+menuitem :: forall action. Attr action -> [Html action] -> Html action
 menuitem = createElementImpl "menuitem"
 
 menuitem' :: forall action. [Html action] -> Html action
-menuitem' = menuitem []
+menuitem' = menuitem mempty
 
-meta :: forall action. Props action -> [Html action] -> Html action
+meta :: forall action. Attr action -> [Html action] -> Html action
 meta = createElementImpl "meta"
 
 meta' :: forall action. [Html action] -> Html action
-meta' = meta []
+meta' = meta mempty
 
-meter :: forall action. Props action -> [Html action] -> Html action
+meter :: forall action. Attr action -> [Html action] -> Html action
 meter = createElementImpl "meter"
 
 meter' :: forall action. [Html action] -> Html action
-meter' = meter []
+meter' = meter mempty
 
-nav :: forall action. Props action -> [Html action] -> Html action
+nav :: forall action. Attr action -> [Html action] -> Html action
 nav = createElementImpl "nav"
 
 nav' :: forall action. [Html action] -> Html action
-nav' = nav []
+nav' = nav mempty
 
-noscript :: forall action. Props action -> [Html action] -> Html action
+noscript :: forall action. Attr action -> [Html action] -> Html action
 noscript = createElementImpl "noscript"
 
 noscript' :: forall action. [Html action] -> Html action
-noscript' = noscript []
+noscript' = noscript mempty
 
-object :: forall action. Props action -> [Html action] -> Html action
+object :: forall action. Attr action -> [Html action] -> Html action
 object = createElementImpl "object"
 
 object' :: forall action. [Html action] -> Html action
-object' = object []
+object' = object mempty
 
-ol :: forall action. Props action -> [Html action] -> Html action
+ol :: forall action. Attr action -> [Html action] -> Html action
 ol = createElementImpl "ol"
 
 ol' :: forall action. [Html action] -> Html action
-ol' = ol []
+ol' = ol mempty
 
-optgroup :: forall action. Props action -> [Html action] -> Html action
+optgroup :: forall action. Attr action -> [Html action] -> Html action
 optgroup = createElementImpl "optgroup"
 
 optgroup' :: forall action. [Html action] -> Html action
-optgroup' = optgroup []
+optgroup' = optgroup mempty
 
-option :: forall action. Props action -> [Html action] -> Html action
+option :: forall action. Attr action -> [Html action] -> Html action
 option = createElementImpl "option"
 
 option' :: forall action. [Html action] -> Html action
-option' = option []
+option' = option mempty
 
-output :: forall action. Props action -> [Html action] -> Html action
+output :: forall action. Attr action -> [Html action] -> Html action
 output = createElementImpl "output"
 
 output' :: forall action. [Html action] -> Html action
-output' = output []
+output' = output mempty
 
-p :: forall action. Props action -> [Html action] -> Html action
+p :: forall action. Attr action -> [Html action] -> Html action
 p = createElementImpl "p"
 
 p' :: forall action. [Html action] -> Html action
-p' = p []
+p' = p mempty
 
-param :: forall action. Props action -> [Html action] -> Html action
+param :: forall action. Attr action -> [Html action] -> Html action
 param = createElementImpl "param"
 
 param' :: forall action. [Html action] -> Html action
-param' = param []
+param' = param mempty
 
-picture :: forall action. Props action -> [Html action] -> Html action
+picture :: forall action. Attr action -> [Html action] -> Html action
 picture = createElementImpl "picture"
 
 picture' :: forall action. [Html action] -> Html action
-picture' = picture []
+picture' = picture mempty
 
-pre :: forall action. Props action -> [Html action] -> Html action
+pre :: forall action. Attr action -> [Html action] -> Html action
 pre = createElementImpl "pre"
 
 pre' :: forall action. [Html action] -> Html action
-pre' = pre []
+pre' = pre mempty
 
-progress :: forall action. Props action -> [Html action] -> Html action
+progress :: forall action. Attr action -> [Html action] -> Html action
 progress = createElementImpl "progress"
 
 progress' :: forall action. [Html action] -> Html action
-progress' = progress []
+progress' = progress mempty
 
-q :: forall action. Props action -> [Html action] -> Html action
+q :: forall action. Attr action -> [Html action] -> Html action
 q = createElementImpl "q"
 
 q' :: forall action. [Html action] -> Html action
-q' = q []
+q' = q mempty
 
-rp :: forall action. Props action -> [Html action] -> Html action
+rp :: forall action. Attr action -> [Html action] -> Html action
 rp = createElementImpl "rp"
 
 rp' :: forall action. [Html action] -> Html action
-rp' = rp []
+rp' = rp mempty
 
-rt :: forall action. Props action -> [Html action] -> Html action
+rt :: forall action. Attr action -> [Html action] -> Html action
 rt = createElementImpl "rt"
 
 rt' :: forall action. [Html action] -> Html action
-rt' = rt []
+rt' = rt mempty
 
-ruby :: forall action. Props action -> [Html action] -> Html action
+ruby :: forall action. Attr action -> [Html action] -> Html action
 ruby = createElementImpl "ruby"
 
 ruby' :: forall action. [Html action] -> Html action
-ruby' = ruby []
+ruby' = ruby mempty
 
-s :: forall action. Props action -> [Html action] -> Html action
+s :: forall action. Attr action -> [Html action] -> Html action
 s = createElementImpl "s"
 
 s' :: forall action. [Html action] -> Html action
-s' = s []
+s' = s mempty
 
-samp :: forall action. Props action -> [Html action] -> Html action
+samp :: forall action. Attr action -> [Html action] -> Html action
 samp = createElementImpl "samp"
 
 samp' :: forall action. [Html action] -> Html action
-samp' = samp []
+samp' = samp mempty
 
-script :: forall action. Props action -> [Html action] -> Html action
+script :: forall action. Attr action -> [Html action] -> Html action
 script = createElementImpl "script"
 
 script' :: forall action. [Html action] -> Html action
-script' = script []
+script' = script mempty
 
-section :: forall action. Props action -> [Html action] -> Html action
+section :: forall action. Attr action -> [Html action] -> Html action
 section = createElementImpl "section"
 
 section' :: forall action. [Html action] -> Html action
-section' = section []
+section' = section mempty
 
-select :: forall action. Props action -> [Html action] -> Html action
+select :: forall action. Attr action -> [Html action] -> Html action
 select = createElementImpl "select"
 
 select' :: forall action. [Html action] -> Html action
-select' = select []
+select' = select mempty
 
-small :: forall action. Props action -> [Html action] -> Html action
+small :: forall action. Attr action -> [Html action] -> Html action
 small = createElementImpl "small"
 
 small' :: forall action. [Html action] -> Html action
-small' = small []
+small' = small mempty
 
-source :: forall action. Props action -> [Html action] -> Html action
+source :: forall action. Attr action -> [Html action] -> Html action
 source = createElementImpl "source"
 
 source' :: forall action. [Html action] -> Html action
-source' = source []
+source' = source mempty
 
-span :: forall action. Props action -> [Html action] -> Html action
+span :: forall action. Attr action -> [Html action] -> Html action
 span = createElementImpl "span"
 
 span' :: forall action. [Html action] -> Html action
-span' = span []
+span' = span mempty
 
-strong :: forall action. Props action -> [Html action] -> Html action
+strong :: forall action. Attr action -> [Html action] -> Html action
 strong = createElementImpl "strong"
 
 strong' :: forall action. [Html action] -> Html action
-strong' = strong []
+strong' = strong mempty
 
-style :: forall action. Props action -> [Html action] -> Html action
+style :: forall action. Attr action -> [Html action] -> Html action
 style = createElementImpl "style"
 
 style' :: forall action. [Html action] -> Html action
-style' = style []
+style' = style mempty
 
-sub :: forall action. Props action -> [Html action] -> Html action
+sub :: forall action. Attr action -> [Html action] -> Html action
 sub = createElementImpl "sub"
 
 sub' :: forall action. [Html action] -> Html action
-sub' = sub []
+sub' = sub mempty
 
-summary :: forall action. Props action -> [Html action] -> Html action
+summary :: forall action. Attr action -> [Html action] -> Html action
 summary = createElementImpl "summary"
 
 summary' :: forall action. [Html action] -> Html action
-summary' = summary []
+summary' = summary mempty
 
-sup :: forall action. Props action -> [Html action] -> Html action
+sup :: forall action. Attr action -> [Html action] -> Html action
 sup = createElementImpl "sup"
 
 sup' :: forall action. [Html action] -> Html action
-sup' = sup []
+sup' = sup mempty
 
-table :: forall action. Props action -> [Html action] -> Html action
+table :: forall action. Attr action -> [Html action] -> Html action
 table = createElementImpl "table"
 
 table' :: forall action. [Html action] -> Html action
-table' = table []
+table' = table mempty
 
-tbody :: forall action. Props action -> [Html action] -> Html action
+tbody :: forall action. Attr action -> [Html action] -> Html action
 tbody = createElementImpl "tbody"
 
 tbody' :: forall action. [Html action] -> Html action
-tbody' = tbody []
+tbody' = tbody mempty
 
-td :: forall action. Props action -> [Html action] -> Html action
+td :: forall action. Attr action -> [Html action] -> Html action
 td = createElementImpl "td"
 
 td' :: forall action. [Html action] -> Html action
-td' = td []
+td' = td mempty
 
-textarea :: forall action. Props action -> [Html action] -> Html action
+textarea :: forall action. Attr action -> [Html action] -> Html action
 textarea = createElementImpl "textarea"
 
 textarea' :: forall action. [Html action] -> Html action
-textarea' = textarea []
+textarea' = textarea mempty
 
-tfoot :: forall action. Props action -> [Html action] -> Html action
+tfoot :: forall action. Attr action -> [Html action] -> Html action
 tfoot = createElementImpl "tfoot"
 
 tfoot' :: forall action. [Html action] -> Html action
-tfoot' = tfoot []
+tfoot' = tfoot mempty
 
-th :: forall action. Props action -> [Html action] -> Html action
+th :: forall action. Attr action -> [Html action] -> Html action
 th = createElementImpl "th"
 
 th' :: forall action. [Html action] -> Html action
-th' = th []
+th' = th mempty
 
-thead :: forall action. Props action -> [Html action] -> Html action
+thead :: forall action. Attr action -> [Html action] -> Html action
 thead = createElementImpl "thead"
 
 thead' :: forall action. [Html action] -> Html action
-thead' = thead []
+thead' = thead mempty
 
-time :: forall action. Props action -> [Html action] -> Html action
+time :: forall action. Attr action -> [Html action] -> Html action
 time = createElementImpl "time"
 
 time' :: forall action. [Html action] -> Html action
-time' = time []
+time' = time mempty
 
-title :: forall action. Props action -> [Html action] -> Html action
+title :: forall action. Attr action -> [Html action] -> Html action
 title = createElementImpl "title"
 
 title' :: forall action. [Html action] -> Html action
-title' = title []
+title' = title mempty
 
-tr :: forall action. Props action -> [Html action] -> Html action
+tr :: forall action. Attr action -> [Html action] -> Html action
 tr = createElementImpl "tr"
 
 tr' :: forall action. [Html action] -> Html action
-tr' = tr []
+tr' = tr mempty
 
-track :: forall action. Props action -> [Html action] -> Html action
+track :: forall action. Attr action -> [Html action] -> Html action
 track = createElementImpl "track"
 
 track' :: forall action. [Html action] -> Html action
-track' = track []
+track' = track mempty
 
-u :: forall action. Props action -> [Html action] -> Html action
+u :: forall action. Attr action -> [Html action] -> Html action
 u = createElementImpl "u"
 
 u' :: forall action. [Html action] -> Html action
-u' = u []
+u' = u mempty
 
-ul :: forall action. Props action -> [Html action] -> Html action
+ul :: forall action. Attr action -> [Html action] -> Html action
 ul = createElementImpl "ul"
 
 ul' :: forall action. [Html action] -> Html action
-ul' = ul []
+ul' = ul mempty
 
-var :: forall action. Props action -> [Html action] -> Html action
+var :: forall action. Attr action -> [Html action] -> Html action
 var = createElementImpl "var"
 
 var' :: forall action. [Html action] -> Html action
-var' = var []
+var' = var mempty
 
-video :: forall action. Props action -> [Html action] -> Html action
+video :: forall action. Attr action -> [Html action] -> Html action
 video = createElementImpl "video"
 
 video' :: forall action. [Html action] -> Html action
-video' = video []
+video' = video mempty
 
-wbr :: forall action. Props action -> [Html action] -> Html action
+wbr :: forall action. Attr action -> [Html action] -> Html action
 wbr = createElementImpl "body"
 
 wbr' :: forall action. [Html action] -> Html action
-wbr' = wbr []
+wbr' = wbr mempty

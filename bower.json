@@ -14,6 +14,7 @@
   "dependencies": {
     "purescript-dom": "~0.1.1",
     "purescript-maybe": "~0.2.1",
-    "react": "~0.12.2"
+    "react": "~0.12.2",
+    "purescript-monoid": "~0.2.0"
   }
 }
