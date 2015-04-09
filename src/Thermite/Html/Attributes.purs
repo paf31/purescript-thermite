@@ -1,3 +1,5 @@
+-- | This module defines helper functions for creating HTML attributes.
+
 module Thermite.Html.Attributes where
     
 import Thermite.Types

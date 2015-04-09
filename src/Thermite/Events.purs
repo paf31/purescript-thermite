@@ -1,3 +1,5 @@
+-- | This module defines helper functions for creating event handlers.
+
 module Thermite.Events where
 
 import Thermite.Types

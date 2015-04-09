@@ -2,12 +2,26 @@
 
 ## Module Thermite
 
+
+This module defines functions for working with React components at a high level:
+
+- `createClass` and `simpleSpec`, which can be used to create a component class
+- `render` and `renderTo`, which can be used to render a component class
+
 #### `simpleSpec`
 
 ``` purescript
 simpleSpec :: forall m state props action. state -> PerformAction props action m -> Render state props action -> Spec m state props action
 ```
 
+Create a minimal `Spec`. The arguments are, in order:
+
+- The initial component state
+- A function for performing actions
+- A function for rendering the current state as a HTML document
+
+A `Spec` created using this function can be extended with optional properties using other functions
+in this module.
 
 #### `componentWillMount`
 
@@ -15,6 +29,7 @@ simpleSpec :: forall m state props action. state -> PerformAction props action m
 componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action
 ```
 
+Extend a `Spec` with an action to run when the component will be mounted.
 
 #### `displayName`
 
@@ -22,6 +37,7 @@ componentWillMount :: forall m state props action. action -> Spec m state props 
 displayName :: forall m state props action. String -> Spec m state props action -> Spec m state props action
 ```
 
+Extend a `Spec` with a display name.
 
 #### `createClass`
 
@@ -29,6 +45,7 @@ displayName :: forall m state props action. String -> Spec m state props action 
 createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 ```
 
+Create a component class from a `Spec`.
 
 #### `render`
 
@@ -36,6 +53,7 @@ createClass :: forall eff state props action. Spec (Action eff state) state prop
 render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 ```
 
+Render a component class to the document body.
 
 #### `renderTo`
 
@@ -43,9 +61,112 @@ render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM
 renderTo :: forall props eff. Node -> ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
 ```
 
+Render a component class to the specified node.
+
+
+## Module Thermite.Types
+
+
+This module defines types used by the Thermite library.
+
+#### `Context`
+
+``` purescript
+data Context state props action
+```
+
+The `Context` type represents React's `this` reference.
+
+It is passed to event handlers to allow us to get and set component state.
+
+#### `ComponentClass`
+
+``` purescript
+data ComponentClass props (eff :: # !)
+```
+
+A component class, the result of React's `createClass` method.
+
+The type parameters capture the properties required by the class, and the effects
+its action handlers can have.
+
+#### `Attr`
+
+``` purescript
+data Attr action
+```
+
+The type of HTML attributes, parameterised by the type of actions they can emit from 
+event handlers.
+
+#### `Html`
+
+``` purescript
+data Html action
+```
+
+The type of HTML elements.
+
+#### `PerformAction`
+
+``` purescript
+type PerformAction props action m = props -> action -> m Unit
+```
+
+A type synonym for action handlers, which take an action and the current properties
+for the component, and return a computation in some monad `m`.
+
+In practice, `m` will be the `Action` monad.
+
+#### `Render`
+
+``` purescript
+type Render state props action = Context state props action -> state -> props -> Html action
+```
+
+A rendering function, which takes a `Context`, the current state and properties, and 
+returns a HTML document.
+
+#### `Spec`
+
+``` purescript
+newtype Spec m state props action
+  = Spec (SpecRecord m state props action)
+```
+
+A component specification, which can be passed to `createClass`.
+
+A minimal `Spec` can be built using `simpleSpec`, and extended with optional arguments
+using functions in the `Thermite` module.
+
+#### `SpecRecord`
+
+``` purescript
+type SpecRecord m state props action = { displayName :: Maybe String, componentWillMount :: Maybe action, render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }
+```
+
+A type synonym for the record type which captures the functions which make up a `Spec`.
+
+#### `semigroupAttr`
+
+``` purescript
+instance semigroupAttr :: Semigroup (Attr action)
+```
+
+
+#### `monoidAttr`
+
+``` purescript
+instance monoidAttr :: Monoid (Attr action)
+```
+
 
 
 ## Module Thermite.Action
+
+
+This module defines the `Action` monad, which can be used to access the 
+component state, and invoke asynchronous actions in the `Eff` monad.
 
 #### `functorActionF`
 
@@ -60,6 +181,11 @@ instance functorActionF :: Functor (ActionF eff state)
 data Action eff state a
 ```
 
+The `Action` monad, parameterized by 
+
+- The row of effects which are allowed in its asynchronous actions
+- The component state type
+- The return type
 
 #### `runAction`
 
@@ -67,6 +193,7 @@ data Action eff state a
 runAction :: forall eff state props action a. Context state props action -> Action eff state a -> Eff eff Unit
 ```
 
+Run a computation in the `Action` monad.
 
 #### `getState`
 
@@ -74,6 +201,7 @@ runAction :: forall eff state props action a. Context state props action -> Acti
 getState :: forall eff state. Action eff state state
 ```
 
+Get the current component state.
 
 #### `setState`
 
@@ -81,6 +209,7 @@ getState :: forall eff state. Action eff state state
 setState :: forall eff state. state -> Action eff state Unit
 ```
 
+Update the component state.
 
 #### `modifyState`
 
@@ -88,6 +217,7 @@ setState :: forall eff state. state -> Action eff state Unit
 modifyState :: forall eff state. (state -> state) -> Action eff state Unit
 ```
 
+Modify the component state by applying a function.
 
 #### `async`
 
@@ -95,6 +225,10 @@ modifyState :: forall eff state. (state -> state) -> Action eff state Unit
 async :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
 ```
 
+Run an asynchronous computation.
+
+The first argument is a function which takes a callback, and starts some asynchronous computation,
+invoking the callback when the result is available.
 
 #### `sync`
 
@@ -102,6 +236,7 @@ async :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff
 sync :: forall eff state a. Eff eff a -> Action eff state a
 ```
 
+Run a synchronous computation.
 
 #### `asyncSetState`
 
@@ -109,6 +244,10 @@ sync :: forall eff state a. Eff eff a -> Action eff state a
 asyncSetState :: forall eff state. ((state -> Eff eff Unit) -> Eff eff Unit) -> Action eff state Unit
 ```
 
+Set the component state based on the result of an asynchronous computation.
+
+The first argument is a function which takes a callback, and starts some asynchronous computation,
+invoking the callback when the new state is available.
 
 #### `functorAction`
 
@@ -146,304 +285,10 @@ instance monadAction :: Monad (Action eff state)
 
 
 
-## Module Thermite.Events
-
-#### `ClipboardEvent`
-
-``` purescript
-data ClipboardEvent :: *
-```
-
-
-#### `onCopy`
-
-``` purescript
-onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
-```
-
-
-#### `onCut`
-
-``` purescript
-onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
-```
-
-
-#### `onPaste`
-
-``` purescript
-onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
-```
-
-
-#### `KeyboardEvent`
-
-``` purescript
-data KeyboardEvent :: *
-```
-
-
-#### `onKeyDown`
-
-``` purescript
-onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
-```
-
-
-#### `onKeyPress`
-
-``` purescript
-onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
-```
-
-
-#### `onKeyUp`
-
-``` purescript
-onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
-```
-
-
-#### `FocusEvent`
-
-``` purescript
-data FocusEvent :: *
-```
-
-
-#### `onFocus`
-
-``` purescript
-onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
-```
-
-
-#### `onBlur`
-
-``` purescript
-onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
-```
-
-
-#### `FormEvent`
-
-``` purescript
-data FormEvent :: *
-```
-
-
-#### `onChange`
-
-``` purescript
-onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
-```
-
-
-#### `onInput`
-
-``` purescript
-onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
-```
-
-
-#### `onSubmit`
-
-``` purescript
-onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
-```
-
-
-#### `MouseEvent`
-
-``` purescript
-data MouseEvent :: *
-```
-
-
-#### `onClick`
-
-``` purescript
-onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDoubleClick`
-
-``` purescript
-onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDrag`
-
-``` purescript
-onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragEnd`
-
-``` purescript
-onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragEnter`
-
-``` purescript
-onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragExit`
-
-``` purescript
-onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragLeave`
-
-``` purescript
-onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragOver`
-
-``` purescript
-onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDragStart`
-
-``` purescript
-onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onDrop`
-
-``` purescript
-onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseDown`
-
-``` purescript
-onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseEnter`
-
-``` purescript
-onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseLeave`
-
-``` purescript
-onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseMove`
-
-``` purescript
-onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseOut`
-
-``` purescript
-onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseOver`
-
-``` purescript
-onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `onMouseUp`
-
-``` purescript
-onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
-```
-
-
-#### `TouchEvent`
-
-``` purescript
-data TouchEvent :: *
-```
-
-
-#### `onTouchCancel`
-
-``` purescript
-onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
-```
-
-
-#### `onTouchEnd`
-
-``` purescript
-onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
-```
-
-
-#### `onTouchMove`
-
-``` purescript
-onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
-```
-
-
-#### `onTouchStart`
-
-``` purescript
-onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
-```
-
-
-#### `UIEvent`
-
-``` purescript
-data UIEvent :: *
-```
-
-
-#### `onScroll`
-
-``` purescript
-onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Attr action
-```
-
-
-#### `WheelEvent`
-
-``` purescript
-data WheelEvent :: *
-```
-
-
-#### `onWheel`
-
-``` purescript
-onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Attr action
-```
-
-
-
 ## Module Thermite.Html
+
+
+This module defines functions for creating simple HTML documents.
 
 #### `text`
 
@@ -451,6 +296,7 @@ onWheel :: forall state props action. Context state props action -> (WheelEvent 
 text :: forall action. String -> Html action
 ```
 
+Create a text node.
 
 #### `createElement`
 
@@ -458,9 +304,13 @@ text :: forall action. String -> Html action
 createElement :: forall action. String -> Attr action -> [Html action] -> Html action
 ```
 
+Create a HTML element from a tag name, a set of attributes and a collection of child nodes.
 
 
 ## Module Thermite.Html.Attributes
+
+
+This module defines helper functions for creating HTML attributes.
 
 #### `accept`
 
@@ -1164,6 +1014,9 @@ wmode :: forall action. String -> Attr action
 
 
 ## Module Thermite.Html.Elements
+
+
+This module defines helper functions for creating HTML elements.
 
 #### `a`
 
@@ -2734,154 +2587,300 @@ wbr' :: forall action. [Html action] -> Html action
 
 
 
-## Module Thermite.Internal
+## Module Thermite.Events
 
-#### `getStateImpl`
+
+This module defines helper functions for creating event handlers.
+
+#### `ClipboardEvent`
 
 ``` purescript
-getStateImpl :: forall eff state props action. Context state props action -> Eff eff state
+data ClipboardEvent :: *
 ```
 
 
-#### `setStateImpl`
+#### `onCopy`
 
 ``` purescript
-setStateImpl :: forall eff state props action. Context state props action -> state -> Eff eff Unit
+onCopy :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
-#### `textImpl`
+#### `onCut`
 
 ``` purescript
-textImpl :: forall action. String -> Html action
+onCut :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
-#### `createElementImpl`
+#### `onPaste`
 
 ``` purescript
-createElementImpl :: forall action. String -> Attr action -> [Html action] -> Html action
+onPaste :: forall state props action. Context state props action -> (ClipboardEvent -> action) -> Attr action
 ```
 
 
-#### `unsafeAttribute`
+#### `KeyboardEvent`
 
 ``` purescript
-unsafeAttribute :: forall action attr. String -> attr -> Attr action
+data KeyboardEvent :: *
 ```
 
 
-#### `event`
+#### `onKeyDown`
 
 ``` purescript
-event :: forall state props action event. String -> Context state props action -> (event -> action) -> Attr action
+onKeyDown :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
-#### `createClassImpl`
+#### `onKeyPress`
 
 ``` purescript
-createClassImpl :: forall eff m state props action. (Context state props action -> m Unit -> Eff eff Unit) -> (forall a r. r -> (a -> r) -> Maybe a -> r) -> Spec m state props action -> ComponentClass props eff
+onKeyPress :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
-#### `documentBody`
+#### `onKeyUp`
 
 ``` purescript
-documentBody :: forall props eff. Eff (dom :: DOM | eff) Node
+onKeyUp :: forall state props action. Context state props action -> (KeyboardEvent -> action) -> Attr action
 ```
 
 
-#### `renderToImpl`
+#### `FocusEvent`
 
 ``` purescript
-renderToImpl :: forall props eff. Node -> ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
+data FocusEvent :: *
 ```
 
 
-
-## Module Thermite.Types
-
-#### `Context`
+#### `onFocus`
 
 ``` purescript
-data Context state props action
+onFocus :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 ```
 
 
-#### `ComponentClass`
+#### `onBlur`
 
 ``` purescript
-data ComponentClass props (eff :: # !)
+onBlur :: forall state props action. Context state props action -> (FocusEvent -> action) -> Attr action
 ```
 
 
-#### `Attr`
+#### `FormEvent`
 
 ``` purescript
-data Attr action
+data FormEvent :: *
 ```
 
 
-#### `Html`
+#### `onChange`
 
 ``` purescript
-data Html action
+onChange :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
-#### `PerformAction`
+#### `onInput`
 
 ``` purescript
-type PerformAction props action m = props -> action -> m Unit
+onInput :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
-#### `Render`
+#### `onSubmit`
 
 ``` purescript
-type Render state props action = Context state props action -> state -> props -> Html action
+onSubmit :: forall state props action. Context state props action -> (FormEvent -> action) -> Attr action
 ```
 
 
-#### `Spec`
+#### `MouseEvent`
 
 ``` purescript
-newtype Spec m state props action
-  = Spec (SpecRecord m state props action)
+data MouseEvent :: *
 ```
 
 
-#### `SpecRecord`
+#### `onClick`
 
 ``` purescript
-type SpecRecord m state props action = { displayName :: Maybe String, componentWillMount :: Maybe action, render :: Render state props action, performAction :: PerformAction props action m, initialState :: state }
+onClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
-#### `emptyAttr`
+#### `onDoubleClick`
 
 ``` purescript
-emptyAttr :: forall action. Attr action
+onDoubleClick :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
-#### `appendAttr`
+#### `onDrag`
 
 ``` purescript
-appendAttr :: forall action. Attr action -> Attr action -> Attr action
+onDrag :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
-#### `semigroupAttr`
+#### `onDragEnd`
 
 ``` purescript
-instance semigroupAttr :: Semigroup (Attr action)
+onDragEnd :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
 ```
 
 
-#### `monoidAttr`
+#### `onDragEnter`
 
 ``` purescript
-instance monoidAttr :: Monoid (Attr action)
+onDragEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onDragExit`
+
+``` purescript
+onDragExit :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onDragLeave`
+
+``` purescript
+onDragLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onDragOver`
+
+``` purescript
+onDragOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onDragStart`
+
+``` purescript
+onDragStart :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onDrop`
+
+``` purescript
+onDrop :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseDown`
+
+``` purescript
+onMouseDown :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseEnter`
+
+``` purescript
+onMouseEnter :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseLeave`
+
+``` purescript
+onMouseLeave :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseMove`
+
+``` purescript
+onMouseMove :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseOut`
+
+``` purescript
+onMouseOut :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseOver`
+
+``` purescript
+onMouseOver :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `onMouseUp`
+
+``` purescript
+onMouseUp :: forall state props action. Context state props action -> (MouseEvent -> action) -> Attr action
+```
+
+
+#### `TouchEvent`
+
+``` purescript
+data TouchEvent :: *
+```
+
+
+#### `onTouchCancel`
+
+``` purescript
+onTouchCancel :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+```
+
+
+#### `onTouchEnd`
+
+``` purescript
+onTouchEnd :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+```
+
+
+#### `onTouchMove`
+
+``` purescript
+onTouchMove :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+```
+
+
+#### `onTouchStart`
+
+``` purescript
+onTouchStart :: forall state props action. Context state props action -> (TouchEvent -> action) -> Attr action
+```
+
+
+#### `UIEvent`
+
+``` purescript
+data UIEvent :: *
+```
+
+
+#### `onScroll`
+
+``` purescript
+onScroll :: forall state props action. Context state props action -> (UIEvent -> action) -> Attr action
+```
+
+
+#### `WheelEvent`
+
+``` purescript
+data WheelEvent :: *
+```
+
+
+#### `onWheel`
+
+``` purescript
+onWheel :: forall state props action. Context state props action -> (WheelEvent -> action) -> Attr action
 ```

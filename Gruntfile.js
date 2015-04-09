@@ -13,7 +13,15 @@ module.exports = function(grunt) {
 
     pscDocs: {
       lib: {
-        src: ["src/**/*.purs"],
+        src: [
+          "src/Thermite.purs",
+          "src/Thermite/Types.purs",
+          "src/Thermite/Action.purs",
+          "src/Thermite/Html.purs",
+          "src/Thermite/Html/Attributes.purs",
+          "src/Thermite/Html/Elements.purs",
+          "src/Thermite/Events.purs"
+        ],
         dest: "docs/README.md"
       }
     },

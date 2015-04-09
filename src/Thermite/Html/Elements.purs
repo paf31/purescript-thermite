@@ -1,3 +1,5 @@
+-- | This module defines helper functions for creating HTML elements.
+
 module Thermite.Html.Elements where
 
 import Data.Monoid
