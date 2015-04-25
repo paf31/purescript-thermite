@@ -84,14 +84,16 @@ foreign import createClassImpl
   \    return function(spec) {\
   \      return React.createClass({\
   \        getInitialState: function() {\
-  \          return spec.initialState;\
+  \          return {\
+  \            value: spec.initialState\
+  \          };\
   \        },\
   \        performAction: function(action) {\
   \          runAction(this)(spec.performAction(this.props)(action))();\
   \        },\
   \        render: function() {\
   \          var children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];\
-  \          return spec.render(this)(this.state)(this.props)(children);\
+  \          return spec.render(this)(this.state.value)(this.props)(children);\
   \        },\
   \        componentWillMount: function() {\
   \          var self = this;\
@@ -101,7 +103,9 @@ foreign import createClassImpl
   \            };\
   \          })(spec.componentWillMount)();\
   \        },\
-  \        displayName: maybe(undefined)(function(a) { return a; })(spec.displayName)\
+  \        displayName: maybe(undefined)(function(a) {\
+  \          return a;\
+  \        })(spec.displayName)\
   \      })\
   \    };\
   \  };\

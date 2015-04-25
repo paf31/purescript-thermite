@@ -11,7 +11,7 @@ import Thermite.Types
 foreign import getStateImpl """
   function getStateImpl(ctx) {
     return function() {
-      return ctx.state;
+      return ctx.state.value;
     };
   }
   """ :: forall eff state props action. Context state action -> Eff eff state
@@ -20,7 +20,7 @@ foreign import setStateImpl """
   function setStateImpl(ctx) {
     return function(state) {
       return function() {
-        ctx.setState(state);
+        ctx.setState({ value: state });
       };
     };
   }
