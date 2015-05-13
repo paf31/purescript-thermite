@@ -2591,6 +2591,452 @@ wbr' :: forall eff. [Html eff] -> Html eff
 
 
 
+## Module Thermite.SVG
+
+
+This module defines helper functions for creating SVG elements.
+
+#### `circle`
+
+``` purescript
+circle :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `clipPath`
+
+``` purescript
+clipPath :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `defs`
+
+``` purescript
+defs :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `ellipse`
+
+``` purescript
+ellipse :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `g`
+
+``` purescript
+g :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `line`
+
+``` purescript
+line :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `linearGradient`
+
+``` purescript
+linearGradient :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `mask`
+
+``` purescript
+mask :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `path`
+
+``` purescript
+path :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `pattern`
+
+``` purescript
+pattern :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `polygon`
+
+``` purescript
+polygon :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `polyline`
+
+``` purescript
+polyline :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `radialGradient`
+
+``` purescript
+radialGradient :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `rect`
+
+``` purescript
+rect :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `stop`
+
+``` purescript
+stop :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `svg`
+
+``` purescript
+svg :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `text`
+
+``` purescript
+text :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+#### `tspan`
+
+``` purescript
+tspan :: forall eff. Attr -> [Html eff] -> Html eff
+```
+
+
+
+## Module Thermite.SVG.Attributes
+
+
+This module defines helper functions for creating SVG attributes.
+
+#### `clipPath`
+
+``` purescript
+clipPath :: String -> Attr
+```
+
+
+#### `cx`
+
+``` purescript
+cx :: String -> Attr
+```
+
+
+#### `cy`
+
+``` purescript
+cy :: String -> Attr
+```
+
+
+#### `d`
+
+``` purescript
+d :: String -> Attr
+```
+
+
+#### `dx`
+
+``` purescript
+dx :: String -> Attr
+```
+
+
+#### `dy`
+
+``` purescript
+dy :: String -> Attr
+```
+
+
+#### `fill`
+
+``` purescript
+fill :: String -> Attr
+```
+
+
+#### `fillOpacity`
+
+``` purescript
+fillOpacity :: String -> Attr
+```
+
+
+#### `fontFamily`
+
+``` purescript
+fontFamily :: String -> Attr
+```
+
+
+#### `fontSize`
+
+``` purescript
+fontSize :: String -> Attr
+```
+
+
+#### `fx`
+
+``` purescript
+fx :: String -> Attr
+```
+
+
+#### `fy`
+
+``` purescript
+fy :: String -> Attr
+```
+
+
+#### `gradientTransform`
+
+``` purescript
+gradientTransform :: String -> Attr
+```
+
+
+#### `gradientUnits`
+
+``` purescript
+gradientUnits :: String -> Attr
+```
+
+
+#### `markerEnd`
+
+``` purescript
+markerEnd :: String -> Attr
+```
+
+
+#### `markerMid`
+
+``` purescript
+markerMid :: String -> Attr
+```
+
+
+#### `markerStart`
+
+``` purescript
+markerStart :: String -> Attr
+```
+
+
+#### `offset`
+
+``` purescript
+offset :: String -> Attr
+```
+
+
+#### `opacity`
+
+``` purescript
+opacity :: String -> Attr
+```
+
+
+#### `patternContentUnits`
+
+``` purescript
+patternContentUnits :: String -> Attr
+```
+
+
+#### `patternUnits`
+
+``` purescript
+patternUnits :: String -> Attr
+```
+
+
+#### `points`
+
+``` purescript
+points :: String -> Attr
+```
+
+
+#### `preserveAspectRatio`
+
+``` purescript
+preserveAspectRatio :: String -> Attr
+```
+
+
+#### `r`
+
+``` purescript
+r :: String -> Attr
+```
+
+
+#### `rx`
+
+``` purescript
+rx :: String -> Attr
+```
+
+
+#### `ry`
+
+``` purescript
+ry :: String -> Attr
+```
+
+
+#### `spreadMethod`
+
+``` purescript
+spreadMethod :: String -> Attr
+```
+
+
+#### `stopColor`
+
+``` purescript
+stopColor :: String -> Attr
+```
+
+
+#### `stopOpacity`
+
+``` purescript
+stopOpacity :: String -> Attr
+```
+
+
+#### `stroke`
+
+``` purescript
+stroke :: String -> Attr
+```
+
+
+#### `strokeDasharray`
+
+``` purescript
+strokeDasharray :: String -> Attr
+```
+
+
+#### `strokeLinecap`
+
+``` purescript
+strokeLinecap :: String -> Attr
+```
+
+
+#### `strokeOpacity`
+
+``` purescript
+strokeOpacity :: String -> Attr
+```
+
+
+#### `strokeWidth`
+
+``` purescript
+strokeWidth :: String -> Attr
+```
+
+
+#### `textAnchor`
+
+``` purescript
+textAnchor :: String -> Attr
+```
+
+
+#### `transform`
+
+``` purescript
+transform :: String -> Attr
+```
+
+
+#### `version`
+
+``` purescript
+version :: String -> Attr
+```
+
+
+#### `viewBox`
+
+``` purescript
+viewBox :: String -> Attr
+```
+
+
+#### `x1`
+
+``` purescript
+x1 :: String -> Attr
+```
+
+
+#### `x2`
+
+``` purescript
+x2 :: String -> Attr
+```
+
+
+#### `x`
+
+``` purescript
+x :: String -> Attr
+```
+
+
+#### `y1`
+
+``` purescript
+y1 :: String -> Attr
+```
+
+
+#### `y2`
+
+``` purescript
+y2 :: String -> Attr
+```
+
+
+#### `y`
+
+``` purescript
+y :: String -> Attr
+```
+
+
+
 ## Module Thermite.Events
 
 

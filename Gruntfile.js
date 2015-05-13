@@ -20,6 +20,8 @@ module.exports = function(grunt) {
           "src/Thermite/Html.purs",
           "src/Thermite/Html/Attributes.purs",
           "src/Thermite/Html/Elements.purs",
+          "src/Thermite/SVG.purs",
+          "src/Thermite/SVG/Attributes.purs",
           "src/Thermite/Events.purs"
         ],
         dest: "docs/README.md"
