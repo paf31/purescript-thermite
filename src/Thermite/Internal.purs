@@ -36,7 +36,11 @@ foreign import createElementImpl """
   function createElementImpl(element) {
     return function(props) {
       return function(children) {
-        return React.createElement(element, props, children);
+        if ("dangerouslySetInnerHTML" in props) {
+          return React.createElement(element, props);
+        } else {
+          return React.createElement(element, props, children);
+        }
       };
     };
   }
