@@ -34,7 +34,7 @@ foreign import textImpl """
 
 foreign import passArrayImpl """
   function passArrayImpl(a) {
-    return [a];
+    return a;
   }
   """ :: forall eff. [Html eff] -> Html eff
 
