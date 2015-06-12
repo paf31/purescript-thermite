@@ -32,6 +32,12 @@ foreign import textImpl """
   }
   """ :: forall eff. String -> Html eff
 
+foreign import passArrayImpl """
+  function passArrayImpl(a) {
+    return a;
+  }
+  """ :: forall eff. [Html eff] -> Html eff
+
 foreign import createElementImpl """
   function createElementImpl(element) {
     return function(props) {
@@ -39,7 +45,7 @@ foreign import createElementImpl """
         if ("dangerouslySetInnerHTML" in props) {
           return React.createElement(element, props);
         } else {
-          return React.createElement(element, props, children);
+          return React.createElement.apply(this, [element, props].concat(children));
         }
       };
     };
