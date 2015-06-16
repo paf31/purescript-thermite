@@ -23,7 +23,7 @@ exports.createClassImpl = function(runAction) {
                     var self = this;
                     maybe(function() {})(function(action) {
                         return function() {
-                            self.performAction(action);Ó
+                            self.performAction(action);
                         };
                     })(spec.componentWillMount)();
                 },

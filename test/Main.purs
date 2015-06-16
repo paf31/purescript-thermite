@@ -1,6 +1,6 @@
-module Main (main) where
+module Test.Main (main) where
 
-import Data.Function
+import Prelude
 
 import qualified Thermite as T
 import qualified Thermite.Html as T
@@ -12,7 +12,7 @@ import qualified Thermite.Types as T
 
 data Action = Increment | Decrement
 
-type State = { counter :: Number }
+type State = { counter :: Int }
 
 initialState :: State
 initialState = { counter: 0 }
