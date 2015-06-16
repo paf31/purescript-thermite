@@ -16,6 +16,8 @@ module Thermite
   , renderTo
   ) where
 
+import Prelude
+
 import DOM
 
 import Data.Maybe
@@ -33,7 +35,7 @@ type PerformAction eff state props action = props -> action -> Action eff state 
 
 -- | A rendering function, which takes a `Context`, the current state and properties, an array
 -- | of child nodes and returns a HTML document.
-type Render eff state props action = Context state action -> state -> props -> [Html eff] -> Html eff
+type Render eff state props action = Context state action -> state -> props -> Array (Html eff) -> Html eff
 
 -- | A component specification, which can be passed to `createClass`.
 -- | 
@@ -78,41 +80,11 @@ componentWillMount action (Spec spec) = Spec (spec { componentWillMount = Just a
 displayName :: forall eff state props action. String -> Spec eff state props action -> Spec eff state props action
 displayName name (Spec spec) = Spec (spec { displayName = Just name })
 
-foreign import createClassImpl 
-  "function createClassImpl(runAction) {\
-  \  return function(maybe) {\
-  \    return function(spec) {\
-  \      return React.createClass({\
-  \        getInitialState: function() {\
-  \          return {\
-  \            value: spec.initialState\
-  \          };\
-  \        },\
-  \        performAction: function(action) {\
-  \          runAction(this)(spec.performAction(this.props)(action))();\
-  \        },\
-  \        render: function() {\
-  \          var children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];\
-  \          return spec.render(this)(this.state.value)(this.props)(children);\
-  \        },\
-  \        componentWillMount: function() {\
-  \          var self = this;\
-  \          maybe(function() { })(function(action) {\
-  \            return function() {\
-  \              self.performAction(action);\
-  \            };\
-  \          })(spec.componentWillMount)();\
-  \        },\
-  \        displayName: maybe(undefined)(function(a) {\
-  \          return a;\
-  \        })(spec.displayName)\
-  \      })\
-  \    };\
-  \  };\
-  \}" :: forall eff state props action. (Context state action -> Action eff state Unit -> Eff eff Unit) ->
-                                        (forall a r. r -> (a -> r) -> Maybe a -> r) ->
-                                        Spec eff state props action ->
-                                        ComponentClass props eff
+foreign import createClassImpl :: forall eff state props action. 
+  (Context state action -> Action eff state Unit -> Eff eff Unit) ->
+  (forall a r. r -> (a -> r) -> Maybe a -> r) ->
+  Spec eff state props action ->
+  ComponentClass props eff
 
 -- | Create a component class from a `Spec`.
 createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff

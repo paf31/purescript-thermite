@@ -1,63 +1,113 @@
--- | This module defines helper functions for creating SVG elements.
+## Module Thermite.SVG
 
-module Thermite.SVG where
+This module defines helper functions for creating SVG elements.
 
-import Prelude
+#### `circle`
 
-import Thermite.Types
-import Thermite.Internal
-    
+``` purescript
 circle :: forall eff. Attr -> Array (Html eff) -> Html eff
-circle = createElementImpl "circle"
+```
 
+#### `clipPath`
+
+``` purescript
 clipPath :: forall eff. Attr -> Array (Html eff) -> Html eff
-clipPath = createElementImpl "clipPath"
+```
 
+#### `defs`
+
+``` purescript
 defs :: forall eff. Attr -> Array (Html eff) -> Html eff
-defs = createElementImpl "defs"
+```
 
+#### `ellipse`
+
+``` purescript
 ellipse :: forall eff. Attr -> Array (Html eff) -> Html eff
-ellipse = createElementImpl "ellipse"
+```
 
+#### `g`
+
+``` purescript
 g :: forall eff. Attr -> Array (Html eff) -> Html eff
-g = createElementImpl "g"
+```
 
+#### `line`
+
+``` purescript
 line :: forall eff. Attr -> Array (Html eff) -> Html eff
-line = createElementImpl "line"
+```
 
+#### `linearGradient`
+
+``` purescript
 linearGradient :: forall eff. Attr -> Array (Html eff) -> Html eff
-linearGradient = createElementImpl "linearGradient"
+```
 
+#### `mask`
+
+``` purescript
 mask :: forall eff. Attr -> Array (Html eff) -> Html eff
-mask = createElementImpl "mask"
+```
 
+#### `path`
+
+``` purescript
 path :: forall eff. Attr -> Array (Html eff) -> Html eff
-path = createElementImpl "path"
+```
 
+#### `pattern`
+
+``` purescript
 pattern :: forall eff. Attr -> Array (Html eff) -> Html eff
-pattern = createElementImpl "pattern"
+```
 
+#### `polygon`
+
+``` purescript
 polygon :: forall eff. Attr -> Array (Html eff) -> Html eff
-polygon = createElementImpl "polygon"
+```
 
+#### `polyline`
+
+``` purescript
 polyline :: forall eff. Attr -> Array (Html eff) -> Html eff
-polyline = createElementImpl "polyline"
+```
 
+#### `radialGradient`
+
+``` purescript
 radialGradient :: forall eff. Attr -> Array (Html eff) -> Html eff
-radialGradient = createElementImpl "radialGradient"
+```
 
+#### `rect`
+
+``` purescript
 rect :: forall eff. Attr -> Array (Html eff) -> Html eff
-rect = createElementImpl "rect"
+```
 
+#### `stop`
+
+``` purescript
 stop :: forall eff. Attr -> Array (Html eff) -> Html eff
-stop = createElementImpl "stop"
+```
 
+#### `svg`
+
+``` purescript
 svg :: forall eff. Attr -> Array (Html eff) -> Html eff
-svg = createElementImpl "svg"
+```
 
+#### `text`
+
+``` purescript
 text :: forall eff. Attr -> Array (Html eff) -> Html eff
-text = createElementImpl "text"
+```
 
+#### `tspan`
+
+``` purescript
 tspan :: forall eff. Attr -> Array (Html eff) -> Html eff
-tspan = createElementImpl "tspan"
+```
+
 

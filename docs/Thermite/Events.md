@@ -1,126 +1,257 @@
--- | This module defines helper functions for creating event handlers.
+## Module Thermite.Events
 
-module Thermite.Events where
+This module defines helper functions for creating event handlers.
 
-import Prelude
+#### `ClipboardEvent`
 
-import Thermite.Types
-import Thermite.Internal
+``` purescript
+data ClipboardEvent :: *
+```
 
-foreign import data ClipboardEvent :: *
+#### `onCopy`
 
+``` purescript
 onCopy :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
-onCopy = event "onCopy"
+```
 
+#### `onCut`
+
+``` purescript
 onCut :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
-onCut = event "onCut"
+```
 
+#### `onPaste`
+
+``` purescript
 onPaste :: forall state props action. Context state action -> (ClipboardEvent -> action) -> Attr
-onPaste = event "onPaste"
+```
 
-foreign import data KeyboardEvent :: *
+#### `KeyboardEvent`
 
+``` purescript
+data KeyboardEvent :: *
+```
+
+#### `onKeyDown`
+
+``` purescript
 onKeyDown :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
-onKeyDown = event "onKeyDown"
+```
 
+#### `onKeyPress`
+
+``` purescript
 onKeyPress :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
-onKeyPress = event "onKeyPress"
+```
 
+#### `onKeyUp`
+
+``` purescript
 onKeyUp :: forall state props action. Context state action -> (KeyboardEvent -> action) -> Attr
-onKeyUp = event "onKeyUp"
+```
 
-foreign import data FocusEvent :: *
+#### `FocusEvent`
 
+``` purescript
+data FocusEvent :: *
+```
+
+#### `onFocus`
+
+``` purescript
 onFocus :: forall state props action. Context state action -> (FocusEvent -> action) -> Attr
-onFocus = event "onFocus"
+```
 
+#### `onBlur`
+
+``` purescript
 onBlur :: forall state props action. Context state action -> (FocusEvent -> action) -> Attr
-onBlur = event "onBlur"
+```
 
-foreign import data FormEvent :: *
+#### `FormEvent`
 
+``` purescript
+data FormEvent :: *
+```
+
+#### `onChange`
+
+``` purescript
 onChange :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
-onChange = event "onChange"
+```
 
+#### `onInput`
+
+``` purescript
 onInput :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
-onInput = event "onInput"
+```
 
+#### `onSubmit`
+
+``` purescript
 onSubmit :: forall state props action. Context state action -> (FormEvent -> action) -> Attr
-onSubmit = event "onSubmit"
+```
 
-foreign import data MouseEvent :: *
+#### `MouseEvent`
 
+``` purescript
+data MouseEvent :: *
+```
+
+#### `onClick`
+
+``` purescript
 onClick :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onClick = event "onClick"
+```
 
+#### `onDoubleClick`
+
+``` purescript
 onDoubleClick :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDoubleClick = event "onDoubleClick"
+```
 
+#### `onDrag`
+
+``` purescript
 onDrag :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDrag = event "onDrag"
+```
 
+#### `onDragEnd`
+
+``` purescript
 onDragEnd :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragEnd = event "onDragEnd"
+```
 
+#### `onDragEnter`
+
+``` purescript
 onDragEnter :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragEnter = event "onDragEnter"
+```
 
+#### `onDragExit`
+
+``` purescript
 onDragExit :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragExit = event "onDragExit"
+```
 
+#### `onDragLeave`
+
+``` purescript
 onDragLeave :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragLeave = event "onDragLeave"
+```
 
+#### `onDragOver`
+
+``` purescript
 onDragOver :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragOver = event "onDragOver"
+```
 
+#### `onDragStart`
+
+``` purescript
 onDragStart :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDragStart = event "onDragStart"
+```
 
+#### `onDrop`
+
+``` purescript
 onDrop :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onDrop = event "onDrop"
+```
 
+#### `onMouseDown`
+
+``` purescript
 onMouseDown :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseDown = event "onMouseDown"
+```
 
+#### `onMouseEnter`
+
+``` purescript
 onMouseEnter :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseEnter = event "onMouseEnter"
+```
 
+#### `onMouseLeave`
+
+``` purescript
 onMouseLeave :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseLeave = event "onMouseLeave"
+```
 
+#### `onMouseMove`
+
+``` purescript
 onMouseMove :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseMove = event "onMouseMove"
+```
 
+#### `onMouseOut`
+
+``` purescript
 onMouseOut :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseOut = event "onMouseOut"
+```
 
+#### `onMouseOver`
+
+``` purescript
 onMouseOver :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseOver = event "onMouseOver"
+```
 
+#### `onMouseUp`
+
+``` purescript
 onMouseUp :: forall state props action. Context state action -> (MouseEvent -> action) -> Attr
-onMouseUp = event "onMouseUp"
+```
 
-foreign import data TouchEvent :: *
+#### `TouchEvent`
 
+``` purescript
+data TouchEvent :: *
+```
+
+#### `onTouchCancel`
+
+``` purescript
 onTouchCancel :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
-onTouchCancel = event "onTouchCancel"
+```
 
+#### `onTouchEnd`
+
+``` purescript
 onTouchEnd :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
-onTouchEnd = event "onTouchEnd"
+```
 
+#### `onTouchMove`
+
+``` purescript
 onTouchMove :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
-onTouchMove = event "onTouchMove"
+```
 
+#### `onTouchStart`
+
+``` purescript
 onTouchStart :: forall state props action. Context state action -> (TouchEvent -> action) -> Attr
-onTouchStart = event "onTouchStart"
+```
 
-foreign import data UIEvent :: *
+#### `UIEvent`
 
+``` purescript
+data UIEvent :: *
+```
+
+#### `onScroll`
+
+``` purescript
 onScroll :: forall state props action. Context state action -> (UIEvent -> action) -> Attr
-onScroll = event "onScroll"
+```
 
-foreign import data WheelEvent :: *
+#### `WheelEvent`
 
+``` purescript
+data WheelEvent :: *
+```
+
+#### `onWheel`
+
+``` purescript
 onWheel :: forall state props action. Context state action -> (WheelEvent -> action) -> Attr
-onWheel = event "onWheel"
+```
+
+

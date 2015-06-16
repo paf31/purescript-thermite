@@ -7,6 +7,8 @@ module Thermite.Types
   , Html()
   ) where
 
+import Prelude
+
 import Data.Maybe
 import Data.Monoid
 
@@ -27,31 +29,12 @@ data Attr
 -- | The type of HTML elements.
 data Html (eff :: # !)
   
-foreign import emptyAttr """
-  var emptyAttr = {};
-  """ :: Attr
+foreign import emptyAttr :: Attr
 
-foreign import appendAttr """
-  function appendAttr(attr1) {
-    return function(attr2) {
-      var o = {};
-      for (var k in attr1) {
-        if (attr1.hasOwnProperty(k)) {
-          o[k] = attr1[k];
-        }
-      }
-      for (var k in attr2) {
-        if (attr2.hasOwnProperty(k)) {
-          o[k] = attr2[k];
-        }
-      }
-      return o;
-    };
-  }
-  """ :: Attr -> Attr -> Attr
+foreign import appendAttr :: Attr -> Attr -> Attr
 
 instance semigroupAttr :: Semigroup Attr where
-  (<>) = appendAttr
+  append = appendAttr
   
 instance monoidAttr :: Monoid Attr where
   mempty = emptyAttr

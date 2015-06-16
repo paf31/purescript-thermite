@@ -1,680 +1,1349 @@
--- | This module defines helper functions for creating HTML elements.
+## Module Thermite.Html.Elements
 
-module Thermite.Html.Elements where
+This module defines helper functions for creating HTML elements.
 
-import Data.Monoid
+#### `a`
 
-import Thermite.Types
-import Thermite.Internal
-    
+``` purescript
 a :: forall eff. Attr -> Array (Html eff) -> Html eff
-a = createElementImpl "a"
+```
 
+#### `a'`
+
+``` purescript
 a' :: forall eff. Array (Html eff) -> Html eff
-a' = a mempty
+```
 
+#### `abbr`
+
+``` purescript
 abbr :: forall eff. Attr -> Array (Html eff) -> Html eff
-abbr = createElementImpl "abbr"
+```
 
+#### `abbr'`
+
+``` purescript
 abbr' :: forall eff. Array (Html eff) -> Html eff
-abbr' = abbr mempty
+```
 
+#### `address`
+
+``` purescript
 address :: forall eff. Attr -> Array (Html eff) -> Html eff
-address = createElementImpl "address"
+```
 
+#### `address'`
+
+``` purescript
 address' :: forall eff. Array (Html eff) -> Html eff
-address' = address mempty
+```
 
+#### `area`
+
+``` purescript
 area :: forall eff. Attr -> Array (Html eff) -> Html eff
-area = createElementImpl "area"
+```
 
+#### `area'`
+
+``` purescript
 area' :: forall eff. Array (Html eff) -> Html eff
-area' = area mempty
+```
 
+#### `article`
+
+``` purescript
 article :: forall eff. Attr -> Array (Html eff) -> Html eff
-article = createElementImpl "article"
+```
 
+#### `article'`
+
+``` purescript
 article' :: forall eff. Array (Html eff) -> Html eff
-article' = article mempty
+```
 
+#### `aside`
+
+``` purescript
 aside :: forall eff. Attr -> Array (Html eff) -> Html eff
-aside = createElementImpl "aside"
+```
 
+#### `aside'`
+
+``` purescript
 aside' :: forall eff. Array (Html eff) -> Html eff
-aside' = aside mempty
+```
 
+#### `audio`
+
+``` purescript
 audio :: forall eff. Attr -> Array (Html eff) -> Html eff
-audio = createElementImpl "audio"
+```
 
+#### `audio'`
+
+``` purescript
 audio' :: forall eff. Array (Html eff) -> Html eff
-audio' = audio mempty
+```
 
+#### `b`
+
+``` purescript
 b :: forall eff. Attr -> Array (Html eff) -> Html eff
-b = createElementImpl "b"
+```
 
+#### `b'`
+
+``` purescript
 b' :: forall eff. Array (Html eff) -> Html eff
-b' = b mempty
+```
 
+#### `base`
+
+``` purescript
 base :: forall eff. Attr -> Array (Html eff) -> Html eff
-base = createElementImpl "base"
+```
 
+#### `base'`
+
+``` purescript
 base' :: forall eff. Array (Html eff) -> Html eff
-base' = base mempty
+```
 
+#### `bdi`
+
+``` purescript
 bdi :: forall eff. Attr -> Array (Html eff) -> Html eff
-bdi = createElementImpl "bdi"
+```
 
+#### `bdi'`
+
+``` purescript
 bdi' :: forall eff. Array (Html eff) -> Html eff
-bdi' = bdi mempty
+```
 
+#### `bdo`
+
+``` purescript
 bdo :: forall eff. Attr -> Array (Html eff) -> Html eff
-bdo = createElementImpl "bdo"
+```
 
+#### `bdo'`
+
+``` purescript
 bdo' :: forall eff. Array (Html eff) -> Html eff
-bdo' = bdo mempty
+```
 
+#### `big`
+
+``` purescript
 big :: forall eff. Attr -> Array (Html eff) -> Html eff
-big = createElementImpl "big"
+```
 
+#### `big'`
+
+``` purescript
 big' :: forall eff. Array (Html eff) -> Html eff
-big' = big mempty
+```
 
+#### `blockquote`
+
+``` purescript
 blockquote :: forall eff. Attr -> Array (Html eff) -> Html eff
-blockquote = createElementImpl "blockquote"
+```
 
+#### `blockquote'`
+
+``` purescript
 blockquote' :: forall eff. Array (Html eff) -> Html eff
-blockquote' = blockquote mempty
+```
 
+#### `body`
+
+``` purescript
 body :: forall eff. Attr -> Array (Html eff) -> Html eff
-body = createElementImpl "body"
+```
 
+#### `body'`
+
+``` purescript
 body' :: forall eff. Array (Html eff) -> Html eff
-body' = body mempty
+```
 
+#### `br`
+
+``` purescript
 br :: forall eff. Attr -> Array (Html eff) -> Html eff
-br = createElementImpl "br"
+```
 
+#### `br'`
+
+``` purescript
 br' :: forall eff. Array (Html eff) -> Html eff
-br' = br mempty
+```
 
+#### `button`
+
+``` purescript
 button :: forall eff. Attr -> Array (Html eff) -> Html eff
-button = createElementImpl "button"
+```
 
+#### `button'`
+
+``` purescript
 button' :: forall eff. Array (Html eff) -> Html eff
-button' = button mempty
+```
 
+#### `canvas`
+
+``` purescript
 canvas :: forall eff. Attr -> Array (Html eff) -> Html eff
-canvas = createElementImpl "canvas"
+```
 
+#### `canvas'`
+
+``` purescript
 canvas' :: forall eff. Array (Html eff) -> Html eff
-canvas' = canvas mempty
+```
 
+#### `caption`
+
+``` purescript
 caption :: forall eff. Attr -> Array (Html eff) -> Html eff
-caption = createElementImpl "caption"
+```
 
+#### `caption'`
+
+``` purescript
 caption' :: forall eff. Array (Html eff) -> Html eff
-caption' = caption mempty
+```
 
+#### `cite`
+
+``` purescript
 cite :: forall eff. Attr -> Array (Html eff) -> Html eff
-cite = createElementImpl "cite"
+```
 
+#### `cite'`
+
+``` purescript
 cite' :: forall eff. Array (Html eff) -> Html eff
-cite' = cite mempty
+```
 
+#### `code`
+
+``` purescript
 code :: forall eff. Attr -> Array (Html eff) -> Html eff
-code = createElementImpl "code"
+```
 
+#### `code'`
+
+``` purescript
 code' :: forall eff. Array (Html eff) -> Html eff
-code' = code mempty
+```
 
+#### `col`
+
+``` purescript
 col :: forall eff. Attr -> Array (Html eff) -> Html eff
-col = createElementImpl "col"
+```
 
+#### `col'`
+
+``` purescript
 col' :: forall eff. Array (Html eff) -> Html eff
-col' = col mempty
+```
 
+#### `colgroup`
+
+``` purescript
 colgroup :: forall eff. Attr -> Array (Html eff) -> Html eff
-colgroup = createElementImpl "colgroup"
+```
 
+#### `colgroup'`
+
+``` purescript
 colgroup' :: forall eff. Array (Html eff) -> Html eff
-colgroup' = colgroup mempty
+```
 
+#### `_data`
+
+``` purescript
 _data :: forall eff. Attr -> Array (Html eff) -> Html eff
-_data = createElementImpl "data"
+```
 
+#### `_data'`
+
+``` purescript
 _data' :: forall eff. Array (Html eff) -> Html eff
-_data' = _data mempty
+```
 
+#### `datalist`
+
+``` purescript
 datalist :: forall eff. Attr -> Array (Html eff) -> Html eff
-datalist = createElementImpl "datalist"
+```
 
+#### `datalist'`
+
+``` purescript
 datalist' :: forall eff. Array (Html eff) -> Html eff
-datalist' = datalist mempty
+```
 
+#### `dd`
+
+``` purescript
 dd :: forall eff. Attr -> Array (Html eff) -> Html eff
-dd = createElementImpl "dd"
+```
 
+#### `dd'`
+
+``` purescript
 dd' :: forall eff. Array (Html eff) -> Html eff
-dd' = dd mempty
+```
 
+#### `del`
+
+``` purescript
 del :: forall eff. Attr -> Array (Html eff) -> Html eff
-del = createElementImpl "del"
+```
 
+#### `del'`
+
+``` purescript
 del' :: forall eff. Array (Html eff) -> Html eff
-del' = del mempty
+```
 
+#### `details`
+
+``` purescript
 details :: forall eff. Attr -> Array (Html eff) -> Html eff
-details = createElementImpl "details"
+```
 
+#### `details'`
+
+``` purescript
 details' :: forall eff. Array (Html eff) -> Html eff
-details' = details mempty
+```
 
+#### `dfn`
+
+``` purescript
 dfn :: forall eff. Attr -> Array (Html eff) -> Html eff
-dfn = createElementImpl "dfn"
+```
 
+#### `dfn'`
+
+``` purescript
 dfn' :: forall eff. Array (Html eff) -> Html eff
-dfn' = dfn mempty
+```
 
+#### `dialog`
+
+``` purescript
 dialog :: forall eff. Attr -> Array (Html eff) -> Html eff
-dialog = createElementImpl "dialog"
+```
 
+#### `dialog'`
+
+``` purescript
 dialog' :: forall eff. Array (Html eff) -> Html eff
-dialog' = dialog mempty
+```
 
+#### `div`
+
+``` purescript
 div :: forall eff. Attr -> Array (Html eff) -> Html eff
-div = createElementImpl "div"
+```
 
+#### `div'`
+
+``` purescript
 div' :: forall eff. Array (Html eff) -> Html eff
-div' = div mempty
+```
 
+#### `dl`
+
+``` purescript
 dl :: forall eff. Attr -> Array (Html eff) -> Html eff
-dl = createElementImpl "dl"
+```
 
+#### `dl'`
+
+``` purescript
 dl' :: forall eff. Array (Html eff) -> Html eff
-dl' = dl mempty
+```
 
+#### `dt`
+
+``` purescript
 dt :: forall eff. Attr -> Array (Html eff) -> Html eff
-dt = createElementImpl "dt"
+```
 
+#### `dt'`
+
+``` purescript
 dt' :: forall eff. Array (Html eff) -> Html eff
-dt' = dt mempty
+```
 
+#### `em`
+
+``` purescript
 em :: forall eff. Attr -> Array (Html eff) -> Html eff
-em = createElementImpl "em"
+```
 
+#### `em'`
+
+``` purescript
 em' :: forall eff. Array (Html eff) -> Html eff
-em' = em mempty
+```
 
+#### `embed`
+
+``` purescript
 embed :: forall eff. Attr -> Array (Html eff) -> Html eff
-embed = createElementImpl "embed"
+```
 
+#### `embed'`
+
+``` purescript
 embed' :: forall eff. Array (Html eff) -> Html eff
-embed' = embed mempty
+```
 
+#### `fieldset`
+
+``` purescript
 fieldset :: forall eff. Attr -> Array (Html eff) -> Html eff
-fieldset = createElementImpl "fieldset"
+```
 
+#### `fieldset'`
+
+``` purescript
 fieldset' :: forall eff. Array (Html eff) -> Html eff
-fieldset' = fieldset mempty
+```
 
+#### `figcaption`
+
+``` purescript
 figcaption :: forall eff. Attr -> Array (Html eff) -> Html eff
-figcaption = createElementImpl "figcaption"
+```
 
+#### `figcaption'`
+
+``` purescript
 figcaption' :: forall eff. Array (Html eff) -> Html eff
-figcaption' = figcaption mempty
+```
 
+#### `figure`
+
+``` purescript
 figure :: forall eff. Attr -> Array (Html eff) -> Html eff
-figure = createElementImpl "figure"
+```
 
+#### `figure'`
+
+``` purescript
 figure' :: forall eff. Array (Html eff) -> Html eff
-figure' = figure mempty
+```
 
+#### `footer`
+
+``` purescript
 footer :: forall eff. Attr -> Array (Html eff) -> Html eff
-footer = createElementImpl "footer"
+```
 
+#### `footer'`
+
+``` purescript
 footer' :: forall eff. Array (Html eff) -> Html eff
-footer' = footer mempty
+```
 
+#### `form`
+
+``` purescript
 form :: forall eff. Attr -> Array (Html eff) -> Html eff
-form = createElementImpl "form"
+```
 
+#### `form'`
+
+``` purescript
 form' :: forall eff. Array (Html eff) -> Html eff
-form' = form mempty
+```
 
+#### `h1`
+
+``` purescript
 h1 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h1 = createElementImpl "h1"
+```
 
+#### `h1'`
+
+``` purescript
 h1' :: forall eff. Array (Html eff) -> Html eff
-h1' = h1 mempty
+```
 
+#### `h2`
+
+``` purescript
 h2 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h2 = createElementImpl "h2"
+```
 
+#### `h2'`
+
+``` purescript
 h2' :: forall eff. Array (Html eff) -> Html eff
-h2' = h2 mempty
+```
 
+#### `h3`
+
+``` purescript
 h3 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h3 = createElementImpl "h3"
+```
 
+#### `h3'`
+
+``` purescript
 h3' :: forall eff. Array (Html eff) -> Html eff
-h3' = h3 mempty
+```
 
+#### `h4`
+
+``` purescript
 h4 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h4 = createElementImpl "h4"
+```
 
+#### `h4'`
+
+``` purescript
 h4' :: forall eff. Array (Html eff) -> Html eff
-h4' = h4 mempty
+```
 
+#### `h5`
+
+``` purescript
 h5 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h5 = createElementImpl "h5"
+```
 
+#### `h5'`
+
+``` purescript
 h5' :: forall eff. Array (Html eff) -> Html eff
-h5' = h5 mempty
+```
 
+#### `h6`
+
+``` purescript
 h6 :: forall eff. Attr -> Array (Html eff) -> Html eff
-h6 = createElementImpl "h6"
+```
 
+#### `h6'`
+
+``` purescript
 h6' :: forall eff. Array (Html eff) -> Html eff
-h6' = h6 mempty
+```
 
+#### `head`
+
+``` purescript
 head :: forall eff. Attr -> Array (Html eff) -> Html eff
-head = createElementImpl "head"
+```
 
+#### `head'`
+
+``` purescript
 head' :: forall eff. Array (Html eff) -> Html eff
-head' = head mempty
+```
 
+#### `header`
+
+``` purescript
 header :: forall eff. Attr -> Array (Html eff) -> Html eff
-header = createElementImpl "header"
+```
 
+#### `header'`
+
+``` purescript
 header' :: forall eff. Array (Html eff) -> Html eff
-header' = header mempty
+```
 
+#### `hr`
+
+``` purescript
 hr :: forall eff. Attr -> Array (Html eff) -> Html eff
-hr = createElementImpl "hr"
+```
 
+#### `hr'`
+
+``` purescript
 hr' :: forall eff. Array (Html eff) -> Html eff
-hr' = hr mempty
+```
 
+#### `html`
+
+``` purescript
 html :: forall eff. Attr -> Array (Html eff) -> Html eff
-html = createElementImpl "html"
+```
 
+#### `html'`
+
+``` purescript
 html' :: forall eff. Array (Html eff) -> Html eff
-html' = html mempty
+```
 
+#### `i`
+
+``` purescript
 i :: forall eff. Attr -> Array (Html eff) -> Html eff
-i = createElementImpl "i"
+```
 
+#### `i'`
+
+``` purescript
 i' :: forall eff. Array (Html eff) -> Html eff
-i' = i mempty
+```
 
+#### `iframe`
+
+``` purescript
 iframe :: forall eff. Attr -> Array (Html eff) -> Html eff
-iframe = createElementImpl "iframe"
+```
 
+#### `iframe'`
+
+``` purescript
 iframe' :: forall eff. Array (Html eff) -> Html eff
-iframe' = iframe mempty
+```
 
+#### `img`
+
+``` purescript
 img :: forall eff. Attr -> Array (Html eff) -> Html eff
-img = createElementImpl "img"
+```
 
+#### `img'`
+
+``` purescript
 img' :: forall eff. Array (Html eff) -> Html eff
-img' = img mempty
+```
 
+#### `input`
+
+``` purescript
 input :: forall eff. Attr -> Array (Html eff) -> Html eff
-input = createElementImpl "input"
+```
 
+#### `input'`
+
+``` purescript
 input' :: forall eff. Array (Html eff) -> Html eff
-input' = input mempty
+```
 
+#### `ins`
+
+``` purescript
 ins :: forall eff. Attr -> Array (Html eff) -> Html eff
-ins = createElementImpl "ins"
+```
 
+#### `ins'`
+
+``` purescript
 ins' :: forall eff. Array (Html eff) -> Html eff
-ins' = ins mempty
+```
 
+#### `kbd`
+
+``` purescript
 kbd :: forall eff. Attr -> Array (Html eff) -> Html eff
-kbd = createElementImpl "kbd"
+```
 
+#### `kbd'`
+
+``` purescript
 kbd' :: forall eff. Array (Html eff) -> Html eff
-kbd' = kbd mempty
+```
 
+#### `keygen`
+
+``` purescript
 keygen :: forall eff. Attr -> Array (Html eff) -> Html eff
-keygen = createElementImpl "keygen"
+```
 
+#### `keygen'`
+
+``` purescript
 keygen' :: forall eff. Array (Html eff) -> Html eff
-keygen' = keygen mempty
+```
 
+#### `label`
+
+``` purescript
 label :: forall eff. Attr -> Array (Html eff) -> Html eff
-label = createElementImpl "label"
+```
 
+#### `label'`
+
+``` purescript
 label' :: forall eff. Array (Html eff) -> Html eff
-label' = label mempty
+```
 
+#### `legend`
+
+``` purescript
 legend :: forall eff. Attr -> Array (Html eff) -> Html eff
-legend = createElementImpl "legend"
+```
 
+#### `legend'`
+
+``` purescript
 legend' :: forall eff. Array (Html eff) -> Html eff
-legend' = legend mempty
+```
 
+#### `li`
+
+``` purescript
 li :: forall eff. Attr -> Array (Html eff) -> Html eff
-li = createElementImpl "li"
+```
 
+#### `li'`
+
+``` purescript
 li' :: forall eff. Array (Html eff) -> Html eff
-li' = li mempty
+```
 
+#### `link`
+
+``` purescript
 link :: forall eff. Attr -> Array (Html eff) -> Html eff
-link = createElementImpl "link"
+```
 
+#### `link'`
+
+``` purescript
 link' :: forall eff. Array (Html eff) -> Html eff
-link' = body mempty
+```
 
+#### `main`
+
+``` purescript
 main :: forall eff. Attr -> Array (Html eff) -> Html eff
-main = createElementImpl "main"
+```
 
+#### `main'`
+
+``` purescript
 main' :: forall eff. Array (Html eff) -> Html eff
-main' = main mempty
+```
 
+#### `map`
+
+``` purescript
 map :: forall eff. Attr -> Array (Html eff) -> Html eff
-map = createElementImpl "map"
+```
 
+#### `map'`
+
+``` purescript
 map' :: forall eff. Array (Html eff) -> Html eff
-map' = map mempty
+```
 
+#### `mark`
+
+``` purescript
 mark :: forall eff. Attr -> Array (Html eff) -> Html eff
-mark = createElementImpl "mark"
+```
 
+#### `mark'`
+
+``` purescript
 mark' :: forall eff. Array (Html eff) -> Html eff
-mark' = mark mempty
+```
 
+#### `menu`
+
+``` purescript
 menu :: forall eff. Attr -> Array (Html eff) -> Html eff
-menu = createElementImpl "menu"
+```
 
+#### `menu'`
+
+``` purescript
 menu' :: forall eff. Array (Html eff) -> Html eff
-menu' = menu mempty
+```
 
+#### `menuitem`
+
+``` purescript
 menuitem :: forall eff. Attr -> Array (Html eff) -> Html eff
-menuitem = createElementImpl "menuitem"
+```
 
+#### `menuitem'`
+
+``` purescript
 menuitem' :: forall eff. Array (Html eff) -> Html eff
-menuitem' = menuitem mempty
+```
 
+#### `meta`
+
+``` purescript
 meta :: forall eff. Attr -> Array (Html eff) -> Html eff
-meta = createElementImpl "meta"
+```
 
+#### `meta'`
+
+``` purescript
 meta' :: forall eff. Array (Html eff) -> Html eff
-meta' = meta mempty
+```
 
+#### `meter`
+
+``` purescript
 meter :: forall eff. Attr -> Array (Html eff) -> Html eff
-meter = createElementImpl "meter"
+```
 
+#### `meter'`
+
+``` purescript
 meter' :: forall eff. Array (Html eff) -> Html eff
-meter' = meter mempty
+```
 
+#### `nav`
+
+``` purescript
 nav :: forall eff. Attr -> Array (Html eff) -> Html eff
-nav = createElementImpl "nav"
+```
 
+#### `nav'`
+
+``` purescript
 nav' :: forall eff. Array (Html eff) -> Html eff
-nav' = nav mempty
+```
 
+#### `noscript`
+
+``` purescript
 noscript :: forall eff. Attr -> Array (Html eff) -> Html eff
-noscript = createElementImpl "noscript"
+```
 
+#### `noscript'`
+
+``` purescript
 noscript' :: forall eff. Array (Html eff) -> Html eff
-noscript' = noscript mempty
+```
 
+#### `object`
+
+``` purescript
 object :: forall eff. Attr -> Array (Html eff) -> Html eff
-object = createElementImpl "object"
+```
 
+#### `object'`
+
+``` purescript
 object' :: forall eff. Array (Html eff) -> Html eff
-object' = object mempty
+```
 
+#### `ol`
+
+``` purescript
 ol :: forall eff. Attr -> Array (Html eff) -> Html eff
-ol = createElementImpl "ol"
+```
 
+#### `ol'`
+
+``` purescript
 ol' :: forall eff. Array (Html eff) -> Html eff
-ol' = ol mempty
+```
 
+#### `optgroup`
+
+``` purescript
 optgroup :: forall eff. Attr -> Array (Html eff) -> Html eff
-optgroup = createElementImpl "optgroup"
+```
 
+#### `optgroup'`
+
+``` purescript
 optgroup' :: forall eff. Array (Html eff) -> Html eff
-optgroup' = optgroup mempty
+```
 
+#### `option`
+
+``` purescript
 option :: forall eff. Attr -> Array (Html eff) -> Html eff
-option = createElementImpl "option"
+```
 
+#### `option'`
+
+``` purescript
 option' :: forall eff. Array (Html eff) -> Html eff
-option' = option mempty
+```
 
+#### `output`
+
+``` purescript
 output :: forall eff. Attr -> Array (Html eff) -> Html eff
-output = createElementImpl "output"
+```
 
+#### `output'`
+
+``` purescript
 output' :: forall eff. Array (Html eff) -> Html eff
-output' = output mempty
+```
 
+#### `p`
+
+``` purescript
 p :: forall eff. Attr -> Array (Html eff) -> Html eff
-p = createElementImpl "p"
+```
 
+#### `p'`
+
+``` purescript
 p' :: forall eff. Array (Html eff) -> Html eff
-p' = p mempty
+```
 
+#### `param`
+
+``` purescript
 param :: forall eff. Attr -> Array (Html eff) -> Html eff
-param = createElementImpl "param"
+```
 
+#### `param'`
+
+``` purescript
 param' :: forall eff. Array (Html eff) -> Html eff
-param' = param mempty
+```
 
+#### `picture`
+
+``` purescript
 picture :: forall eff. Attr -> Array (Html eff) -> Html eff
-picture = createElementImpl "picture"
+```
 
+#### `picture'`
+
+``` purescript
 picture' :: forall eff. Array (Html eff) -> Html eff
-picture' = picture mempty
+```
 
+#### `pre`
+
+``` purescript
 pre :: forall eff. Attr -> Array (Html eff) -> Html eff
-pre = createElementImpl "pre"
+```
 
+#### `pre'`
+
+``` purescript
 pre' :: forall eff. Array (Html eff) -> Html eff
-pre' = pre mempty
+```
 
+#### `progress`
+
+``` purescript
 progress :: forall eff. Attr -> Array (Html eff) -> Html eff
-progress = createElementImpl "progress"
+```
 
+#### `progress'`
+
+``` purescript
 progress' :: forall eff. Array (Html eff) -> Html eff
-progress' = progress mempty
+```
 
+#### `q`
+
+``` purescript
 q :: forall eff. Attr -> Array (Html eff) -> Html eff
-q = createElementImpl "q"
+```
 
+#### `q'`
+
+``` purescript
 q' :: forall eff. Array (Html eff) -> Html eff
-q' = q mempty
+```
 
+#### `rp`
+
+``` purescript
 rp :: forall eff. Attr -> Array (Html eff) -> Html eff
-rp = createElementImpl "rp"
+```
 
+#### `rp'`
+
+``` purescript
 rp' :: forall eff. Array (Html eff) -> Html eff
-rp' = rp mempty
+```
 
+#### `rt`
+
+``` purescript
 rt :: forall eff. Attr -> Array (Html eff) -> Html eff
-rt = createElementImpl "rt"
+```
 
+#### `rt'`
+
+``` purescript
 rt' :: forall eff. Array (Html eff) -> Html eff
-rt' = rt mempty
+```
 
+#### `ruby`
+
+``` purescript
 ruby :: forall eff. Attr -> Array (Html eff) -> Html eff
-ruby = createElementImpl "ruby"
+```
 
+#### `ruby'`
+
+``` purescript
 ruby' :: forall eff. Array (Html eff) -> Html eff
-ruby' = ruby mempty
+```
 
+#### `s`
+
+``` purescript
 s :: forall eff. Attr -> Array (Html eff) -> Html eff
-s = createElementImpl "s"
+```
 
+#### `s'`
+
+``` purescript
 s' :: forall eff. Array (Html eff) -> Html eff
-s' = s mempty
+```
 
+#### `samp`
+
+``` purescript
 samp :: forall eff. Attr -> Array (Html eff) -> Html eff
-samp = createElementImpl "samp"
+```
 
+#### `samp'`
+
+``` purescript
 samp' :: forall eff. Array (Html eff) -> Html eff
-samp' = samp mempty
+```
 
+#### `script`
+
+``` purescript
 script :: forall eff. Attr -> Array (Html eff) -> Html eff
-script = createElementImpl "script"
+```
 
+#### `script'`
+
+``` purescript
 script' :: forall eff. Array (Html eff) -> Html eff
-script' = script mempty
+```
 
+#### `section`
+
+``` purescript
 section :: forall eff. Attr -> Array (Html eff) -> Html eff
-section = createElementImpl "section"
+```
 
+#### `section'`
+
+``` purescript
 section' :: forall eff. Array (Html eff) -> Html eff
-section' = section mempty
+```
 
+#### `select`
+
+``` purescript
 select :: forall eff. Attr -> Array (Html eff) -> Html eff
-select = createElementImpl "select"
+```
 
+#### `select'`
+
+``` purescript
 select' :: forall eff. Array (Html eff) -> Html eff
-select' = select mempty
+```
 
+#### `small`
+
+``` purescript
 small :: forall eff. Attr -> Array (Html eff) -> Html eff
-small = createElementImpl "small"
+```
 
+#### `small'`
+
+``` purescript
 small' :: forall eff. Array (Html eff) -> Html eff
-small' = small mempty
+```
 
+#### `source`
+
+``` purescript
 source :: forall eff. Attr -> Array (Html eff) -> Html eff
-source = createElementImpl "source"
+```
 
+#### `source'`
+
+``` purescript
 source' :: forall eff. Array (Html eff) -> Html eff
-source' = source mempty
+```
 
+#### `span`
+
+``` purescript
 span :: forall eff. Attr -> Array (Html eff) -> Html eff
-span = createElementImpl "span"
+```
 
+#### `span'`
+
+``` purescript
 span' :: forall eff. Array (Html eff) -> Html eff
-span' = span mempty
+```
 
+#### `strong`
+
+``` purescript
 strong :: forall eff. Attr -> Array (Html eff) -> Html eff
-strong = createElementImpl "strong"
+```
 
+#### `strong'`
+
+``` purescript
 strong' :: forall eff. Array (Html eff) -> Html eff
-strong' = strong mempty
+```
 
+#### `style`
+
+``` purescript
 style :: forall eff. Attr -> Array (Html eff) -> Html eff
-style = createElementImpl "style"
+```
 
+#### `style'`
+
+``` purescript
 style' :: forall eff. Array (Html eff) -> Html eff
-style' = style mempty
+```
 
+#### `sub`
+
+``` purescript
 sub :: forall eff. Attr -> Array (Html eff) -> Html eff
-sub = createElementImpl "sub"
+```
 
+#### `sub'`
+
+``` purescript
 sub' :: forall eff. Array (Html eff) -> Html eff
-sub' = sub mempty
+```
 
+#### `summary`
+
+``` purescript
 summary :: forall eff. Attr -> Array (Html eff) -> Html eff
-summary = createElementImpl "summary"
+```
 
+#### `summary'`
+
+``` purescript
 summary' :: forall eff. Array (Html eff) -> Html eff
-summary' = summary mempty
+```
 
+#### `sup`
+
+``` purescript
 sup :: forall eff. Attr -> Array (Html eff) -> Html eff
-sup = createElementImpl "sup"
+```
 
+#### `sup'`
+
+``` purescript
 sup' :: forall eff. Array (Html eff) -> Html eff
-sup' = sup mempty
+```
 
+#### `table`
+
+``` purescript
 table :: forall eff. Attr -> Array (Html eff) -> Html eff
-table = createElementImpl "table"
+```
 
+#### `table'`
+
+``` purescript
 table' :: forall eff. Array (Html eff) -> Html eff
-table' = table mempty
+```
 
+#### `tbody`
+
+``` purescript
 tbody :: forall eff. Attr -> Array (Html eff) -> Html eff
-tbody = createElementImpl "tbody"
+```
 
+#### `tbody'`
+
+``` purescript
 tbody' :: forall eff. Array (Html eff) -> Html eff
-tbody' = tbody mempty
+```
 
+#### `td`
+
+``` purescript
 td :: forall eff. Attr -> Array (Html eff) -> Html eff
-td = createElementImpl "td"
+```
 
+#### `td'`
+
+``` purescript
 td' :: forall eff. Array (Html eff) -> Html eff
-td' = td mempty
+```
 
+#### `textarea`
+
+``` purescript
 textarea :: forall eff. Attr -> Array (Html eff) -> Html eff
-textarea = createElementImpl "textarea"
+```
 
+#### `textarea'`
+
+``` purescript
 textarea' :: forall eff. Array (Html eff) -> Html eff
-textarea' = textarea mempty
+```
 
+#### `tfoot`
+
+``` purescript
 tfoot :: forall eff. Attr -> Array (Html eff) -> Html eff
-tfoot = createElementImpl "tfoot"
+```
 
+#### `tfoot'`
+
+``` purescript
 tfoot' :: forall eff. Array (Html eff) -> Html eff
-tfoot' = tfoot mempty
+```
 
+#### `th`
+
+``` purescript
 th :: forall eff. Attr -> Array (Html eff) -> Html eff
-th = createElementImpl "th"
+```
 
+#### `th'`
+
+``` purescript
 th' :: forall eff. Array (Html eff) -> Html eff
-th' = th mempty
+```
 
+#### `thead`
+
+``` purescript
 thead :: forall eff. Attr -> Array (Html eff) -> Html eff
-thead = createElementImpl "thead"
+```
 
+#### `thead'`
+
+``` purescript
 thead' :: forall eff. Array (Html eff) -> Html eff
-thead' = thead mempty
+```
 
+#### `time`
+
+``` purescript
 time :: forall eff. Attr -> Array (Html eff) -> Html eff
-time = createElementImpl "time"
+```
 
+#### `time'`
+
+``` purescript
 time' :: forall eff. Array (Html eff) -> Html eff
-time' = time mempty
+```
 
+#### `title`
+
+``` purescript
 title :: forall eff. Attr -> Array (Html eff) -> Html eff
-title = createElementImpl "title"
+```
 
+#### `title'`
+
+``` purescript
 title' :: forall eff. Array (Html eff) -> Html eff
-title' = title mempty
+```
 
+#### `tr`
+
+``` purescript
 tr :: forall eff. Attr -> Array (Html eff) -> Html eff
-tr = createElementImpl "tr"
+```
 
+#### `tr'`
+
+``` purescript
 tr' :: forall eff. Array (Html eff) -> Html eff
-tr' = tr mempty
+```
 
+#### `track`
+
+``` purescript
 track :: forall eff. Attr -> Array (Html eff) -> Html eff
-track = createElementImpl "track"
+```
 
+#### `track'`
+
+``` purescript
 track' :: forall eff. Array (Html eff) -> Html eff
-track' = track mempty
+```
 
+#### `u`
+
+``` purescript
 u :: forall eff. Attr -> Array (Html eff) -> Html eff
-u = createElementImpl "u"
+```
 
+#### `u'`
+
+``` purescript
 u' :: forall eff. Array (Html eff) -> Html eff
-u' = u mempty
+```
 
+#### `ul`
+
+``` purescript
 ul :: forall eff. Attr -> Array (Html eff) -> Html eff
-ul = createElementImpl "ul"
+```
 
+#### `ul'`
+
+``` purescript
 ul' :: forall eff. Array (Html eff) -> Html eff
-ul' = ul mempty
+```
 
+#### `var`
+
+``` purescript
 var :: forall eff. Attr -> Array (Html eff) -> Html eff
-var = createElementImpl "var"
+```
 
+#### `var'`
+
+``` purescript
 var' :: forall eff. Array (Html eff) -> Html eff
-var' = var mempty
+```
 
+#### `video`
+
+``` purescript
 video :: forall eff. Attr -> Array (Html eff) -> Html eff
-video = createElementImpl "video"
+```
 
+#### `video'`
+
+``` purescript
 video' :: forall eff. Array (Html eff) -> Html eff
-video' = video mempty
+```
 
+#### `wbr`
+
+``` purescript
 wbr :: forall eff. Attr -> Array (Html eff) -> Html eff
-wbr = createElementImpl "body"
+```
 
+#### `wbr'`
+
+``` purescript
 wbr' :: forall eff. Array (Html eff) -> Html eff
-wbr' = wbr mempty
+```
+
+

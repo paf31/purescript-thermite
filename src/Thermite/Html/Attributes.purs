@@ -2,6 +2,8 @@
 
 module Thermite.Html.Attributes where
     
+import Prelude
+    
 import Thermite.Types
 import Thermite.Internal
 

@@ -12,6 +12,8 @@ module Thermite.Action
   , asyncSetState
   ) where
 
+import Prelude
+
 import Control.Monad.Eff
 
 import Thermite.Types
@@ -23,9 +25,9 @@ data ActionF eff state next
   | Wait ((next -> Eff eff Unit) -> Eff eff Unit)
 
 instance functorActionF :: Functor (ActionF eff state) where
-  (<$>) f (GetState k) = GetState (f <<< k)
-  (<$>) f (SetState s a) = SetState s (f a)
-  (<$>) f (Wait c) = Wait \k -> c (k <<< f)
+  map f (GetState k) = GetState (f <<< k)
+  map f (SetState s a) = SetState s (f a)
+  map f (Wait c) = Wait \k -> c (k <<< f)
 
 -- | The `Action` monad, parameterized by 
 -- |
@@ -82,17 +84,17 @@ asyncSetState c = do
   setState s 
 
 instance functorAction :: Functor (Action eff state) where
-  (<$>) f (Pure a) = Pure (f a)
-  (<$>) f (Impure x) = Impure ((<$>) f <$> x)
+  map f (Pure a) = Pure (f a)
+  map f (Impure x) = Impure ((<$>) f <$> x)
 
 instance applyAction :: Apply (Action eff state) where
-  (<*>) = ap
+  apply = ap
 
 instance applicativeAction :: Applicative (Action eff state) where
   pure = Pure
 
 instance bindAction :: Bind (Action eff state) where
-  (>>=) (Pure a) f = f a
-  (>>=) (Impure x) f = Impure $ x <#> \a -> a >>= f 
+  bind (Pure a) f = f a
+  bind (Impure x) f = Impure $ x <#> \a -> a >>= f 
 
 instance monadAction :: Monad (Action eff state)

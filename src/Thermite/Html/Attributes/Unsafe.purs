@@ -2,6 +2,8 @@
 
 module Thermite.Html.Attributes.Unsafe where
 
+import Prelude
+
 import Thermite.Types
 import Thermite.Internal
 
@@ -11,8 +13,4 @@ innerHTML s = unsafeAttribute "dangerouslySetInnerHTML" { "__html": s }
 style :: forall a. a -> Attr
 style = unsafeAttribute "style" <<< styleUnsafe
 
-foreign import styleUnsafe """
-    function styleUnsafe(a) {
-      return a;
-    }
-  """ :: forall a. a -> Attr
+foreign import styleUnsafe :: forall a. a -> Attr
