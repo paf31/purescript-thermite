@@ -21,14 +21,14 @@ render :: T.Render _ State _ Action
 render ctx s _ _ = T.div' [counter, buttons]
   where
   counter :: T.Html _
-  counter = 
+  counter =
     T.p'
       [ T.text "Value: "
       , T.text $ show s.counter
       ]
 
   buttons :: T.Html _
-  buttons = 
+  buttons =
     T.p'
       [ T.button (T.onClick ctx (\_ -> Increment))
                  [ T.text "Increment" ]
