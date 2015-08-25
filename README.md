@@ -18,7 +18,7 @@ grunt
 
 ## Getting Started
 
-Thermite components are defined in parts: 
+Thermite components are defined in parts:
 
 - A type of _actions_, which represents the actions a user can take on our component
 - A type of _states_, which represents the internal state of our component
@@ -49,7 +49,7 @@ data Action = Increment | Decrement
 The state of our component is just a `Number`:
 
 ```purescript
-type State = { counter :: Number }
+type State = { counter :: Int }
 ```
 
 The initial state is zero:
@@ -66,14 +66,14 @@ render :: T.Render _ State _ Action
 render ctx s _ _ = T.div' [counter, buttons]
   where
   counter :: T.Html _
-  counter = 
+  counter =
     T.p'
       [ T.text "Value: "
       , T.text $ show s.counter
       ]
 
   buttons :: T.Html _
-  buttons = 
+  buttons =
     T.p'
       [ T.button (T.onClick ctx (\_ -> Increment))
                  [ T.text "Increment" ]
