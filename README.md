@@ -56,7 +56,7 @@ The initial state is zero:
 
 ```purescript
 initialState :: State
-initialState = { counter: 0 }
+initialState = { counter: 0.0 }
 ```
 
 Our rendering function uses the `Thermite.Html.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. We also pass the _context_ `ctx` to the `onclick` handlers, so that the event handlers are able to update the state of the component.
@@ -86,8 +86,8 @@ We interpret actions by using the `modifyState` function to update the component
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
-performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
+performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1.0 }
+performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1.0 }
 ```
 
 With these pieces, we can create a specification for our component:
