@@ -15,7 +15,7 @@ data Action = Increment | Decrement
 type State = { counter :: Int }
 
 initialState :: State
-initialState = { counter: 0.0 }
+initialState = { counter: 0 }
 
 render :: T.Render _ State _ Action
 render ctx s _ _ = T.div' [counter, buttons]
@@ -37,8 +37,8 @@ render ctx s _ _ = T.div' [counter, buttons]
       ]
 
 performAction :: T.PerformAction _ State _ Action
-performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1.0 }
-performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1.0 }
+performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
+performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 
 spec :: T.Spec _ State _ Action
 spec = T.simpleSpec initialState performAction render
