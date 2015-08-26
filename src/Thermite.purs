@@ -19,6 +19,7 @@ module Thermite
 import Prelude
 
 import DOM
+import DOM.Node.Types
 
 import Data.Maybe
 
@@ -38,7 +39,7 @@ type PerformAction eff state props action = props -> action -> Action eff state 
 type Render eff state props action = Context state action -> state -> props -> Array (Html eff) -> Html eff
 
 -- | A component specification, which can be passed to `createClass`.
--- | 
+-- |
 -- | A minimal `Spec` can be built using `simpleSpec`, and extended with optional arguments
 -- | using functions in the `Thermite` module.
 newtype Spec eff state props action = Spec (SpecRecord eff state props action)
@@ -60,10 +61,10 @@ type SpecRecord eff state props action =
 -- |
 -- | A `Spec` created using this function can be extended with optional properties using other functions
 -- | in this module.
-simpleSpec :: forall eff state props action. 
-                state -> 
-                PerformAction eff state props action -> 
-                Render eff state props action -> 
+simpleSpec :: forall eff state props action.
+                state ->
+                PerformAction eff state props action ->
+                Render eff state props action ->
                 Spec eff state props action
 simpleSpec initialState performAction render = Spec { initialState: initialState
                                                     , performAction: performAction
@@ -80,7 +81,7 @@ componentWillMount action (Spec spec) = Spec (spec { componentWillMount = Just a
 displayName :: forall eff state props action. String -> Spec eff state props action -> Spec eff state props action
 displayName name (Spec spec) = Spec (spec { displayName = Just name })
 
-foreign import createClassImpl :: forall eff state props action. 
+foreign import createClassImpl :: forall eff state props action.
   (Context state action -> Action eff state Unit -> Eff eff Unit) ->
   (forall a r. r -> (a -> r) -> Maybe a -> r) ->
   Spec eff state props action ->
