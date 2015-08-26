@@ -19,6 +19,7 @@ module Thermite
 import Prelude
 
 import DOM
+import DOM.Node.Types
 
 import Data.Maybe
 

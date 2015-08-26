@@ -3,6 +3,7 @@ module Thermite.Internal where
 import Prelude
 
 import DOM
+import DOM.Node.Types
 
 import Data.Maybe
 

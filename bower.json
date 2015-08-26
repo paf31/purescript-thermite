@@ -16,10 +16,10 @@
     "url": "git://github.com/paf31/purescript-thermite.git"
   },
   "dependencies": {
-    "purescript-dom": "^0.1.1",
+    "purescript-dom": "^0.2.0",
     "purescript-maybe": "^0.3.0",
     "purescript-monoid": "^0.3.0",
-    "purescript-eff": "~0.1.0",
-    "react": "~0.12.2"
+    "purescript-eff": "^0.1.0",
+    "react": "^0.12.2"
   }
 }
