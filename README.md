@@ -89,6 +89,22 @@ performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
 performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 ```
 
+The `Action` monad supports the following operations:
+
+- `getState`, `setState`, `modifyState`
+- `async`, `asyncSetState`
+- `liftEff` via the `MonadEff` class
+
+`async` and `asyncSetState` can be used to create asynchronous actions (using AJAX, for example). Each takes a callback, which will receive the result asynchronously. For example:
+
+```purescript
+performAction :: T.PerformAction _ State _ Action
+performAction _ Increment = do
+  inc <- T.async \callback ->
+    runContT getIncrementValueFromServer callback
+  T.modifyState \o -> { counter: o.counter + inc }
+```
+
 With these pieces, we can create a specification for our component:
 
 ```purescript
