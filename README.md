@@ -11,9 +11,9 @@
 ## Building
 
 ```
-npm install
-bower update
-grunt
+pulp dep update
+pulp build
+pulp test -r cat > html/index.js
 ```
 
 ## Getting Started
