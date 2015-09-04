@@ -7,7 +7,6 @@ module Thermite.Action
   , getState
   , setState
   , modifyState
-  , sync
   , async
   , asyncSetState
   ) where
@@ -15,9 +14,7 @@ module Thermite.Action
 import Prelude
 
 import Control.Monad.Eff
-
-import Thermite.Types
-import Thermite.Internal
+import Control.Monad.Eff.Class
 
 data ActionF eff state next
   = GetState (state -> next)
@@ -37,15 +34,18 @@ instance functorActionF :: Functor (ActionF eff state) where
 data Action eff state a = Pure a | Impure (ActionF eff state (Action eff state a))
 
 -- | Run a computation in the `Action` monad.
-runAction :: forall eff state props action a. Context state action -> Action eff state a -> Eff eff Unit 
-runAction ctx = go
+runAction :: forall eff state props a.
+               React.ReactThis props state -> 
+               Action (state :: React.ReactState (React.Read React.Write) state | eff) state a -> 
+               Eff    (state :: React.ReactState (React.Read React.Write) state | eff) Unit 
+runAction this = go
   where
   go (Pure _) = return unit
   go (Impure (GetState k)) = void do
-    s <- getStateImpl ctx
+    s <- React.readState this
     go (k s)
   go (Impure (SetState s next)) = void do
-    setStateImpl ctx s
+    React.writeState this s
     go next
   go (Impure (Wait c)) = c go
 
@@ -69,10 +69,6 @@ modifyState f = do
 -- | invoking the callback when the result is available.
 async :: forall eff state a. ((a -> Eff eff Unit) -> Eff eff Unit) -> Action eff state a
 async c = Impure $ Wait \k -> c (k <<< Pure)
-
--- | Run a synchronous computation.
-sync :: forall eff state a. Eff eff a -> Action eff state a
-sync e = async ((>>=) e)
 
 -- | Set the component state based on the result of an asynchronous computation.
 -- |
@@ -98,3 +94,6 @@ instance bindAction :: Bind (Action eff state) where
   bind (Impure x) f = Impure $ x <#> \a -> a >>= f 
 
 instance monadAction :: Monad (Action eff state)
+
+instance monadEffAction :: MonadEff eff (Action eff state) where
+  liftEff e = async ((>>=) e)
