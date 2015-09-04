@@ -17,11 +17,11 @@ for the component, and return a computation in the `Action` monad.
 #### `Render`
 
 ``` purescript
-type Render eff state props action = Context state action -> state -> props -> Array (Html eff) -> Html eff
+type Render eff state props action = (action -> EventHandlerContext eff props state Unit) -> state -> props -> Array ReactElement -> ReactElement
 ```
 
-A rendering function, which takes a `Context`, the current state and properties, an array
-of child nodes and returns a HTML document.
+A rendering function, which takes a event dispatcher function, the current state and
+props, an arrayof child nodes and returns a HTML document.
 
 #### `Spec`
 
@@ -76,25 +76,9 @@ Extend a `Spec` with a display name.
 #### `createClass`
 
 ``` purescript
-createClass :: forall eff state props action. Spec eff state props action -> ComponentClass props eff
+createClass :: forall eff state props action. Spec eff state props action -> ReactClass props
 ```
 
 Create a component class from a `Spec`.
-
-#### `render`
-
-``` purescript
-render :: forall props eff. ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
-```
-
-Render a component class to the document body.
-
-#### `renderTo`
-
-``` purescript
-renderTo :: forall props eff. Node -> ComponentClass props eff -> props -> Eff (dom :: DOM | eff) Unit
-```
-
-Render a component class to the specified node.
 
 
