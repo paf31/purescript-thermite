@@ -22,12 +22,13 @@ instance applyAction :: Apply (Action eff state)
 instance applicativeAction :: Applicative (Action eff state)
 instance bindAction :: Bind (Action eff state)
 instance monadAction :: Monad (Action eff state)
+instance monadEffAction :: MonadEff eff (Action eff state)
 ```
 
 #### `runAction`
 
 ``` purescript
-runAction :: forall eff state props action a. Context state action -> Action eff state a -> Eff eff Unit
+runAction :: forall eff state props a. ReactThis props state -> Action (state :: ReactState (Read Write) state | eff) state a -> Eff (state :: ReactState (Read Write) state | eff) Unit
 ```
 
 Run a computation in the `Action` monad.
@@ -66,14 +67,6 @@ Run an asynchronous computation.
 
 The first argument is a function which takes a callback, and starts some asynchronous computation,
 invoking the callback when the result is available.
-
-#### `sync`
-
-``` purescript
-sync :: forall eff state a. Eff eff a -> Action eff state a
-```
-
-Run a synchronous computation.
 
 #### `asyncSetState`
 
