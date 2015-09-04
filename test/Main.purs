@@ -2,13 +2,25 @@ module Test.Main (main) where
 
 import Prelude
 
+import Data.Maybe
+import Data.Maybe.Unsafe
+import Data.Nullable (toMaybe)
+
+import Control.Monad.Eff
+
 import qualified Thermite as T
-import qualified Thermite.Html as T
-import qualified Thermite.Html.Elements as T
-import qualified Thermite.Html.Attributes as A
 import qualified Thermite.Action as T
-import qualified Thermite.Events as T
-import qualified Thermite.Types as T
+
+import qualified React as R
+import qualified React.DOM as R
+import qualified React.DOM.Props as RP
+
+import qualified DOM as DOM
+import qualified DOM.HTML as DOM
+import qualified DOM.HTML.Document as DOM
+import qualified DOM.HTML.Types as DOM
+import qualified DOM.HTML.Window as DOM
+import qualified DOM.Node.Types as DOM
 
 data Action = Increment | Decrement
 
@@ -18,22 +30,22 @@ initialState :: State
 initialState = { counter: 0 }
 
 render :: T.Render _ State _ Action
-render ctx s _ _ = T.div' [counter, buttons]
+render dispatch s _ _ = R.div' [counter, buttons]
   where
-  counter :: T.Html _
+  counter :: R.ReactElement
   counter =
-    T.p'
-      [ T.text "Value: "
-      , T.text $ show s.counter
+    R.p'
+      [ R.text "Value: "
+      , R.text $ show s.counter
       ]
 
-  buttons :: T.Html _
+  buttons :: R.ReactElement
   buttons =
-    T.p'
-      [ T.button (T.onClick ctx (\_ -> Increment))
-                 [ T.text "Increment" ]
-      , T.button (T.onClick ctx (\_ -> Decrement))
-                 [ T.text "Decrement" ]
+    R.p'
+      [ R.button [ RP.onClick (\_ -> dispatch Increment) ]
+                 [ R.text "Increment" ]
+      , R.button [ RP.onClick (\_ -> dispatch Decrement) ]
+                 [ R.text "Decrement" ]
       ]
 
 performAction :: T.PerformAction _ State _ Action
@@ -44,6 +56,14 @@ spec :: T.Spec _ State _ Action
 spec = T.simpleSpec initialState performAction render
          # T.componentWillMount Increment
 
-main = do
-  let component = T.createClass spec
-  T.render component {}
+main =
+  let component = T.createClass spec in
+  body >>= R.render (R.createFactory component {}) 
+  
+  where
+  body :: forall eff. Eff (dom :: DOM.DOM | eff) DOM.Element
+  body = do
+    win <- DOM.window
+    doc <- DOM.document win
+    elm <- fromJust <$> toMaybe <$> DOM.body doc
+    return $ DOM.htmlElementToElement elm
