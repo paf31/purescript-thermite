@@ -31,12 +31,22 @@ Here is an example. We'll build a component which displays the value of a intege
 First of all, we need to import some modules:
 
 ```purescript
+import Prelude
+import Data.Maybe
+import Data.Maybe.Unsafe
+import Data.Nullable (toMaybe)
+import Control.Monad.Eff
 import qualified Thermite as T
-import qualified Thermite.Html as T
-
+import qualified Thermite.Action as T
 import qualified React as R
-import qualified React.DOM as RD
+import qualified React.DOM as R
 import qualified React.DOM.Props as RP
+import qualified DOM as DOM
+import qualified DOM.HTML as DOM
+import qualified DOM.HTML.Document as DOM
+import qualified DOM.HTML.Types as DOM
+import qualified DOM.HTML.Window as DOM
+import qualified DOM.Node.Types as DOM
 ```
 
 In our component, users will be able to take two actions - increment and decrement - which will be represented as buttons later:
@@ -62,22 +72,22 @@ Our rendering function uses the `Thermite.Html.*` modules to create a HTML docum
 
 ```purescript
 render :: T.Render _ State _ Action
-render send ctx s _ _ = T.div' [ counter, buttons ]
+render send s _ _ = R.div' [ counter, buttons ]
   where
-  counter :: R.ReactElement _
+  counter :: R.ReactElement
   counter =
-    RD.p'
-      [ RD.text "Value: "
-      , RD.text $ show s.counter
+    R.p'
+      [ R.text "Value: "
+      , R.text $ show s.counter
       ]
 
-  buttons :: R.ReactElement _
+  buttons :: R.ReactElement 
   buttons =
     R.p'
-      [ RD.button [ RP.onClick \_ -> send Increment ]
-                  [ RD.text "Increment" ]
-      , RD.button [ RP.onClick \_ -> send Decrement ]
-                  [ RD.text "Decrement" ]
+      [ R.button [ RP.onClick \_ -> send Increment ]
+                 [ R.text "Increment" ]
+      , R.button [ RP.onClick \_ -> send Decrement ]
+                 [ R.text "Decrement" ]
       ]
 ```
 
@@ -99,10 +109,8 @@ The `Action` monad supports the following operations:
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction _ Increment = do
-  inc <- T.async \callback ->
-    runContT getIncrementValueFromServer callback
-  T.modifyState \o -> { counter: o.counter + inc }
+performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
+performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
 ```
 
 With these pieces, we can create a specification for our component:
@@ -115,7 +123,15 @@ spec = T.simpleSpec initialState performAction render
 Finally, in `main`, we use `createClass` to turn our `Spec` into a component class, and `render` to render it to the document body:
 
 ```purescript
-main = do
-  let component = T.createClass spec
+main =
+  let component = T.createClass spec in
   body >>= R.render (R.createFactory component {}) 
+  
+  where
+  body :: forall eff. Eff (dom :: DOM.DOM | eff) DOM.Element
+  body = do
+    win <- DOM.window
+    doc <- DOM.document win
+    elm <- fromJust <$> toMaybe <$> DOM.body doc
+    return $ DOM.htmlElementToElement elm
 ```
