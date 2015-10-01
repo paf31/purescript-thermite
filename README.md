@@ -32,7 +32,7 @@ First of all, we need to import some modules:
 
 ```purescript
 import qualified Thermite as T
-import qualified Thermite.Html as T
+import qualified Thermite.Action as T
 
 import qualified React as R
 import qualified React.DOM as RD
@@ -58,7 +58,7 @@ initialState :: State
 initialState = { counter: 0 }
 ```
 
-Our rendering function uses the `Thermite.Html.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. We also pass the _context_ `ctx` to the `onclick` handlers, so that the event handlers are able to update the state of the component.
+Our rendering function uses the `React.DOM.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. We also pass the _context_ `ctx` to the `onclick` handlers, so that the event handlers are able to update the state of the component.
 
 ```purescript
 render :: T.Render _ State _ Action
