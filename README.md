@@ -6,7 +6,6 @@
 
 - [Module Documentation](docs/)
 - [Example](test/Main.purs)
-- [Task List Example](https://github.com/paf31/purescript-thermite-todomvc)
 
 ## Building
 
@@ -32,10 +31,9 @@ First of all, we need to import some modules:
 
 ```purescript
 import qualified Thermite as T
-import qualified Thermite.Action as T
 
 import qualified React as R
-import qualified React.DOM as RD
+import qualified React.DOM as R
 import qualified React.DOM.Props as RP
 ```
 
@@ -45,7 +43,7 @@ In our component, users will be able to take two actions - increment and decreme
 data Action = Increment | Decrement
 ```
 
-The state of our component is just a `Number`:
+The state of our component is just an integer:
 
 ```purescript
 type State = { counter :: Int }
@@ -58,64 +56,84 @@ initialState :: State
 initialState = { counter: 0 }
 ```
 
-Our rendering function uses the `React.DOM.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. We also pass the _context_ `ctx` to the `onclick` handlers, so that the event handlers are able to update the state of the component.
+Our rendering function uses the `React.DOM.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. The `dispatch` function, which is passed as the first argument to `render`, can be used to build such a function, by providing an action:
 
 ```purescript
 render :: T.Render _ State _ Action
-render send ctx s _ _ = T.div' [ counter, buttons ]
-  where
-  counter :: R.ReactElement _
-  counter =
-    RD.p'
-      [ RD.text "Value: "
-      , RD.text $ show s.counter
-      ]
-
-  buttons :: R.ReactElement _
-  buttons =
-    R.p'
-      [ RD.button [ RP.onClick \_ -> send Increment ]
-                  [ RD.text "Increment" ]
-      , RD.button [ RP.onClick \_ -> send Decrement ]
-                  [ RD.text "Decrement" ]
-      ]
+render dispatch _ state _ =
+  [ R.p' [ R.text "Value: "
+         , R.text $ show state.counter
+         ]
+  , R.p' [ R.button [ RP.onClick \_ -> dispatch Increment ]
+                    [ R.text "Increment" ]
+         , R.button [ RP.onClick \_ -> dispatch Decrement ]
+                    [ R.text "Decrement" ]
+         ]
+  ]
 ```
 
-We interpret actions by using the `modifyState` function to update the component state:
+The `performAction` function interprets actions by updating the state using record updates, and passing the result to the state update function:
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction _ Increment = T.modifyState \o -> { counter: o.counter + 1 }
-performAction _ Decrement = T.modifyState \o -> { counter: o.counter - 1 }
+performAction Increment _ state update = update $ state { counter = state.counter + 1 }
+performAction Decrement _ state update = update $ state { counter = state.counter - 1 }
 ```
 
-The `Action` monad supports the following operations:
-
-- `getState`, `setState`, `modifyState`
-- `async`, `asyncSetState`
-- `liftEff` via the `MonadEff` class
-
-`async` and `asyncSetState` can be used to create asynchronous actions (using AJAX, for example). Each takes a callback, which will receive the result asynchronously. For example:
+_Note_: since `PerformAction` is callback-based, we can also create asynchronous action handlers (using AJAX, for example):
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction _ Increment = do
-  inc <- T.async \callback ->
-    runContT getIncrementValueFromServer callback
-  T.modifyState \o -> { counter: o.counter + inc }
+performAction Increment _ state update = getIncrementValueFromServer \amount ->
+  update $ state { counter = state.counter + amount }
 ```
 
-With these pieces, we can create a specification for our component:
+With these pieces, we can create a `Spec` for our component:
 
 ```purescript
 spec :: T.Spec _ State _ Action
-spec = T.simpleSpec initialState performAction render
+spec = T.simpleSpec performAction render
 ```
 
-Finally, in `main`, we use `createClass` to turn our `Spec` into a component class, and `render` to render it to the document body:
+Finally, in `main`, we use `createClass` to turn our `Spec` into a component class, providing an initial state.
+The `render` function from `purescript-react` can then be used to render our component to the document body:
 
 ```purescript
 main = do
-  let component = T.createClass spec
-  body >>= R.render (R.createFactory component {}) 
+  let component = T.createClass spec initialState
+  body >>= R.render (R.createFactory component {})
 ```
+
+## Combining Components
+
+The `Spec` type is an instance of the `Semigroup` and `Monoid` type classes. These instances can be used to combine different components with the same `state` and `action` types.
+
+In practice, the `state` and `action` types will not always match for the different subcomponents, so Thermite provides combinators for changing these type arguments: `focus` and `foreach`. These combinators are heavily inspired by the [OpticUI](https://github.com/zrho/purescript-optic-ui) library.
+
+See the [example project](test/Main.purs) for examples of these kinds of composition.
+
+### `focus`
+
+`focus` (and the related functions `focusState` and `match`) are used to enlarge the state and action types, to make it possible to embed a component inside a larger component.
+
+`focus` takes a _lens_, which identifies the `state` type as a part of the state type of the larger component, and a _prism_, which identifies all actions of the smaller component as actions for the larger component. `focusState` is used when only the `state` type needs to be changed, and `match` is used when only the `action` type needs to be changed.
+
+As a simple example, we can combine two subcomponents by using a `Tuple` to store both states, and `Either` to combine both sets of actions:
+
+```purescript
+spec1 :: Spec _ S1 _ A1
+spec2 :: Spec _ S2 _ A2
+
+spec :: Spec _ (Tuple S1 S2) _ (Either A1 A2)
+spec = focus _1 _Left spec1 <> focus _2 _Right spec2
+```
+
+Here, `_1` and `_Left` embed `spec1` inside `spec`, using the left components of both the state `Tuple` and the `Either` type of actions. `_2` and `_Right` similarly embed `spec2`, using the right components.
+
+_focus_ is responsible for directing the various actions to the correct components, and updating the correct parts of the state.
+
+### `foreach`
+
+Where `focus` embeds a single subcomponent inside another component, `foreach` embeds a whole collection of subcomponents.
+
+`foreach` turns a `Spec eff state props action` into a `Spec eff (List state) props (Tuple Int action)`. Note that the state type has been wrapped using `List`, since the component now tracks state for each element of the collection. Also, the `action` type has been replaced with `Tuple Int action`. This means that when an action occurs, it is accompanied by the index of the element in the collection which it originated from.
