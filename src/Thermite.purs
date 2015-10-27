@@ -22,6 +22,7 @@ module Thermite
   , simpleSpec
   , createClass
   , createReactSpec
+  , withState
   , focus
   , focusState
   , match
@@ -185,6 +186,22 @@ createReactSpec (Spec spec) state =
       <$> React.getProps this
       <*> React.readState this
       <*> React.getChildren this
+
+-- | This function captures the state of the `Spec` as a function argument.
+-- |
+-- | This can sometimes be useful in complex scenarios involving the `focus` and
+-- | `foreach` combinators.
+withState ::
+  forall eff state props action.
+  (state -> Spec eff state props action) ->
+  Spec eff state props action
+withState f = simpleSpec performAction render
+  where
+  performAction :: PerformAction eff state props action
+  performAction a p st = view _performAction (f st) a p st
+
+  render :: Render state props action
+  render k p st = view _render (f st) k p st
 
 -- | Change the state type, using a lens to focus on a part of the state.
 -- |

@@ -149,6 +149,17 @@ This function is a low-level alternative to `createClass`, used when the React
 component spec needs to be modified before being turned into a component class,
 e.g. by adding additional lifecycle methods.
 
+#### `withState`
+
+``` purescript
+withState :: forall eff state props action. (state -> Spec eff state props action) -> Spec eff state props action
+```
+
+This function captures the state of the `Spec` as a function argument.
+
+This can sometimes be useful in complex scenarios involving the `focus` and
+`foreach` combinators.
+
 #### `focus`
 
 ``` purescript
