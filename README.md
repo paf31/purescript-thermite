@@ -59,7 +59,7 @@ initialState = { counter: 0 }
 Our rendering function uses the `React.DOM.*` modules to create a HTML document containing a label and two buttons. The buttons' `onclick` handlers are given functions which generate the correct actions. The `dispatch` function, which is passed as the first argument to `render`, can be used to build such a function, by providing an action:
 
 ```purescript
-render :: T.Render _ State _ Action
+render :: T.Render State _ Action
 render dispatch _ state _ =
   [ R.p' [ R.text "Value: "
          , R.text $ show state.counter
