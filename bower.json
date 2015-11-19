@@ -18,6 +18,6 @@
   "dependencies": {
     "purescript-dom": "^0.2.6",
     "purescript-profunctor-lenses": "~0.3.0",
-    "purescript-react": "^0.4.0"
+    "purescript-react": "^0.5.0"
   }
 }

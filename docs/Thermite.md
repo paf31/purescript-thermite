@@ -32,7 +32,7 @@ A default `PerformAction` action implementation which ignores all actions.
 #### `EventHandler`
 
 ``` purescript
-type EventHandler props = forall eff state refs. Eff (props :: ReactProps props, state :: ReactState ReadWrite state, refs :: ReactRefs refs | eff) Unit
+type EventHandler = forall eff refs. Eff (props :: ReactProps, state :: ReactState ReadWrite, refs :: ReactRefs refs | eff) Unit
 ```
 
 A type synonym for an event handler which can be used to construct
@@ -41,7 +41,7 @@ A type synonym for an event handler which can be used to construct
 #### `Render`
 
 ``` purescript
-type Render state props action = (action -> EventHandler props) -> props -> state -> Array ReactElement -> Array ReactElement
+type Render state props action = (action -> EventHandler) -> props -> state -> Array ReactElement -> Array ReactElement
 ```
 
 A rendering function, which takes an action handler function, the current state and
@@ -72,8 +72,8 @@ HTML elements next to one another, and performing actions in sequence.
 
 ##### Instances
 ``` purescript
-instance semigroupSpec :: Semigroup (Spec eff state props action)
-instance monoidSpec :: Monoid (Spec eff state props action)
+Semigroup (Spec eff state props action)
+Monoid (Spec eff state props action)
 ```
 
 #### `_performAction`
@@ -140,7 +140,7 @@ Create a React component class from a Thermite component `Spec`.
 #### `createReactSpec`
 
 ``` purescript
-createReactSpec :: forall eff state props action. Spec eff state props action -> state -> { spec :: ReactSpec props state eff, dispatcher :: ReactThis props state -> action -> EventHandler props }
+createReactSpec :: forall eff state props action. Spec eff state props action -> state -> { spec :: ReactSpec props state eff, dispatcher :: ReactThis props state -> action -> EventHandler }
 ```
 
 Create a React component spec from a Thermite component `Spec`.

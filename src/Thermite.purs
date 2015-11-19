@@ -60,10 +60,10 @@ defaultPerformAction _ _ _ _ = pure unit
 
 -- | A type synonym for an event handler which can be used to construct
 -- | `purescript-react`'s event attributes.
-type EventHandler props =
-  forall eff state refs.
-    Eff ( props :: React.ReactProps props
-        , state :: React.ReactState React.ReadWrite state
+type EventHandler =
+  forall eff refs.
+    Eff ( props :: React.ReactProps
+        , state :: React.ReactState React.ReadWrite
         , refs :: React.ReactRefs refs
         | eff
         ) Unit
@@ -71,7 +71,7 @@ type EventHandler props =
 -- | A rendering function, which takes an action handler function, the current state and
 -- | props, an array of child nodes and returns a HTML document.
 type Render state props action =
-   (action -> EventHandler props) ->
+   (action -> EventHandler) ->
    props ->
    state ->
    Array React.ReactElement ->
@@ -167,15 +167,15 @@ createReactSpec ::
   Spec eff state props action ->
   state ->
   { spec :: React.ReactSpec props state eff
-  , dispatcher :: React.ReactThis props state -> action -> EventHandler props
+  , dispatcher :: React.ReactThis props state -> action -> EventHandler
   }
 createReactSpec (Spec spec) state =
   { spec: React.spec state render
   , dispatcher: dispatch
   }
   where
-  dispatch :: React.ReactThis props state -> action -> EventHandler props
-  dispatch this action = unsafeInterleaveEff do
+  dispatch :: React.ReactThis props state -> action -> EventHandler
+  dispatch this action = do
     props <- React.getProps this
     state <- React.readState this
     unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.writeState this)
