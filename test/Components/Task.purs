@@ -2,18 +2,8 @@ module Components.Task where
 
 import Prelude
 
-import Data.Lens
-import Data.List
-import Data.Tuple
-import Data.Either
-import Data.Foldable (fold)
-
-import Control.Monad.Eff
-import Control.Monad.Eff.Unsafe
-
 import qualified Thermite as T
 
-import qualified React as R
 import qualified React.DOM as R
 import qualified React.DOM.Props as RP
 
