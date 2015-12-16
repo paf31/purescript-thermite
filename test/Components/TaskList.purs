@@ -10,9 +10,6 @@ import Data.Either
 import Data.Filter
 import Data.Foldable (fold)
 
-import Control.Monad.Eff
-import Control.Monad.Eff.Unsafe
-
 import qualified Thermite as T
 
 import qualified React as R

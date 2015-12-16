@@ -31,9 +31,6 @@ module Thermite
 
 import Prelude
 
-import DOM
-import DOM.Node.Types
-
 import Data.Lens
 import Data.List
 import Data.Tuple

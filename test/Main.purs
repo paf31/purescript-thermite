@@ -15,7 +15,6 @@ module Test.Main (main) where
 
 import Prelude
 
-import Data.Maybe
 import Data.Maybe.Unsafe
 import Data.Nullable (toMaybe)
 
@@ -29,11 +28,9 @@ import qualified React as R
 
 import qualified DOM as DOM
 import qualified DOM.HTML as DOM
-import qualified DOM.HTML.Document as DOM
 import qualified DOM.HTML.Types as DOM
 import qualified DOM.HTML.Window as DOM
 import qualified DOM.Node.ParentNode as DOM
-import qualified DOM.Node.Types as DOM
 
 -- | The main method creates the task list component, and renders it to the document body.
 main :: Eff (dom :: DOM.DOM) Unit
