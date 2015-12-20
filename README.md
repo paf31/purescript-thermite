@@ -132,6 +132,25 @@ Here, `_1` and `_Left` embed `spec1` inside `spec`, using the left components of
 
 _focus_ is responsible for directing the various actions to the correct components, and updating the correct parts of the state.
 
+### `split`
+
+`split` is used to handle child components which might not be present, for
+example, when a parent object contains a `Maybe` state.
+
+```purescript
+type Parent = { child :: Maybe child }
+
+_child :: LensP Parent (Maybe Child)
+_child = lens _.child (_ { child = _ })
+
+_ChildAction :: PrismP ParentAction ChildAction
+
+childSpec :: Spec _ Child _ ChildAction
+
+spec :: Spec _ Parent _ ParentAction
+spec = focus _child _ChildAction $ split _Just childSpec
+```
+
 ### `foreach`
 
 Where `focus` embeds a single subcomponent inside another component, `foreach` embeds a whole collection of subcomponents.
