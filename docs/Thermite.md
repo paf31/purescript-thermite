@@ -15,7 +15,7 @@ Thermite also provides type class instances and lens combinators for composing `
 #### `PerformAction`
 
 ``` purescript
-type PerformAction eff state props action = action -> props -> state -> (state -> Eff eff Unit) -> Eff eff Unit
+type PerformAction eff state props action = action -> props -> state -> ((state -> state) -> Eff eff Unit) -> Eff eff Unit
 ```
 
 A type synonym for action handlers, which take an action, the current properties
