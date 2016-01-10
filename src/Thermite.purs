@@ -48,7 +48,7 @@ type PerformAction eff state props action =
   action ->
   props ->
   state ->
-  (state -> Eff eff Unit) ->
+  ((state -> state) -> Eff eff Unit) ->
   Eff eff Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
@@ -175,7 +175,7 @@ createReactSpec (Spec spec) state =
   dispatch this action = do
     props <- React.getProps this
     state <- React.readState this
-    unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.writeState this)
+    unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
 
   render :: React.Render props state eff
   render this = map React.DOM.div' $
@@ -229,7 +229,7 @@ focus lens prism (Spec spec) = Spec
   performAction a p st k =
     case matching prism a of
       Left _ -> pure unit
-      Right a' -> spec.performAction a' p (view lens st) (k <<< flip (set lens) st)
+      Right a' -> spec.performAction a' p (view lens st) (k <<< over lens)
 
   render :: Render state2 props action2
   render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -266,8 +266,8 @@ foreach f = Spec
   performAction (Tuple i a) p sts k =
     for_ (sts !! i) \st -> case f i of Spec s -> s.performAction a p st (k <<< modifying i)
     where
-    modifying :: Int -> state -> List state
-    modifying i st = fromMaybe sts (updateAt i st sts)
+    modifying :: Int -> (state -> state) -> List state -> List state
+    modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
 
   render :: Render (List state) props (Tuple Int action)
   render k p sts _ = foldWithIndex (\i st els -> case f i of Spec s -> els <> s.render (k <<< Tuple i) p st []) sts []
