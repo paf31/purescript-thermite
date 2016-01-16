@@ -72,20 +72,20 @@ render dispatch _ state _ =
   ]
 ```
 
-The `performAction` function interprets actions by updating the state using record updates, and passing the result to the state update function:
+The `performAction` function interprets actions by passing a function to the state update function, which is responsible for updating the state using record updates:
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction Increment _ state update = update $ state { counter = state.counter + 1 }
-performAction Decrement _ state update = update $ state { counter = state.counter - 1 }
+performAction Increment _ _ update = update $ \state -> state { counter = state.counter + 1 }
+performAction Decrement _ _ update = update $ \state -> state { counter = state.counter - 1 }
 ```
 
 _Note_: since `PerformAction` is callback-based, we can also create asynchronous action handlers (using AJAX, for example):
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction Increment _ state update = getIncrementValueFromServer \amount ->
-  update $ state { counter = state.counter + amount }
+performAction Increment _ _ update = getIncrementValueFromServer \amount ->
+  update $ \state -> state { counter = state.counter + amount }
 ```
 
 With these pieces, we can create a `Spec` for our component:
