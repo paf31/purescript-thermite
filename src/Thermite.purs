@@ -26,6 +26,7 @@ module Thermite
   , focus
   , focusState
   , match
+  , split
   , foreach
   ) where
 
@@ -248,6 +249,28 @@ match :: forall eff props state action1 action2.
   Spec eff state props action1 ->
   Spec eff state props action2
 match prism = focus id prism
+
+-- | Create a component which renders an optional subcomponent.
+split :: forall eff props state1 state2 action.
+  PrismP state1 state2 ->
+  Spec eff state2 props action ->
+  Spec eff state1 props action
+split prism (Spec spec) = Spec
+  { performAction: performAction
+  , render: render
+  }
+  where
+  performAction :: PerformAction eff state1 props action
+  performAction a p st k =
+    case matching prism st of
+      Left _ -> pure unit
+      Right st' -> spec.performAction a p st' (k <<< flip (set prism) st)
+
+  render :: Render state1 props action
+  render k p st children =
+    case matching prism st of
+      Left _ -> []
+      Right st' -> spec.render k p st' children
 
 -- | Create a component whose state is described by a list, displaying one subcomponent
 -- | for each entry in the list.
