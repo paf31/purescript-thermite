@@ -199,6 +199,14 @@ match :: forall eff props state action1 action2. PrismP action2 action1 -> Spec 
 A variant of `focus` which only changes the action type, by applying a `Prism`,
 effectively matching some subset of a larger action type.
 
+#### `split`
+
+``` purescript
+split :: forall eff props state1 state2 action. PrismP state1 state2 -> Spec eff state2 props action -> Spec eff state1 props action
+```
+
+Create a component which renders an optional subcomponent.
+
 #### `foreach`
 
 ``` purescript
