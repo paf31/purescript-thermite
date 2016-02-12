@@ -32,6 +32,7 @@ module Thermite
 
 import Prelude
 
+import Data.Bifunctor (bimap)
 import Data.Lens
 import Data.List
 import Data.Tuple
@@ -40,8 +41,12 @@ import Data.Maybe
 import Data.Monoid
 import Data.Foldable (for_)
 
+import Control.Coroutine
+import Control.Monad.Aff (Aff, launchAff)
 import Control.Monad.Eff
-import Control.Monad.Eff.Unsafe
+import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
+import Control.Monad.Free.Trans
 
 -- | A type synonym for action handlers, which take an action, the current properties
 -- | for the component, and a state update function, and return a computation in the `Eff` monad.
@@ -49,12 +54,11 @@ type PerformAction eff state props action =
   action ->
   props ->
   state ->
-  ((state -> state) -> Eff eff Unit) ->
-  Eff eff Unit
+  Producer (state -> state) (Aff eff) Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
-defaultPerformAction _ _ _ _ = pure unit
+defaultPerformAction _ _ _ = pure unit
 
 -- | A type synonym for an event handler which can be used to construct
 -- | `purescript-react`'s event attributes.
@@ -142,13 +146,13 @@ simpleSpec performAction render =
 
 instance semigroupSpec :: Semigroup (Spec eff state props action) where
   append (Spec spec1) (Spec spec2) =
-    Spec { performAction:       \a p s k -> do spec1.performAction a p s k
-                                               spec2.performAction a p s k
+    Spec { performAction:       \a p s -> do spec1.performAction a p s
+                                             spec2.performAction a p s
          , render:              \k p s   -> spec1.render k p s       <> spec2.render k p s
          }
 
 instance monoidSpec :: Monoid (Spec eff state props action) where
-  mempty = simpleSpec (\_ _ _ _ -> pure unit)
+  mempty = simpleSpec (\_ _ _ -> pure unit)
                       (\_ _ _ _ -> [])
 
 -- | Create a React component class from a Thermite component `Spec`.
@@ -176,7 +180,20 @@ createReactSpec (Spec spec) state =
   dispatch this action = do
     props <- React.getProps this
     state <- React.readState this
-    unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
+
+    let process :: Process (Aff eff) Unit
+        process = spec.performAction action props state $$ consumer'
+
+        forgetEff :: forall eff1 a. Eff eff1 a -> Eff eff a
+        forgetEff = unsafeInterleaveEff
+
+        consumer' :: Consumer (state -> state) (Aff eff) Unit
+        consumer' = consumer \state' -> do
+          liftEff $ forgetEff $ React.transformState this state'
+          pure Nothing
+    unsafeInterleaveEff $ launchAff $ runProcess process
+    -- unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
+    return unit
 
   render :: React.Render props state eff
   render this = map React.DOM.div' $
@@ -227,10 +244,10 @@ focus lens prism (Spec spec) = Spec
   }
   where
   performAction :: PerformAction eff state2 props action2
-  performAction a p st k =
+  performAction a p st =
     case matching prism a of
       Left _ -> pure unit
-      Right a' -> spec.performAction a' p (view lens st) (k <<< over lens)
+      Right a' -> bimapFreeT (bimap (over lens) id) id $ spec.performAction a' p (view lens st)
 
   render :: Render state2 props action2
   render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -261,10 +278,10 @@ split prism (Spec spec) = Spec
   }
   where
   performAction :: PerformAction eff state1 props action
-  performAction a p st k =
+  performAction a p st =
     case matching prism st of
       Left _ -> pure unit
-      Right st' -> spec.performAction a p st' (k <<< over prism)
+      Right st' -> bimapFreeT (bimap (over prism) id) id $ spec.performAction a p st'
 
   render :: Render state1 props action
   render k p st children =
@@ -286,8 +303,8 @@ foreach f = Spec
   }
   where
   performAction :: PerformAction eff (List state) props (Tuple Int action)
-  performAction (Tuple i a) p sts k =
-    for_ (sts !! i) \st -> case f i of Spec s -> s.performAction a p st (k <<< modifying i)
+  performAction (Tuple i a) p sts =
+    for_ (sts !! i) \st -> case f i of Spec s -> bimapFreeT (bimap (modifying i) id) id $ s.performAction a p st
     where
     modifying :: Int -> (state -> state) -> List state -> List state
     modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
