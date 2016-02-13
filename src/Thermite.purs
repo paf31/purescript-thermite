@@ -42,7 +42,7 @@ import Data.Monoid
 import Data.Foldable (for_)
 
 import Control.Coroutine
-import Control.Monad.Aff (Aff, launchAff)
+import Control.Monad.Aff (Aff, later, launchAff)
 import Control.Monad.Eff
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
@@ -189,7 +189,7 @@ createReactSpec (Spec spec) state =
 
         consumer' :: Consumer (state -> state) (Aff eff) Unit
         consumer' = consumer \state' -> do
-          liftEff $ forgetEff $ React.transformState this state'
+          later $ liftEff $ forgetEff $ React.transformState this state'
           pure Nothing
     unsafeInterleaveEff $ launchAff $ runProcess process
     -- unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
