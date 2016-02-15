@@ -1,0 +1,23 @@
+{
+  "name": "purescript-thermite",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "pretest": "pulp build",
+    "test": "pulp test --runtime cat > html/index.js && open html/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paf31/purescript-thermite.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paf31/purescript-thermite/issues"
+  },
+  "homepage": "https://github.com/paf31/purescript-thermite#readme",
+  "devDependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
+  }
+}

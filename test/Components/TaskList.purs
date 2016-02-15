@@ -114,10 +114,11 @@ taskList = container $ fold
         handleKeyPress 27 _    = dispatch $ SetEditText ""
         handleKeyPress _  _    = pure unit
     in [ R.table [ RP.className "table table-striped" ]
-                 [ R.thead' [ R.th [ RP.className "col-md-1"  ] []
-                            , R.th [ RP.className "col-md-10" ] [ R.text "Description" ]
-                            , R.th [ RP.className "col-md-1"  ] []
-                            ]
+                 [ R.thead' $ [ R.tr' [ R.th [ RP.className "col-md-1"  ] []
+                                      , R.th [ RP.className "col-md-10" ] [ R.text "Description" ]
+                                      , R.th [ RP.className "col-md-1"  ] []
+                                      ]
+                              ]
                  , R.tbody' $ [ R.tr' [ R.td' []
                                       , R.td' [ R.input [ RP.className "form-control"
                                                         , RP.placeholder "Create a new task"

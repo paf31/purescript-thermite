@@ -16,6 +16,8 @@ pulp build
 pulp test -r cat > html/index.js
 ```
 
+You can also now use `npm test` to run the test command above.
+
 ## Getting Started
 
 Thermite components are defined in parts:

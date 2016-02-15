@@ -25,6 +25,7 @@ import Components.TaskList
 import qualified Thermite as T
 
 import qualified React as R
+import qualified ReactDOM as RDOM
 
 import qualified DOM as DOM
 import qualified DOM.HTML as DOM
@@ -38,4 +39,4 @@ main = void do
   let component = T.createClass taskList initialTaskListState
   document <- DOM.window >>= DOM.document
   container <- fromJust <<< toMaybe <$> DOM.querySelector "#container" (DOM.htmlDocumentToParentNode document)
-  R.render (R.createFactory component {}) container
+  RDOM.render (R.createFactory component {}) container
