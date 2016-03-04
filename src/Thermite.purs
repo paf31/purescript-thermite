@@ -11,7 +11,9 @@
 -- | Thermite also provides type class instances and lens combinators for composing `Spec`s.
 
 module Thermite
-  ( PerformAction()
+  ( Thermite
+  , Query
+  , PerformAction()
   , defaultPerformAction
   , EventHandler()
   , Render()
@@ -22,21 +24,25 @@ module Thermite
   , simpleSpec
   , createClass
   , createReactSpec
+  {-
   , withState
   , focus
   , focusState
   , match
   , split
   , foreach
+  -}
   ) where
 
 import Prelude
 
 import Data.Bifunctor (bimap)
+import Data.Bifunctor as B
 import Data.Lens
 import Data.List
 import Data.Tuple
 import Data.Either
+import Data.Identity
 import Data.Maybe
 import Data.Monoid
 import Data.Foldable (for_)
@@ -47,6 +53,36 @@ import Control.Monad.Eff
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
 import Control.Monad.Free.Trans
+import Control.Monad.Rec.Class
+
+data Query s a = Get (s -> a) | Modify (s -> s) a
+
+mapQuery :: forall st1 st2 a. (st1 -> st2) -> ((st2 -> st2) -> (st1 -> st1)) -> Query st2 a -> Query st1 a
+mapQuery get _ (Get k) = Get (k <<< get)
+mapQuery _ set (Modify k c) = Modify (set k) c
+
+instance queryFunctor :: Functor (Query s) where
+  map f (Get k) = Get (f <<< k)
+  map f (Modify g next) = Modify g (f next)
+
+type Thermite s = Co (Query s)
+
+runThermite :: forall s m a. (MonadRec m) => Thermite s m a -> m s -> (s -> m s) -> m a
+runThermite th get set = runFreeT eval th
+  where
+    eval (Get k) = do
+      st <- get
+      return (k st)
+    eval (Modify k next) = do
+      st <- get
+      set (k st)
+      return next
+
+get :: forall s m. (Monad m) => Thermite s m s
+get = liftFreeT (Get id)
+
+modify :: forall s m. (Monad m) => (s -> s) -> Thermite s m Unit
+modify f = liftFreeT (Modify f unit)
 
 -- | A type synonym for action handlers, which take an action, the current properties
 -- | for the component, and a state update function, and return a computation in the `Eff` monad.
@@ -54,7 +90,7 @@ type PerformAction eff state props action =
   action ->
   props ->
   state ->
-  Producer (state -> state) (Aff eff) Unit
+  Thermite state (Aff eff) Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
@@ -181,19 +217,13 @@ createReactSpec (Spec spec) state =
     props <- React.getProps this
     state <- React.readState this
 
-    let process :: Process (Aff eff) Unit
-        process = spec.performAction action props state $$ consumer'
-
-        forgetEff :: forall eff1 a. Eff eff1 a -> Eff eff a
+    let forgetEff :: forall eff1 a. Eff eff1 a -> Eff eff a
         forgetEff = unsafeInterleaveEff
 
-        consumer' :: Consumer (state -> state) (Aff eff) Unit
-        consumer' = consumer \state' -> do
-          later $ liftEff $ forgetEff $ React.transformState this state'
-          pure Nothing
-    unsafeInterleaveEff $ launchAff $ runProcess process
-    -- unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
-    return unit
+        get = liftEff $ forgetEff $ React.readState this
+        set st = liftEff $ forgetEff $ React.writeState this st
+
+    unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get set
 
   render :: React.Render props state eff
   render this = map React.DOM.div' $
@@ -247,7 +277,7 @@ focus lens prism (Spec spec) = Spec
   performAction a p st =
     case matching prism a of
       Left _ -> pure unit
-      Right a' -> bimapFreeT (bimap (over lens) id) id $ spec.performAction a' p (view lens st)
+      Right a' -> bimapFreeT (mapQuery (view lens) (over lens)) id $ spec.performAction a' p (view lens st)
 
   render :: Render state2 props action2
   render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -269,6 +299,7 @@ match prism = focus id prism
 
 -- | Create a component which renders an optional subcomponent.
 split :: forall eff props state1 state2 action.
+  Monoid state2 =>
   PrismP state1 state2 ->
   Spec eff state2 props action ->
   Spec eff state1 props action
@@ -281,7 +312,7 @@ split prism (Spec spec) = Spec
   performAction a p st =
     case matching prism st of
       Left _ -> pure unit
-      Right st' -> bimapFreeT (bimap (over prism) id) id $ spec.performAction a p st'
+      Right st' -> bimapFreeT (mapQuery (view prism) (over prism)) id $ spec.performAction a p st'
 
   render :: Render state1 props action
   render k p st children =
@@ -304,7 +335,7 @@ foreach f = Spec
   where
   performAction :: PerformAction eff (List state) props (Tuple Int action)
   performAction (Tuple i a) p sts =
-    for_ (sts !! i) \st -> case f i of Spec s -> bimapFreeT (bimap (modifying i) id) id $ s.performAction a p st
+    for_ (sts !! i) \st -> case f i of Spec s -> bimapFreeT (mapQuery (const st) (modifying i)) id $ s.performAction a p st
     where
     modifying :: Int -> (state -> state) -> List state -> List state
     modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
