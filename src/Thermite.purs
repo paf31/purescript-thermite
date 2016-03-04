@@ -222,7 +222,7 @@ createReactSpec (Spec spec) state =
         forgetEff = unsafeInterleaveEff
 
         get = liftEff $ forgetEff $ React.readState this
-        set st = liftEff $ forgetEff $ React.writeState this st
+        set st = later $ liftEff $ forgetEff $ React.writeState this st
 
     unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get set
 
