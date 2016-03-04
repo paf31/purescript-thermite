@@ -24,14 +24,14 @@ module Thermite
   , simpleSpec
   , createClass
   , createReactSpec
-  {-
   , withState
   , focus
   , focusState
   , match
   , split
   , foreach
-  -}
+  , get
+  , modify
   ) where
 
 import Prelude
