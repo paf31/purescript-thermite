@@ -32,6 +32,7 @@ module Thermite
   , foreach
   , get
   , modify
+  , mapQuery
   ) where
 
 import Prelude
