@@ -56,6 +56,8 @@ import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
 import Control.Monad.Free.Trans
 import Control.Monad.Rec.Class
 
+import Debug.Trace
+
 data Query s a = Get (s -> a) | Modify (s -> s) a
 
 mapQuery :: forall st1 st2 a. (st1 -> st2) -> ((st2 -> st2) -> (st1 -> st1)) -> Query st2 a -> Query st1 a
@@ -68,15 +70,14 @@ instance queryFunctor :: Functor (Query s) where
 
 type Thermite s = Co (Query s)
 
-runThermite :: forall s m a. (MonadRec m) => Thermite s m a -> m s -> (s -> m s) -> m a
-runThermite th get set = runFreeT eval th
+runThermite :: forall s m a. (MonadRec m) => Thermite s m a -> m s -> ((s -> s) -> m s) -> m a
+runThermite th get modify = runFreeT eval th
   where
     eval (Get k) = do
       st <- get
       return (k st)
     eval (Modify k next) = do
-      st <- get
-      set (k st)
+      modify k
       return next
 
 get :: forall s m. (Monad m) => Thermite s m s
@@ -222,9 +223,9 @@ createReactSpec (Spec spec) state =
         forgetEff = unsafeInterleaveEff
 
         get = liftEff $ forgetEff $ React.readState this
-        set st = later $ liftEff $ forgetEff $ React.writeState this st
+        modify k = later $ liftEff $ forgetEff $ React.transformState this k
 
-    unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get set
+    unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get modify
 
   render :: React.Render props state eff
   render this = map React.DOM.div' $
