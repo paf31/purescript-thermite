@@ -10,11 +10,11 @@ import Data.Either
 import Data.Filter
 import Data.Foldable (fold)
 
-import qualified Thermite as T
+import Thermite as T
 
-import qualified React as R
-import qualified React.DOM as R
-import qualified React.DOM.Props as RP
+import React as R
+import React.DOM as R
+import React.DOM.Props as RP
 
 import Components.Task
 

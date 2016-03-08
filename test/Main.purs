@@ -22,16 +22,16 @@ import Control.Monad.Eff
 
 import Components.TaskList
 
-import qualified Thermite as T
+import Thermite as T
 
-import qualified React as R
-import qualified ReactDOM as RDOM
+import React as R
+import ReactDOM as RDOM
 
-import qualified DOM as DOM
-import qualified DOM.HTML as DOM
-import qualified DOM.HTML.Types as DOM
-import qualified DOM.HTML.Window as DOM
-import qualified DOM.Node.ParentNode as DOM
+import DOM as DOM
+import DOM.HTML as DOM
+import DOM.HTML.Types as DOM
+import DOM.HTML.Window as DOM
+import DOM.Node.ParentNode as DOM
 
 -- | The main method creates the task list component, and renders it to the document body.
 main :: Eff (dom :: DOM.DOM) Unit
