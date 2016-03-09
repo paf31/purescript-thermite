@@ -2,10 +2,10 @@ module Components.Task where
 
 import Prelude
 
-import qualified Thermite as T
+import Thermite as T
 
-import qualified React.DOM as R
-import qualified React.DOM.Props as RP
+import React.DOM as R
+import React.DOM.Props as RP
 
 import Unsafe.Coerce
 
