@@ -22,15 +22,16 @@ import Control.Monad.Eff
 
 import Components.TaskList
 
-import qualified Thermite as T
+import Thermite as T
 
-import qualified React as R
+import React as R
+import ReactDOM as RDOM
 
-import qualified DOM as DOM
-import qualified DOM.HTML as DOM
-import qualified DOM.HTML.Types as DOM
-import qualified DOM.HTML.Window as DOM
-import qualified DOM.Node.ParentNode as DOM
+import DOM as DOM
+import DOM.HTML as DOM
+import DOM.HTML.Types as DOM
+import DOM.HTML.Window as DOM
+import DOM.Node.ParentNode as DOM
 
 -- | The main method creates the task list component, and renders it to the document body.
 main :: Eff (dom :: DOM.DOM) Unit
@@ -38,4 +39,4 @@ main = void do
   let component = T.createClass taskList initialTaskListState
   document <- DOM.window >>= DOM.document
   container <- fromJust <<< toMaybe <$> DOM.querySelector "#container" (DOM.htmlDocumentToParentNode document)
-  R.render (R.createFactory component {}) container
+  RDOM.render (R.createFactory component {}) container

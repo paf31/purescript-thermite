@@ -16,6 +16,8 @@ pulp build
 pulp test -r cat > html/index.js
 ```
 
+You can also now use `npm test` to run the test command above.
+
 ## Getting Started
 
 Thermite components are defined in parts:
@@ -31,11 +33,12 @@ Here is an example. We'll build a component which displays the value of a intege
 First of all, we need to import some modules:
 
 ```purescript
-import qualified Thermite as T
+import Thermite as T
 
-import qualified React as R
-import qualified React.DOM as R
-import qualified React.DOM.Props as RP
+import React as R
+import React.DOM as R
+import React.DOM.Props as RP
+import ReactDOM as RDOM
 ```
 
 In our component, users will be able to take two actions - increment and decrement - which will be represented as buttons later:
@@ -102,7 +105,7 @@ The `render` function from `purescript-react` can then be used to render our com
 ```purescript
 main = do
   let component = T.createClass spec initialState
-  body >>= R.render (R.createFactory component {})
+  body >>= RDOM.render (R.createFactory component {})
 ```
 
 ## Combining Components
