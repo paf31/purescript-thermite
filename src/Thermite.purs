@@ -49,7 +49,7 @@ import Data.Monoid
 import Data.Foldable (for_)
 
 import Control.Coroutine
-import Control.Monad.Aff (Aff, later, launchAff)
+import Control.Monad.Aff (Aff, later, makeAff, launchAff)
 import Control.Monad.Eff
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
@@ -70,7 +70,7 @@ instance queryFunctor :: Functor (Query s) where
 
 type Thermite s = Co (Query s)
 
-runThermite :: forall s m a. (MonadRec m) => Thermite s m a -> m s -> ((s -> s) -> m s) -> m a
+runThermite :: forall s m a. (MonadRec m) => Thermite s m a -> m s -> ((s -> s) -> m Unit) -> m a
 runThermite th get modify = runFreeT eval th
   where
     eval (Get k) = do
@@ -223,9 +223,11 @@ createReactSpec (Spec spec) state =
         forgetEff = unsafeInterleaveEff
 
         get = liftEff $ forgetEff $ React.readState this
-        modify k = later $ liftEff $ forgetEff $ React.transformState this k
+        modify' k = makeAff \_ success -> unsafeInterleaveEff $ do
+          st <- React.readState this
+          void $ React.writeStateWithCallback this (k st) (unsafeInterleaveEff $ success unit)
 
-    unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get modify
+    unsafeInterleaveEff $ launchAff $ runThermite (spec.performAction action props state) get modify'
 
   render :: React.Render props state eff
   render this = map React.DOM.div' $
