@@ -32,16 +32,16 @@ module Thermite
 
 import Prelude
 
-import Data.Lens
-import Data.List
-import Data.Tuple
-import Data.Either
-import Data.Maybe
-import Data.Monoid
+import Data.Lens (PrismP, LensP, matching, over, view, review, lens)
+import Data.List (List(..), (!!), modifyAt)
+import Data.Tuple (Tuple(..))
+import Data.Either (Either(..))
+import Data.Maybe (fromMaybe)
+import Data.Monoid (class Monoid)
 import Data.Foldable (for_)
 
-import Control.Monad.Eff
-import Control.Monad.Eff.Unsafe
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
 
 -- | A type synonym for action handlers, which take an action, the current properties
 -- | for the component, and a state update function, and return a computation in the `Eff` monad.
