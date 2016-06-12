@@ -16,9 +16,9 @@
     "url": "git://github.com/paf31/purescript-thermite.git"
   },
   "dependencies": {
-    "purescript-dom": "^0.2.6",
-    "purescript-profunctor-lenses": "~0.5.0",
-    "purescript-react": "^0.6.0",
-    "purescript-react-dom": "^0.1.0"
+    "purescript-dom": "^1.0.0",
+    "purescript-profunctor-lenses": "^1.0.0",
+    "purescript-react": "^1.0.0",
+    "purescript-react-dom": "^1.0.0"
   }
 }

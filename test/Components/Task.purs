@@ -2,12 +2,10 @@ module Components.Task where
 
 import Prelude
 
-import Thermite as T
-
 import React.DOM as R
 import React.DOM.Props as RP
-
-import Unsafe.Coerce
+import Thermite as T
+import Unsafe.Coerce (unsafeCoerce)
 
 -- | Actions for the task component
 data TaskAction

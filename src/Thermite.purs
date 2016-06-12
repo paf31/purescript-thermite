@@ -43,14 +43,17 @@ import Data.Foldable (for_)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
 
+import React as React
+import React.DOM (div')
+
 -- | A type synonym for action handlers, which take an action, the current properties
 -- | for the component, and a state update function, and return a computation in the `Eff` monad.
-type PerformAction eff state props action =
-  action ->
-  props ->
-  state ->
-  ((state -> state) -> Eff eff Unit) ->
-  Eff eff Unit
+type PerformAction eff state props action
+   = action
+  -> props
+  -> state
+  -> ((state -> state) -> Eff eff Unit)
+  -> Eff eff Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
@@ -68,12 +71,12 @@ type EventHandler =
 
 -- | A rendering function, which takes an action handler function, the current state and
 -- | props, an array of child nodes and returns a HTML document.
-type Render state props action =
-   (action -> EventHandler) ->
-   props ->
-   state ->
-   Array React.ReactElement ->
-   Array React.ReactElement
+type Render state props action
+   = (action -> EventHandler)
+  -> props
+  -> state
+  -> Array React.ReactElement
+  -> Array React.ReactElement
 
 -- | A default `Render` implementation which renders nothing.
 -- |
@@ -130,11 +133,11 @@ _render = lens (\(Spec s) -> s.render) (\(Spec s) r -> Spec (s { render = r }))
 -- |   performAction :: PerformAction _ Int _ Action
 -- |   performAction Increment _ n k = k (n + 1)
 -- | ```
-simpleSpec ::
-  forall eff state props action.
-    PerformAction eff state props action ->
-    Render state props action ->
-    Spec eff state props action
+simpleSpec
+  :: forall eff state props action
+   . PerformAction eff state props action
+  -> Render state props action
+  -> Spec eff state props action
 simpleSpec performAction render =
   Spec { performAction: performAction
        , render: render
@@ -152,7 +155,11 @@ instance monoidSpec :: Monoid (Spec eff state props action) where
                       (\_ _ _ _ -> [])
 
 -- | Create a React component class from a Thermite component `Spec`.
-createClass :: forall eff state props action. Spec eff state props action -> state -> React.ReactClass props
+createClass
+  :: forall eff state props action
+   . Spec eff state props action
+  -> state
+  -> React.ReactClass props
 createClass spec state = React.createClass <<< _.spec $ createReactSpec spec state
 
 -- | Create a React component spec from a Thermite component `Spec`.
@@ -160,30 +167,30 @@ createClass spec state = React.createClass <<< _.spec $ createReactSpec spec sta
 -- | This function is a low-level alternative to `createClass`, used when the React
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
-createReactSpec ::
-  forall eff state props action.
-  Spec eff state props action ->
-  state ->
-  { spec :: React.ReactSpec props state eff
-  , dispatcher :: React.ReactThis props state -> action -> EventHandler
-  }
+createReactSpec
+  :: forall eff state props action
+   . Spec eff state props action
+  -> state
+  -> { spec :: React.ReactSpec props state eff
+     , dispatcher :: React.ReactThis props state -> action -> EventHandler
+     }
 createReactSpec (Spec spec) state =
-  { spec: React.spec state render
-  , dispatcher: dispatch
-  }
+    { spec: React.spec state render
+    , dispatcher
+    }
   where
-  dispatch :: React.ReactThis props state -> action -> EventHandler
-  dispatch this action = do
-    props <- React.getProps this
-    state <- React.readState this
-    unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
+    dispatcher :: React.ReactThis props state -> action -> EventHandler
+    dispatcher this action = do
+      props <- React.getProps this
+      state <- React.readState this
+      unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
 
-  render :: React.Render props state eff
-  render this = map React.DOM.div' $
-    spec.render (dispatch this)
-      <$> React.getProps this
-      <*> React.readState this
-      <*> React.getChildren this
+    render :: React.Render props state eff
+    render this = map div' $
+      spec.render (dispatcher this)
+        <$> React.getProps this
+        <*> React.readState this
+        <*> React.getChildren this
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
@@ -195,11 +202,11 @@ withState ::
   Spec eff state props action
 withState f = simpleSpec performAction render
   where
-  performAction :: PerformAction eff state props action
-  performAction a p st = view _performAction (f st) a p st
+    performAction :: PerformAction eff state props action
+    performAction a p st = view _performAction (f st) a p st
 
-  render :: Render state props action
-  render k p st = view _render (f st) k p st
+    render :: Render state props action
+    render k p st = view _render (f st) k p st
 
 -- | Change the state type, using a lens to focus on a part of the state.
 -- |
@@ -216,87 +223,86 @@ withState f = simpleSpec performAction render
 -- |
 -- | Actions will only be handled when the prism matches its input, otherwise
 -- | the action will be ignored, and should be handled by some other component.
-focus :: forall eff props state2 state1 action1 action2.
-  LensP state2 state1 ->
-  PrismP action2 action1 ->
-  Spec eff state1 props action1 ->
-  Spec eff state2 props action2
-focus lens prism (Spec spec) = Spec
-  { performAction: performAction
-  , render: render
-  }
+focus
+  :: forall eff props state2 state1 action1 action2
+   . LensP state2 state1
+  -> PrismP action2 action1
+  -> Spec eff state1 props action1
+  -> Spec eff state2 props action2
+focus lens prism (Spec spec) = Spec { performAction, render }
   where
-  performAction :: PerformAction eff state2 props action2
-  performAction a p st k =
-    case matching prism a of
-      Left _ -> pure unit
-      Right a' -> spec.performAction a' p (view lens st) (k <<< over lens)
+    performAction :: PerformAction eff state2 props action2
+    performAction a p st k =
+      case matching prism a of
+        Left _ -> pure unit
+        Right a' -> spec.performAction a' p (view lens st) (k <<< over lens)
 
-  render :: Render state2 props action2
-  render k p st = spec.render (k <<< review prism) p (view lens st)
+    render :: Render state2 props action2
+    render k p st = spec.render (k <<< review prism) p (view lens st)
 
 -- | A variant of `focus` which only changes the state type, by applying a `Lens`.
-focusState :: forall eff props state2 state1 action.
-  LensP state2 state1 ->
-  Spec eff state1 props action ->
-  Spec eff state2 props action
+focusState
+  :: forall eff props state2 state1 action
+   . LensP state2 state1
+  -> Spec eff state1 props action
+  -> Spec eff state2 props action
 focusState lens = focus lens id
 
 -- | A variant of `focus` which only changes the action type, by applying a `Prism`,
 -- | effectively matching some subset of a larger action type.
-match :: forall eff props state action1 action2.
-  PrismP action2 action1 ->
-  Spec eff state props action1 ->
-  Spec eff state props action2
+match
+  :: forall eff props state action1 action2
+   . PrismP action2 action1
+  -> Spec eff state props action1
+  -> Spec eff state props action2
 match prism = focus id prism
 
 -- | Create a component which renders an optional subcomponent.
-split :: forall eff props state1 state2 action.
-  PrismP state1 state2 ->
-  Spec eff state2 props action ->
-  Spec eff state1 props action
-split prism (Spec spec) = Spec
-  { performAction: performAction
-  , render: render
-  }
+split
+  :: forall eff props state1 state2 action
+   . PrismP state1 state2
+  -> Spec eff state2 props action
+  -> Spec eff state1 props action
+split prism (Spec spec) = Spec { performAction, render }
   where
-  performAction :: PerformAction eff state1 props action
-  performAction a p st k =
-    case matching prism st of
-      Left _ -> pure unit
-      Right st' -> spec.performAction a p st' (k <<< over prism)
+    performAction :: PerformAction eff state1 props action
+    performAction a p st k =
+      case matching prism st of
+        Left _ -> pure unit
+        Right st' -> spec.performAction a p st' (k <<< over prism)
 
-  render :: Render state1 props action
-  render k p st children =
-    case matching prism st of
-      Left _ -> []
-      Right st' -> spec.render k p st' children
+    render :: Render state1 props action
+    render k p st children =
+      case matching prism st of
+        Left _ -> []
+        Right st' -> spec.render k p st' children
 
 -- | Create a component whose state is described by a list, displaying one subcomponent
 -- | for each entry in the list.
 -- |
 -- | The action type is modified to take the index of the originating subcomponent as an
 -- | additional argument.
-foreach :: forall eff props state action.
-  (Int -> Spec eff state props action) ->
-  Spec eff (List state) props (Tuple Int action)
+foreach
+  :: forall eff props state action
+   . (Int -> Spec eff state props action)
+  -> Spec eff (List state) props (Tuple Int action)
 foreach f = Spec
-  { performAction: performAction
-  , render: render
-  }
+    { performAction: performAction
+    , render: render
+    }
   where
-  performAction :: PerformAction eff (List state) props (Tuple Int action)
-  performAction (Tuple i a) p sts k =
-    for_ (sts !! i) \st -> case f i of Spec s -> s.performAction a p st (k <<< modifying i)
-    where
-    modifying :: Int -> (state -> state) -> List state -> List state
-    modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
+    performAction :: PerformAction eff (List state) props (Tuple Int action)
+    performAction (Tuple i a) p sts k =
+      for_ (sts !! i) \st -> case f i of Spec s -> s.performAction a p st (k <<< modifying i)
+      where
+        modifying :: Int -> (state -> state) -> List state -> List state
+        modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
 
-  render :: Render (List state) props (Tuple Int action)
-  render k p sts _ = foldWithIndex (\i st els -> case f i of Spec s -> els <> s.render (k <<< Tuple i) p st []) sts []
+    render :: Render (List state) props (Tuple Int action)
+    render k p sts _ = foldWithIndex (\i st els -> case f i of Spec s -> els <> s.render (k <<< Tuple i) p st []) sts []
 
-  foldWithIndex :: forall a r. (Int -> a -> r -> r) -> List a -> r -> r
-  foldWithIndex f = go 0
-    where
-    go _ Nil         r = r
-    go i (Cons x xs) r = go (i + 1) xs (f i x r)
+    foldWithIndex :: forall a r. (Int -> a -> r -> r) -> List a -> r -> r
+    foldWithIndex f = go 0
+      where
+      go _ Nil         r = r
+      go i (Cons x xs) r = go (i + 1) xs (f i x r)

@@ -14,29 +14,24 @@
 module Test.Main (main) where
 
 import Prelude
-
-import Data.Maybe.Unsafe
-import Data.Nullable (toMaybe)
-
-import Control.Monad.Eff
-
-import Components.TaskList
-
-import Thermite as T
-
+import Components.TaskList (initialTaskListState, taskList)
+import Control.Monad.Eff (Eff)
+import DOM (DOM) as DOM
+import DOM.HTML (window) as DOM
+import DOM.HTML.Types (htmlDocumentToParentNode) as DOM
+import DOM.HTML.Window (document) as DOM
+import DOM.Node.ParentNode (querySelector) as DOM
 import React as R
 import ReactDOM as RDOM
-
-import DOM as DOM
-import DOM.HTML as DOM
-import DOM.HTML.Types as DOM
-import DOM.HTML.Window as DOM
-import DOM.Node.ParentNode as DOM
+import Thermite as T
+import Data.Maybe (fromJust)
+import Data.Nullable (toMaybe)
+import Partial.Unsafe (unsafePartial)
 
 -- | The main method creates the task list component, and renders it to the document body.
 main :: Eff (dom :: DOM.DOM) Unit
 main = void do
   let component = T.createClass taskList initialTaskListState
   document <- DOM.window >>= DOM.document
-  container <- fromJust <<< toMaybe <$> DOM.querySelector "#container" (DOM.htmlDocumentToParentNode document)
+  container <- unsafePartial (fromJust <<< toMaybe <$> DOM.querySelector "#container" (DOM.htmlDocumentToParentNode document))
   RDOM.render (R.createFactory component {}) container
