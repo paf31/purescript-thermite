@@ -19,6 +19,9 @@
     "purescript-dom": "^1.0.0",
     "purescript-profunctor-lenses": "^1.0.0",
     "purescript-react": "^1.0.0",
-    "purescript-react-dom": "^1.0.0"
+    "purescript-react-dom": "^1.0.0",
+    "purescript-freet": "^1.0.0",
+    "purescript-aff": "^1.0.0",
+    "purescript-coroutines": "^1.0.0"
   }
 }

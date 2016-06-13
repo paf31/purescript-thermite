@@ -15,7 +15,7 @@ Thermite also provides type class instances and lens combinators for composing `
 #### `PerformAction`
 
 ``` purescript
-type PerformAction eff state props action = action -> props -> state -> ((state -> state) -> Eff eff Unit) -> Eff eff Unit
+type PerformAction eff state props action = action -> props -> state -> Producer (state -> state) (Aff eff) Unit
 ```
 
 A type synonym for action handlers, which take an action, the current properties
@@ -219,4 +219,33 @@ for each entry in the list.
 The action type is modified to take the index of the originating subcomponent as an
 additional argument.
 
+
+### Re-exported from Control.Coroutine:
+
+#### `Producer`
+
+``` purescript
+type Producer o = Co (Emit o)
+```
+
+A type synonym for a `Co`routine which only emits values.
+
+#### `producer`
+
+``` purescript
+producer :: forall o m r. Monad m => m (Either o r) -> Producer o m r
+```
+
+Create a `Producer` by providing a monadic function that produces values.
+
+The function should pure a value of type `r` at most once, when the
+`Producer` is ready to close.
+
+#### `emit`
+
+``` purescript
+emit :: forall m o. Monad m => o -> Producer o m Unit
+```
+
+Emit an output value.
 
