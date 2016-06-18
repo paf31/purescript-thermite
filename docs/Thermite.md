@@ -15,11 +15,17 @@ Thermite also provides type class instances and lens combinators for composing `
 #### `PerformAction`
 
 ``` purescript
-type PerformAction eff state props action = action -> props -> state -> Producer (state -> state) (Aff eff) Unit
+type PerformAction eff state props action = action -> props -> state -> CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
 ```
 
-A type synonym for action handlers, which take an action, the current properties
-for the component, and a state update function, and return a computation in the `Eff` monad.
+A type synonym for an action handler, which takes an action, the current props
+and state for the component, and return a `CoTransformer` which will emit
+state updates asynchronously.
+
+`Control.Coroutine.cotransform` can be used to emit state update functions
+and wait for the new state value. If `cotransform` returns `Nothing`, then
+the state could not be updated. Usually, this will not happen, but it is possible
+in certain use cases involving `split` and `foreach`.
 
 #### `defaultPerformAction`
 
@@ -222,30 +228,20 @@ additional argument.
 
 ### Re-exported from Control.Coroutine:
 
-#### `Producer`
+#### `CoTransformer`
 
 ``` purescript
-type Producer o = Co (Emit o)
+type CoTransformer i o = Co (CoTransform i o)
 ```
 
-A type synonym for a `Co`routine which only emits values.
+A type synonym for a `Co`routine which "cotransforms" values, emitting an output
+before waiting for its input.
 
-#### `producer`
+#### `cotransform`
 
 ``` purescript
-producer :: forall o m r. Monad m => m (Either o r) -> Producer o m r
+cotransform :: forall m i o. Monad m => o -> CoTransformer i o m i
 ```
 
-Create a `Producer` by providing a monadic function that produces values.
-
-The function should pure a value of type `r` at most once, when the
-`Producer` is ready to close.
-
-#### `emit`
-
-``` purescript
-emit :: forall m o. Monad m => o -> Producer o m Unit
-```
-
-Emit an output value.
+Cotransform input values.
 

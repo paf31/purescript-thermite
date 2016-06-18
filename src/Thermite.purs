@@ -34,30 +34,40 @@ module Thermite
 
 import Prelude
 
-import Control.Coroutine (Producer, Consumer, ($$), ($~), await, runProcess, transform)
-import Control.Coroutine (Producer, emit, producer) as T
+import Control.Coroutine (CoTransformer,
+                          runProcess, transform, fuseCoTransform,
+                          composeCoTransformers, cotransform,
+                          transformCoTransformL, transformCoTransformR)
+import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
+import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Rec.Class (forever)
 import Control.Monad.Trans (lift)
 import Data.Either (Either(..))
 import Data.Foldable (for_)
-import Data.Lens (PrismP, LensP, matching, view, review, lens, over)
+import Data.Lens (PrismP, LensP, matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
 import React as React
 import React.DOM (div')
 
--- | A type synonym for action handlers, which take an action, the current properties
--- | for the component, and a state update function, and return a computation in the `Eff` monad.
+-- | A type synonym for an action handler, which takes an action, the current props
+-- | and state for the component, and return a `CoTransformer` which will emit
+-- | state updates asynchronously.
+-- |
+-- | `Control.Coroutine.cotransform` can be used to emit state update functions
+-- | and wait for the new state value. If `cotransform` returns `Nothing`, then
+-- | the state could not be updated. Usually, this will not happen, but it is possible
+-- | in certain use cases involving `split` and `foreach`.
 type PerformAction eff state props action
    = action
   -> props
   -> state
-  -> Producer (state -> state) (Aff eff) Unit
+  -> CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
@@ -190,18 +200,24 @@ createReactSpec (Spec spec) state =
       let coerceEff :: forall eff1 a. Eff eff1 a -> Eff eff a
           coerceEff = unsafeInterleaveEff
 
-          modify :: (state -> state) -> Aff eff Unit
+          modify :: (state -> state) -> Aff eff (Maybe state)
           modify f =
             makeAff \_ k -> unsafeInterleaveEff do
-              st <- React.readState this
-              void $ React.writeStateWithCallback this (f st) (unsafeInterleaveEff (k unit))
+              old <- React.readState this
+              let new = f old
+              void $ React.writeStateWithCallback this new (unsafeInterleaveEff (k (pure new)))
 
-          consumer :: Consumer (state -> state) (Aff eff) Unit
-          consumer = forever do
-            f <- await
+          cotransformer :: CoTransformer (state -> state) (Maybe state) (Aff eff) Unit
+          cotransformer = forever do
+            st <- lift (liftEff (coerceEff (React.readState this)))
+            f <- cotransform (Just st)
             lift (modify f)
 
-      unsafeInterleaveEff (launchAff (runProcess (spec.performAction action props state $$ consumer)))
+      let process = forever (transform id)
+                    `fuseCoTransform`
+                    (cotransformer `composeCoTransformers` spec.performAction action props state)
+
+      unsafeInterleaveEff (launchAff (runProcess process))
 
     render :: React.Render props state eff
     render this = map div' $
@@ -253,7 +269,9 @@ focus lens prism (Spec spec) = Spec { performAction, render }
     performAction a p st =
       case matching prism a of
         Left _ -> pure unit
-        Right a' -> spec.performAction a' p (view lens st) $~ transform (over lens)
+        Right a' -> transform (map (view lens))
+                    `transformCoTransformL` spec.performAction a' p (view lens st)
+                    `transformCoTransformR` transform (over lens)
 
     render :: Render state2 props action2
     render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -287,7 +305,9 @@ split prism (Spec spec) = Spec { performAction, render }
     performAction a p st =
       case matching prism st of
         Left _ -> pure unit
-        Right st2 -> spec.performAction a p st2 $~ transform (over prism)
+        Right st2 -> transform (_ >>= preview prism)
+                     `transformCoTransformL` spec.performAction a p st2
+                     `transformCoTransformR` transform (over prism)
 
     render :: Render state1 props action
     render k p st children =
@@ -313,7 +333,9 @@ foreach f = Spec
     performAction (Tuple i a) p sts =
         for_ (sts !! i) \st ->
           case f i of
-            Spec s -> s.performAction a p st $~ transform (modifying i)
+            Spec s -> transform (_ >>= (_ !! i))
+                      `transformCoTransformL` s.performAction a p st
+                      `transformCoTransformR` transform (modifying i)
       where
         modifying :: Int -> (state -> state) -> List state -> List state
         modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
