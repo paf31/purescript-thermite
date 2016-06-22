@@ -88,8 +88,8 @@ taskList = container $ fold
         -- The `NewTask` action is handled here
         -- Everything else is handled by some other child component so is ignored here.
         performAction :: T.PerformAction eff TaskListState props TaskListAction
-        performAction (NewTask s) _ _ k = k $ \state -> state { tasks = Cons (initialTask s) state.tasks }
-        performAction _ _ _ _ = pure unit
+        performAction (NewTask s) _ _ = void $ T.cotransform $ \state -> state { tasks = Cons (initialTask s) state.tasks }
+        performAction _           _ _ = pure unit
 
     -- This function wraps a `Spec`'s `Render` function to filter out tasks.
     applyFilter :: forall action. Filter -> T.Spec eff Task props action -> T.Spec eff Task props action
@@ -144,7 +144,7 @@ taskList = container $ fold
     listActions = T.simpleSpec performAction T.defaultRender
       where
       performAction :: T.PerformAction eff TaskListState props TaskListAction
-      performAction (TaskAction i RemoveTask) _ _ k = k \state -> state { tasks = fromMaybe state.tasks (deleteAt i state.tasks) }
-      performAction (SetEditText s)           _ _ k = k $ _ { editText = s }
-      performAction (SetFilter f)             _ _ k = k $ _ { filter = f }
-      performAction _ _ _ _ = pure unit
+      performAction (TaskAction i RemoveTask) _ _ = void $ T.cotransform \state -> state { tasks = fromMaybe state.tasks (deleteAt i state.tasks) }
+      performAction (SetEditText s)           _ _ = void $ T.cotransform (_ { editText = s })
+      performAction (SetFilter f)             _ _ = void $ T.cotransform (_ { filter = f })
+      performAction _                         _ _ = pure unit

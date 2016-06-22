@@ -15,11 +15,17 @@ Thermite also provides type class instances and lens combinators for composing `
 #### `PerformAction`
 
 ``` purescript
-type PerformAction eff state props action = action -> props -> state -> ((state -> state) -> Eff eff Unit) -> Eff eff Unit
+type PerformAction eff state props action = action -> props -> state -> CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
 ```
 
-A type synonym for action handlers, which take an action, the current properties
-for the component, and a state update function, and return a computation in the `Eff` monad.
+A type synonym for an action handler, which takes an action, the current props
+and state for the component, and return a `CoTransformer` which will emit
+state updates asynchronously.
+
+`Control.Coroutine.cotransform` can be used to emit state update functions
+and wait for the new state value. If `cotransform` returns `Nothing`, then
+the state could not be updated. Usually, this will not happen, but it is possible
+in certain use cases involving `split` and `foreach`.
 
 #### `defaultPerformAction`
 
@@ -219,4 +225,23 @@ for each entry in the list.
 The action type is modified to take the index of the originating subcomponent as an
 additional argument.
 
+
+### Re-exported from Control.Coroutine:
+
+#### `CoTransformer`
+
+``` purescript
+type CoTransformer i o = Co (CoTransform i o)
+```
+
+A type synonym for a `Co`routine which "cotransforms" values, emitting an output
+before waiting for its input.
+
+#### `cotransform`
+
+``` purescript
+cotransform :: forall m i o. Monad m => o -> CoTransformer i o m i
+```
+
+Cotransform input values.
 

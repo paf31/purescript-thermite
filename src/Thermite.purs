@@ -11,12 +11,12 @@
 -- | Thermite also provides type class instances and lens combinators for composing `Spec`s.
 
 module Thermite
-  ( PerformAction()
+  ( PerformAction
   , defaultPerformAction
-  , EventHandler()
-  , Render()
+  , EventHandler
+  , Render
   , defaultRender
-  , Spec()
+  , Spec
   , _performAction
   , _render
   , simpleSpec
@@ -28,36 +28,50 @@ module Thermite
   , match
   , split
   , foreach
+
+  , module T
   ) where
 
 import Prelude
 
-import Data.Lens (PrismP, LensP, matching, over, view, review, lens)
-import Data.List (List(..), (!!), modifyAt)
-import Data.Tuple (Tuple(..))
-import Data.Either (Either(..))
-import Data.Maybe (fromMaybe)
-import Data.Monoid (class Monoid)
-import Data.Foldable (for_)
-
+import Control.Coroutine (CoTransformer,
+                          runProcess, transform, fuseCoTransform,
+                          composeCoTransformers, cotransform,
+                          transformCoTransformL, transformCoTransformR)
+import Control.Coroutine (CoTransformer, cotransform) as T
+import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
-
+import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Rec.Class (forever)
+import Control.Monad.Trans (lift)
+import Data.Either (Either(..))
+import Data.Foldable (for_)
+import Data.Lens (PrismP, LensP, matching, view, review, preview, lens, over)
+import Data.List (List(..), (!!), modifyAt)
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Monoid (class Monoid)
+import Data.Tuple (Tuple(..))
 import React as React
 import React.DOM (div')
 
--- | A type synonym for action handlers, which take an action, the current properties
--- | for the component, and a state update function, and return a computation in the `Eff` monad.
+-- | A type synonym for an action handler, which takes an action, the current props
+-- | and state for the component, and return a `CoTransformer` which will emit
+-- | state updates asynchronously.
+-- |
+-- | `Control.Coroutine.cotransform` can be used to emit state update functions
+-- | and wait for the new state value. If `cotransform` returns `Nothing`, then
+-- | the state could not be updated. Usually, this will not happen, but it is possible
+-- | in certain use cases involving `split` and `foreach`.
 type PerformAction eff state props action
    = action
   -> props
   -> state
-  -> ((state -> state) -> Eff eff Unit)
-  -> Eff eff Unit
+  -> CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
-defaultPerformAction _ _ _ _ = pure unit
+defaultPerformAction _ _ _ = pure unit
 
 -- | A type synonym for an event handler which can be used to construct
 -- | `purescript-react`'s event attributes.
@@ -145,13 +159,13 @@ simpleSpec performAction render =
 
 instance semigroupSpec :: Semigroup (Spec eff state props action) where
   append (Spec spec1) (Spec spec2) =
-    Spec { performAction:       \a p s k -> do spec1.performAction a p s k
-                                               spec2.performAction a p s k
-         , render:              \k p s   -> spec1.render k p s       <> spec2.render k p s
+    Spec { performAction:       \a p s -> do spec1.performAction a p s
+                                             spec2.performAction a p s
+         , render:              \k p s   -> spec1.render k p s <> spec2.render k p s
          }
 
 instance monoidSpec :: Monoid (Spec eff state props action) where
-  mempty = simpleSpec (\_ _ _ _ -> pure unit)
+  mempty = simpleSpec (\_ _ _ -> pure unit)
                       (\_ _ _ _ -> [])
 
 -- | Create a React component class from a Thermite component `Spec`.
@@ -180,10 +194,30 @@ createReactSpec (Spec spec) state =
     }
   where
     dispatcher :: React.ReactThis props state -> action -> EventHandler
-    dispatcher this action = do
+    dispatcher this action = void do
       props <- React.getProps this
       state <- React.readState this
-      unsafeInterleaveEff $ spec.performAction action props state (void <<< unsafeInterleaveEff <<< React.transformState this)
+      let coerceEff :: forall eff1 a. Eff eff1 a -> Eff eff a
+          coerceEff = unsafeInterleaveEff
+
+          modify :: (state -> state) -> Aff eff (Maybe state)
+          modify f =
+            makeAff \_ k -> unsafeInterleaveEff do
+              old <- React.readState this
+              let new = f old
+              void $ React.writeStateWithCallback this new (unsafeInterleaveEff (k (pure new)))
+
+          cotransformer :: CoTransformer (state -> state) (Maybe state) (Aff eff) Unit
+          cotransformer = forever do
+            st <- lift (liftEff (coerceEff (React.readState this)))
+            f <- cotransform (Just st)
+            lift (modify f)
+
+      let process = forever (transform id)
+                    `fuseCoTransform`
+                    (cotransformer `composeCoTransformers` spec.performAction action props state)
+
+      unsafeInterleaveEff (launchAff (runProcess process))
 
     render :: React.Render props state eff
     render this = map div' $
@@ -196,10 +230,10 @@ createReactSpec (Spec spec) state =
 -- |
 -- | This can sometimes be useful in complex scenarios involving the `focus` and
 -- | `foreach` combinators.
-withState ::
-  forall eff state props action.
-  (state -> Spec eff state props action) ->
-  Spec eff state props action
+withState
+  :: forall eff state props action
+   . (state -> Spec eff state props action)
+  -> Spec eff state props action
 withState f = simpleSpec performAction render
   where
     performAction :: PerformAction eff state props action
@@ -232,10 +266,12 @@ focus
 focus lens prism (Spec spec) = Spec { performAction, render }
   where
     performAction :: PerformAction eff state2 props action2
-    performAction a p st k =
+    performAction a p st =
       case matching prism a of
         Left _ -> pure unit
-        Right a' -> spec.performAction a' p (view lens st) (k <<< over lens)
+        Right a' -> transform (map (view lens))
+                    `transformCoTransformL` spec.performAction a' p (view lens st)
+                    `transformCoTransformR` transform (over lens)
 
     render :: Render state2 props action2
     render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -266,10 +302,12 @@ split
 split prism (Spec spec) = Spec { performAction, render }
   where
     performAction :: PerformAction eff state1 props action
-    performAction a p st k =
+    performAction a p st =
       case matching prism st of
         Left _ -> pure unit
-        Right st' -> spec.performAction a p st' (k <<< over prism)
+        Right st2 -> transform (_ >>= preview prism)
+                     `transformCoTransformL` spec.performAction a p st2
+                     `transformCoTransformR` transform (over prism)
 
     render :: Render state1 props action
     render k p st children =
@@ -292,8 +330,12 @@ foreach f = Spec
     }
   where
     performAction :: PerformAction eff (List state) props (Tuple Int action)
-    performAction (Tuple i a) p sts k =
-      for_ (sts !! i) \st -> case f i of Spec s -> s.performAction a p st (k <<< modifying i)
+    performAction (Tuple i a) p sts =
+        for_ (sts !! i) \st ->
+          case f i of
+            Spec s -> transform (_ >>= (_ !! i))
+                      `transformCoTransformL` s.performAction a p st
+                      `transformCoTransformR` transform (modifying i)
       where
         modifying :: Int -> (state -> state) -> List state -> List state
         modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
