@@ -2,7 +2,7 @@
 
 [![Pursuit](http://pursuit.purescript.org/packages/purescript-thermite/badge)](http://pursuit.purescript.org/packages/purescript-thermite/)
 
-`purescript-thermite` is a simple PureScript wrapper for [`purescript-react`](http://github.com/purescript-contrib/purescript-react) inspired by `react-blaze`. It does not (and does not aim to) provide all of the functionality of ReactJS, but instead to provide a clean API to the most commonly-used parts of its API.
+`purescript-thermite` is a PureScript wrapper for [`purescript-react`](http://github.com/purescript-contrib/purescript-react). It does not provide all of the functionality of React, but instead to provide a clean API to the most commonly-used parts of its API. It is possible to use `purescript-react` for more specialized use cases.
 
 - [Try Thermite!](http://paf31.github.io/try-thermite)
 - [Module Documentation](docs/)
@@ -11,7 +11,7 @@
 ## Building
 
 ```
-pulp dep update
+bower update
 pulp build
 pulp test -r cat > html/index.js
 ```
@@ -80,16 +80,19 @@ The `performAction` function interprets actions by passing a function to the sta
 
 ```purescript
 performAction :: T.PerformAction _ State _ Action
-performAction Increment _ _ update = update $ \state -> state { counter = state.counter + 1 }
-performAction Decrement _ _ update = update $ \state -> state { counter = state.counter - 1 }
+performAction Increment _ _ = void (T.cotransform (\state -> state { counter = state.counter + 1 }))
+performAction Decrement _ _ = void (T.cotransform (\state -> state { counter = state.counter - 1 }))
 ```
 
-_Note_: since `PerformAction` is callback-based, we can also create asynchronous action handlers (using AJAX, for example):
+_Note_: `PerformAction` returns a _coroutine_, which can emit many asynchronous state updates using `cotransform`. This approach also allows us to create asynchronous and/or chunked action handlers (using AJAX or websockets, for example):
 
 ```purescript
+getIncrementValueFromServer :: Aff _ Int
+
 performAction :: T.PerformAction _ State _ Action
-performAction Increment _ _ update = getIncrementValueFromServer \amount ->
-  update $ \state -> state { counter = state.counter + amount }
+performAction Increment _ _ = forever do
+  Just amount <- lift getIncrementValueFromServer
+  void $ T.cotransform $ \state -> state { counter = state.counter + amount }
 ```
 
 With these pieces, we can create a `Spec` for our component:
@@ -114,7 +117,7 @@ The `Spec` type is an instance of the `Semigroup` and `Monoid` type classes. The
 
 In practice, the `state` and `action` types will not always match for the different subcomponents, so Thermite provides combinators for changing these type arguments: `focus` and `foreach`. These combinators are heavily inspired by the [OpticUI](https://github.com/zrho/purescript-optic-ui) library.
 
-See the [example project](test/Main.purs) for examples of these kinds of composition.
+See the [example project](test/) for examples of these kinds of composition.
 
 ### `focus`
 
