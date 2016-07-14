@@ -269,9 +269,9 @@ focus lens prism (Spec spec) = Spec { performAction, render }
     performAction a p st =
       case matching prism a of
         Left _ -> pure unit
-        Right a' -> transform (map (view lens))
+        Right a' -> forever (transform (map (view lens)))
                     `transformCoTransformL` spec.performAction a' p (view lens st)
-                    `transformCoTransformR` transform (over lens)
+                    `transformCoTransformR` forever (transform (over lens))
 
     render :: Render state2 props action2
     render k p st = spec.render (k <<< review prism) p (view lens st)
@@ -305,9 +305,9 @@ split prism (Spec spec) = Spec { performAction, render }
     performAction a p st =
       case matching prism st of
         Left _ -> pure unit
-        Right st2 -> transform (_ >>= preview prism)
+        Right st2 -> forever (transform (_ >>= preview prism))
                      `transformCoTransformL` spec.performAction a p st2
-                     `transformCoTransformR` transform (over prism)
+                     `transformCoTransformR` forever (transform (over prism))
 
     render :: Render state1 props action
     render k p st children =
@@ -333,9 +333,9 @@ foreach f = Spec
     performAction (Tuple i a) p sts =
         for_ (sts !! i) \st ->
           case f i of
-            Spec s -> transform (_ >>= (_ !! i))
+            Spec s -> forever (transform (_ >>= (_ !! i)))
                       `transformCoTransformL` s.performAction a p st
-                      `transformCoTransformR` transform (modifying i)
+                      `transformCoTransformR` forever (transform (modifying i))
       where
         modifying :: Int -> (state -> state) -> List state -> List state
         modifying i f sts' = fromMaybe sts' (modifyAt i f sts')

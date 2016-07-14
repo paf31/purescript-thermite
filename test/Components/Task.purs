@@ -49,5 +49,9 @@ taskSpec = T.simpleSpec performAction render
   -- _Note_: this component can only see actions of type `TaskAction`, but the `RemoveTask` action
   -- is ignored here: it will be handled by the parent component.
   performAction :: T.PerformAction eff Task props TaskAction
-  performAction (ChangeCompleted b)   _ _ = void (T.cotransform (_ { completed = b }))
+  performAction (ChangeCompleted b)   _ _ = void do
+    -- This is a test for issue #65.
+    -- In practice, we only need one `cotransform` here.
+    T.cotransform id
+    T.cotransform (_ { completed = b })
   performAction _                     _ _ = pure unit
