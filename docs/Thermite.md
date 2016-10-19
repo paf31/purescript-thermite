@@ -35,6 +35,22 @@ defaultPerformAction :: forall eff state props action. PerformAction eff state p
 
 A default `PerformAction` action implementation which ignores all actions.
 
+#### `writeState`
+
+``` purescript
+writeState :: forall state eff. state -> CoTransformer (Maybe state) (state -> state) (Aff eff) (Maybe state)
+```
+
+Replace the current component state.
+
+#### `modifyState`
+
+``` purescript
+modifyState :: forall state eff. (state -> state) -> CoTransformer (Maybe state) (state -> state) (Aff eff) (Maybe state)
+```
+
+An alias for `cotransform` - apply a function to the current component state.
+
 #### `EventHandler`
 
 ``` purescript
