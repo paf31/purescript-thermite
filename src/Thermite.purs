@@ -16,6 +16,8 @@ module Thermite
   , EventHandler
   , Render
   , defaultRender
+  , writeState
+  , modifyState
   , Spec
   , _performAction
   , _render
@@ -34,15 +36,15 @@ module Thermite
 
 import Prelude
 
-import Control.Coroutine (CoTransformer,
-                          runProcess, transform, fuseCoTransform,
-                          composeCoTransformers, cotransform,
-                          transformCoTransformL, transformCoTransformR)
+import Control.Coroutine (Transformer, CoTransformer, Transform(..),
+                          transform, transformCoTransformR, transformCoTransformL,
+                          runProcess, fuseCoTransform, cotransform)
 import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
 import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Free.Trans (freeT)
 import Control.Monad.Rec.Class (forever)
 import Control.Monad.Trans (lift)
 import Data.Either (Either(..))
@@ -72,6 +74,14 @@ type PerformAction eff state props action
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall eff state props action. PerformAction eff state props action
 defaultPerformAction _ _ _ = pure unit
+
+-- | Replace the current component state.
+writeState :: forall state eff. state -> CoTransformer (Maybe state) (state -> state) (Aff eff) (Maybe state)
+writeState st = cotransform (const st)
+
+-- | An alias for `cotransform` - apply a function to the current component state.
+modifyState :: forall state eff. (state -> state) -> CoTransformer (Maybe state) (state -> state) (Aff eff) (Maybe state)
+modifyState = cotransform
 
 -- | A type synonym for an event handler which can be used to construct
 -- | `purescript-react`'s event attributes.
@@ -200,22 +210,18 @@ createReactSpec (Spec spec) state =
       let coerceEff :: forall eff1 a. Eff eff1 a -> Eff eff a
           coerceEff = unsafeInterleaveEff
 
-          modify :: (state -> state) -> Aff eff (Maybe state)
-          modify f =
-            makeAff \_ k -> unsafeInterleaveEff do
-              old <- React.readState this
+          put :: state -> Aff eff state
+          put new = makeAff \_ k -> unsafeInterleaveEff do
+            void $ React.writeStateWithCallback this new (unsafeInterleaveEff (k new))
+
+          transformer :: Transformer (state -> state) (Maybe state) (Aff eff) Unit
+          transformer = forever $ freeT \_ -> do
+            old <- liftEff (coerceEff (React.readState this))
+            pure (Right (Transform \f ->
               let new = f old
-              void $ React.writeStateWithCallback this new (unsafeInterleaveEff (k (pure new)))
+              in Tuple (Just new) (lift (put new))))
 
-          cotransformer :: CoTransformer (state -> state) (Maybe state) (Aff eff) Unit
-          cotransformer = forever do
-            st <- lift (liftEff (coerceEff (React.readState this)))
-            f <- cotransform (Just st)
-            lift (modify f)
-
-      let process = forever (transform id)
-                    `fuseCoTransform`
-                    (cotransformer `composeCoTransformers` spec.performAction action props state)
+      let process = transformer `fuseCoTransform` spec.performAction action props state
 
       unsafeInterleaveEff (launchAff (runProcess process))
 

@@ -51,7 +51,7 @@ taskSpec = T.simpleSpec performAction render
   performAction :: T.PerformAction eff Task props TaskAction
   performAction (ChangeCompleted b)   _ _ = void do
     -- This is a test for issue #65.
-    -- In practice, we only need one `cotransform` here.
-    T.cotransform id
-    T.cotransform (_ { completed = b })
+    -- In practice, we only need one `modifyState` here.
+    T.modifyState id
+    T.modifyState (_ { completed = b })
   performAction _                     _ _ = pure unit
