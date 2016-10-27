@@ -42,14 +42,14 @@ import Control.Coroutine (Transformer, CoTransformer, Transform(..),
 import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Unsafe (unsafeInterleaveEff)
+import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Free.Trans (freeT)
 import Control.Monad.Rec.Class (forever)
-import Control.Monad.Trans (lift)
+import Control.Monad.Trans.Class (lift)
 import Data.Either (Either(..))
 import Data.Foldable (for_)
-import Data.Lens (PrismP, LensP, matching, view, review, preview, lens, over)
+import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (class Monoid)
@@ -120,7 +120,7 @@ newtype Spec eff state props action = Spec
   }
 
 -- | A `Lens` for accessing the `PerformAction` portion of a `Spec`.
-_performAction :: forall eff state props action. LensP (Spec eff state props action) (PerformAction eff state props action)
+_performAction :: forall eff state props action. Lens' (Spec eff state props action) (PerformAction eff state props action)
 _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { performAction = pa }))
 
 -- | A `Lens` for accessing the `Render` portion of a `Spec`.
@@ -133,7 +133,7 @@ _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { 
 -- | wrap = over _render \child dispatch props state childre  ->
 -- |   [ R.div [ RP.className "wrapper" ] [ child dispatch props state children ] ]
 -- | ```
-_render :: forall eff state props action. LensP (Spec eff state props action) (Render state props action)
+_render :: forall eff state props action. Lens' (Spec eff state props action) (Render state props action)
 _render = lens (\(Spec s) -> s.render) (\(Spec s) r -> Spec (s { render = r }))
 
 -- | Create a minimal `Spec`. The arguments are, in order:
@@ -208,11 +208,11 @@ createReactSpec (Spec spec) state =
       props <- React.getProps this
       state <- React.readState this
       let coerceEff :: forall eff1 a. Eff eff1 a -> Eff eff a
-          coerceEff = unsafeInterleaveEff
+          coerceEff = unsafeCoerceEff
 
           put :: state -> Aff eff state
-          put new = makeAff \_ k -> unsafeInterleaveEff do
-            void $ React.writeStateWithCallback this new (unsafeInterleaveEff (k new))
+          put new = makeAff \_ k -> unsafeCoerceEff do
+            void $ React.writeStateWithCallback this new (unsafeCoerceEff (k new))
 
           transformer :: Transformer (state -> state) (Maybe state) (Aff eff) Unit
           transformer = forever $ freeT \_ -> do
@@ -223,7 +223,7 @@ createReactSpec (Spec spec) state =
 
       let process = transformer `fuseCoTransform` spec.performAction action props state
 
-      unsafeInterleaveEff (launchAff (runProcess process))
+      unsafeCoerceEff (launchAff (runProcess process))
 
     render :: React.Render props state eff
     render this = map div' $
@@ -265,8 +265,8 @@ withState f = simpleSpec performAction render
 -- | the action will be ignored, and should be handled by some other component.
 focus
   :: forall eff props state2 state1 action1 action2
-   . LensP state2 state1
-  -> PrismP action2 action1
+   . Lens' state2 state1
+  -> Prism' action2 action1
   -> Spec eff state1 props action1
   -> Spec eff state2 props action2
 focus lens prism (Spec spec) = Spec { performAction, render }
@@ -285,7 +285,7 @@ focus lens prism (Spec spec) = Spec { performAction, render }
 -- | A variant of `focus` which only changes the state type, by applying a `Lens`.
 focusState
   :: forall eff props state2 state1 action
-   . LensP state2 state1
+   . Lens' state2 state1
   -> Spec eff state1 props action
   -> Spec eff state2 props action
 focusState lens = focus lens id
@@ -294,7 +294,7 @@ focusState lens = focus lens id
 -- | effectively matching some subset of a larger action type.
 match
   :: forall eff props state action1 action2
-   . PrismP action2 action1
+   . Prism' action2 action1
   -> Spec eff state props action1
   -> Spec eff state props action2
 match prism = focus id prism
@@ -302,7 +302,7 @@ match prism = focus id prism
 -- | Create a component which renders an optional subcomponent.
 split
   :: forall eff props state1 state2 action
-   . PrismP state1 state2
+   . Prism' state1 state2
   -> Spec eff state2 props action
   -> Spec eff state1 props action
 split prism (Spec spec) = Spec { performAction, render }

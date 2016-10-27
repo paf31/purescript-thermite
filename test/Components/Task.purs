@@ -31,7 +31,7 @@ taskSpec = T.simpleSpec performAction render
     [ R.tr' <<< map (R.td' <<< pure) $
         [ R.input [ RP._type "checkbox"
                   , RP.className "checkbox"
-                  , RP.checked (if s.completed then "checked" else "")
+                  , RP.checked s.completed
                   , RP.title "Mark as completed"
                   , RP.onChange \e -> dispatch (ChangeCompleted (unsafeCoerce e).target.checked)
                   ] []

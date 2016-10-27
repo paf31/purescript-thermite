@@ -101,7 +101,7 @@ Monoid (Spec eff state props action)
 #### `_performAction`
 
 ``` purescript
-_performAction :: forall eff state props action. LensP (Spec eff state props action) (PerformAction eff state props action)
+_performAction :: forall eff state props action. Lens' (Spec eff state props action) (PerformAction eff state props action)
 ```
 
 A `Lens` for accessing the `PerformAction` portion of a `Spec`.
@@ -109,7 +109,7 @@ A `Lens` for accessing the `PerformAction` portion of a `Spec`.
 #### `_render`
 
 ``` purescript
-_render :: forall eff state props action. LensP (Spec eff state props action) (Render state props action)
+_render :: forall eff state props action. Lens' (Spec eff state props action) (Render state props action)
 ```
 
 A `Lens` for accessing the `Render` portion of a `Spec`.
@@ -185,7 +185,7 @@ This can sometimes be useful in complex scenarios involving the `focus` and
 #### `focus`
 
 ``` purescript
-focus :: forall eff props state2 state1 action1 action2. LensP state2 state1 -> PrismP action2 action1 -> Spec eff state1 props action1 -> Spec eff state2 props action2
+focus :: forall eff props state2 state1 action1 action2. Lens' state2 state1 -> Prism' action2 action1 -> Spec eff state1 props action1 -> Spec eff state2 props action2
 ```
 
 Change the state type, using a lens to focus on a part of the state.
@@ -207,7 +207,7 @@ the action will be ignored, and should be handled by some other component.
 #### `focusState`
 
 ``` purescript
-focusState :: forall eff props state2 state1 action. LensP state2 state1 -> Spec eff state1 props action -> Spec eff state2 props action
+focusState :: forall eff props state2 state1 action. Lens' state2 state1 -> Spec eff state1 props action -> Spec eff state2 props action
 ```
 
 A variant of `focus` which only changes the state type, by applying a `Lens`.
@@ -215,7 +215,7 @@ A variant of `focus` which only changes the state type, by applying a `Lens`.
 #### `match`
 
 ``` purescript
-match :: forall eff props state action1 action2. PrismP action2 action1 -> Spec eff state props action1 -> Spec eff state props action2
+match :: forall eff props state action1 action2. Prism' action2 action1 -> Spec eff state props action1 -> Spec eff state props action2
 ```
 
 A variant of `focus` which only changes the action type, by applying a `Prism`,
@@ -224,7 +224,7 @@ effectively matching some subset of a larger action type.
 #### `split`
 
 ``` purescript
-split :: forall eff props state1 state2 action. PrismP state1 state2 -> Spec eff state2 props action -> Spec eff state1 props action
+split :: forall eff props state1 state2 action. Prism' state1 state2 -> Spec eff state2 props action -> Spec eff state1 props action
 ```
 
 Create a component which renders an optional subcomponent.

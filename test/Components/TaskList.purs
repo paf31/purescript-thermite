@@ -6,7 +6,7 @@ import Components.Task (Task, TaskAction(..), taskSpec, initialTask)
 import Data.Either (Either(..))
 import Data.Filter (Filter(..), showFilter)
 import Data.Foldable (fold)
-import Data.Lens (LensP, PrismP, over, lens, prism)
+import Data.Lens (Lens', Prism', over, lens, prism)
 import Data.List (List(..), deleteAt, length, filter)
 import Data.Maybe (fromMaybe)
 import Data.Tuple (Tuple(..), uncurry)
@@ -24,7 +24,7 @@ data TaskListAction
   | TaskAction Int TaskAction
 
 -- | A `Prism` which corresponds to the `TaskAction` constructor.
-_TaskAction :: PrismP TaskListAction (Tuple Int TaskAction)
+_TaskAction :: Prism' TaskListAction (Tuple Int TaskAction)
 _TaskAction = prism (uncurry TaskAction) \ta ->
   case ta of
     TaskAction i a -> Right (Tuple i a)
@@ -45,7 +45,7 @@ initialTaskListState =
   }
 
 -- | A `Lens` which corresponds to the `tasks` property.
-_tasks :: LensP TaskListState (List Task)
+_tasks :: Lens' TaskListState (List Task)
 _tasks = lens _.tasks (_ { tasks = _ })
 
 -- | A `Spec` for a component consisting of a `List` of tasks.
