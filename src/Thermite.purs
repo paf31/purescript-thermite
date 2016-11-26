@@ -35,15 +35,14 @@ module Thermite
   ) where
 
 import Prelude
-
-import Control.Coroutine (Transformer, CoTransformer, Transform(..),
-                          transform, transformCoTransformR, transformCoTransformL,
-                          runProcess, fuseCoTransform, cotransform)
+import Data.Array (head, length)
+import React as React
+import Control.Coroutine (Transformer, CoTransformer, Transform(..), transform, transformCoTransformR, transformCoTransformL, runProcess, fuseCoTransform, cotransform)
 import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import Control.Monad.Free.Trans (freeT)
 import Control.Monad.Rec.Class (forever)
 import Control.Monad.Trans.Class (lift)
@@ -51,10 +50,9 @@ import Data.Either (Either(..))
 import Data.Foldable (for_)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (fromMaybe, Maybe(..))
 import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
-import React as React
 import React.DOM (div')
 
 -- | A type synonym for an action handler, which takes an action, the current props
@@ -226,11 +224,13 @@ createReactSpec (Spec spec) state =
       unsafeCoerceEff (launchAff (runProcess process))
 
     render :: React.Render props state eff
-    render this = map div' $
+    render this = map maybeDiv $
       spec.render (dispatcher this)
         <$> React.getProps this
         <*> React.readState this
         <*> React.getChildren this
+        where
+          maybeDiv elems = fromMaybe (div' elems) if (length elems == 1) then head elems else Nothing
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
