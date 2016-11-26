@@ -24,6 +24,7 @@ module Thermite
   , simpleSpec
   , createClass
   , createReactSpec
+  , createReactSpec'
   , withState
   , focus
   , focusState
@@ -198,7 +199,24 @@ createReactSpec
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
-createReactSpec (Spec spec) state =
+createReactSpec = createReactSpec' div'
+
+-- | Create a React component spec from a Thermite component `Spec` with an additional
+-- | function for converting the rendered Array of ReactElement's into a single ReactElement
+-- | as is required by React.
+-- |
+-- | This function is a low-level alternative to `createClass`, used when the React
+-- | component spec needs to be modified before being turned into a component class,
+-- | e.g. by adding additional lifecycle methods.
+createReactSpec'
+  :: forall eff state props action
+   . (Array React.ReactElement -> React.ReactElement)
+  -> Spec eff state props action
+  -> state
+  -> { spec :: React.ReactSpec props state eff
+     , dispatcher :: React.ReactThis props state -> action -> EventHandler
+     }
+createReactSpec' wrap (Spec spec) state =
     { spec: React.spec state render
     , dispatcher
     }
@@ -226,7 +244,7 @@ createReactSpec (Spec spec) state =
       unsafeCoerceEff (launchAff (runProcess process))
 
     render :: React.Render props state eff
-    render this = map div' $
+    render this = map wrap $
       spec.render (dispatcher this)
         <$> React.getProps this
         <*> React.readState this
