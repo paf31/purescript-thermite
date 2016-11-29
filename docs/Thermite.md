@@ -171,6 +171,20 @@ This function is a low-level alternative to `createClass`, used when the React
 component spec needs to be modified before being turned into a component class,
 e.g. by adding additional lifecycle methods.
 
+#### `createReactSpec'`
+
+``` purescript
+createReactSpec' :: forall eff state props action. (Array ReactElement -> ReactElement) -> Spec eff state props action -> state -> { spec :: ReactSpec props state eff, dispatcher :: ReactThis props state -> action -> EventHandler }
+```
+
+Create a React component spec from a Thermite component `Spec` with an additional
+function for converting the rendered Array of ReactElement's into a single ReactElement
+as is required by React.
+
+This function is a low-level alternative to `createClass`, used when the React
+component spec needs to be modified before being turned into a component class,
+e.g. by adding additional lifecycle methods.
+
 #### `withState`
 
 ``` purescript
