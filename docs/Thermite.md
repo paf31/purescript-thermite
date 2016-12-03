@@ -185,6 +185,15 @@ This function is a low-level alternative to `createClass`, used when the React
 component spec needs to be modified before being turned into a component class,
 e.g. by adding additional lifecycle methods.
 
+#### `defaultMain`
+
+``` purescript
+defaultMain :: forall state props action eff. Spec eff state props action -> state -> props -> Eff (dom :: DOM | eff) Unit
+```
+
+A default implementation of `main` which renders a component to the
+document body.
+
 #### `withState`
 
 ``` purescript
