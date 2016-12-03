@@ -25,6 +25,7 @@ module Thermite
   , createClass
   , createReactSpec
   , createReactSpec'
+  , defaultMain
   , withState
   , focus
   , focusState
@@ -36,27 +37,32 @@ module Thermite
   ) where
 
 import Prelude
-
-import Control.Coroutine (Transformer, CoTransformer, Transform(..),
-                          transform, transformCoTransformR, transformCoTransformL,
-                          runProcess, fuseCoTransform, cotransform)
+import React as React
+import Control.Coroutine (Transformer, CoTransformer, Transform(..), transform, transformCoTransformR, transformCoTransformL, runProcess, fuseCoTransform, cotransform)
 import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import Control.Monad.Free.Trans (freeT)
 import Control.Monad.Rec.Class (forever)
 import Control.Monad.Trans.Class (lift)
+import DOM (DOM) as DOM
+import DOM.HTML (window) as DOM
+import DOM.HTML.Document (body) as DOM
+import DOM.HTML.Types (htmlElementToElement) as DOM
+import DOM.HTML.Window (document) as DOM
 import Data.Either (Either(..))
-import Data.Foldable (for_)
+import Data.Foldable (for_, traverse_)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Monoid (class Monoid)
+import Data.Nullable (toMaybe)
 import Data.Tuple (Tuple(..))
-import React as React
+import React (createFactory)
 import React.DOM (div')
+import ReactDOM (render)
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -216,10 +222,11 @@ createReactSpec'
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) state =
-    { spec: React.spec state render
-    , dispatcher
-    }
+createReactSpec' wrap (Spec spec) =
+    \state ->
+      { spec: React.spec state render
+      , dispatcher
+      }
   where
     dispatcher :: React.ReactThis props state -> action -> EventHandler
     dispatcher this action = void do
@@ -249,6 +256,20 @@ createReactSpec' wrap (Spec spec) state =
         <$> React.getProps this
         <*> React.readState this
         <*> React.getChildren this
+
+-- | A default implementation of `main` which renders a component to the
+-- | document body.
+defaultMain
+  :: forall state props action eff
+   . Spec eff state props action
+  -> state
+  -> props
+  -> Eff (dom :: DOM.DOM | eff) Unit
+defaultMain spec initialState props = void do
+  let component = createClass spec initialState
+  document <- DOM.window >>= DOM.document
+  container <- toMaybe <$> DOM.body document
+  traverse_ (render (createFactory component props) <<< DOM.htmlElementToElement) container
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
@@ -362,13 +383,13 @@ foreach f = Spec
                       `transformCoTransformR` forever (transform (modifying i))
       where
         modifying :: Int -> (state -> state) -> List state -> List state
-        modifying i f sts' = fromMaybe sts' (modifyAt i f sts')
+        modifying j g sts' = fromMaybe sts' (modifyAt j g sts')
 
     render :: Render (List state) props (Tuple Int action)
     render k p sts _ = foldWithIndex (\i st els -> case f i of Spec s -> els <> s.render (k <<< Tuple i) p st []) sts []
 
     foldWithIndex :: forall a r. (Int -> a -> r -> r) -> List a -> r -> r
-    foldWithIndex f = go 0
+    foldWithIndex g = go 0
       where
       go _ Nil         r = r
-      go i (Cons x xs) r = go (i + 1) xs (f i x r)
+      go i (Cons x xs) r = go (i + 1) xs (g i x r)

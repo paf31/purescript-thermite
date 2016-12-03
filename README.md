@@ -102,13 +102,10 @@ spec :: T.Spec _ State _ Action
 spec = T.simpleSpec performAction render
 ```
 
-Finally, in `main`, we use `createClass` to turn our `Spec` into a component class, providing an initial state.
-The `render` function from `purescript-react` can then be used to render our component to the document body:
+Finally, in `main`, the `defaultMain` function can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
-main = do
-  let component = T.createClass spec initialState
-  body >>= RDOM.render (R.createFactory component {})
+main = defaultMain spec initialState unit
 ```
 
 ## Combining Components
