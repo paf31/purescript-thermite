@@ -1,6 +1,6 @@
 ## Module Thermite
 
-Themite provides a simple model-view-action abstraction on top of `purescript-react`:
+Thermite provides a simple model-view-action abstraction on top of `purescript-react`:
 
 - A `Spec` defines a `state` type which acts as the _model_.
 - The `Spec` also defines an `action` type which acts as the set of _actions_.
