@@ -1,7 +1,8 @@
 module Components.TaskList where
 
 import Prelude
-
+import React.DOM.Props as RP
+import Thermite as T
 import Components.Task (Task, TaskAction(..), taskSpec, initialTask)
 import Data.Either (Either(..))
 import Data.Filter (Filter(..), showFilter)
@@ -12,8 +13,6 @@ import Data.Maybe (fromMaybe)
 import Data.Tuple (Tuple(..), uncurry)
 import React (ReactElement) as R
 import React.DOM (text, p', td', input, tr', tbody', th, thead', table, div, h1', button) as R
-import React.DOM.Props as RP
-import Thermite as T
 import Unsafe.Coerce (unsafeCoerce)
 
 -- | An action for the full task list component
