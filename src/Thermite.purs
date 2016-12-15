@@ -38,15 +38,14 @@ module Thermite
 
 import Prelude
 import React as React
-import Control.Coroutine (Transformer, CoTransformer, Transform(..), transform, transformCoTransformR, transformCoTransformL, runProcess, fuseCoTransform, cotransform)
+import Control.Coroutine (CoTransform(CoTransform), CoTransformer, cotransform, transform, transformCoTransformL, transformCoTransformR)
 import Control.Coroutine (CoTransformer, cotransform) as T
 import Control.Monad.Aff (Aff, launchAff, makeAff)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
-import Control.Monad.Free.Trans (freeT)
-import Control.Monad.Rec.Class (forever)
-import Control.Monad.Trans.Class (lift)
+import Control.Monad.Free.Trans (resume)
+import Control.Monad.Rec.Class (Step(..), forever, tailRecM)
 import DOM (DOM) as DOM
 import DOM.HTML (window) as DOM
 import DOM.HTML.Document (body) as DOM
@@ -235,20 +234,24 @@ createReactSpec' wrap (Spec spec) =
       let coerceEff :: forall eff1 a. Eff eff1 a -> Eff eff a
           coerceEff = unsafeCoerceEff
 
-          put :: state -> Aff eff state
-          put new = makeAff \_ k -> unsafeCoerceEff do
-            void $ React.writeStateWithCallback this new (unsafeCoerceEff (k new))
+          step :: CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
+               -> Aff eff (Step (CoTransformer (Maybe state) (state -> state) (Aff eff) Unit) Unit)
+          step cot = do
+            e <- resume cot
+            case e of
+              Left _ -> pure (Done unit)
+              Right (CoTransform f k) -> do
+                st <- liftEff (coerceEff (React.readState this))
+                let newState = f st
+                makeAff \_ k1 -> unsafeCoerceEff do
+                  void $ React.writeStateWithCallback this newState (unsafeCoerceEff (k1 newState))
+                pure (Loop (k (Just newState)))
 
-          transformer :: Transformer (state -> state) (Maybe state) (Aff eff) Unit
-          transformer = forever $ freeT \_ -> do
-            old <- liftEff (coerceEff (React.readState this))
-            pure (Right (Transform \f ->
-              let new = f old
-              in Tuple (Just new) (lift (put new))))
-
-      let process = transformer `fuseCoTransform` spec.performAction action props state
-
-      unsafeCoerceEff (launchAff (runProcess process))
+          cotransformer :: CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
+          cotransformer = spec.performAction action props state
+      -- Step the coroutine manually, since none of the existing coroutine
+      -- functions do quite what we want here.
+      unsafeCoerceEff (launchAff (tailRecM step cotransformer))
 
     render :: React.Render props state eff
     render this = map wrap $
