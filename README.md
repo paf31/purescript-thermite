@@ -105,7 +105,7 @@ spec = T.simpleSpec performAction render
 Finally, in `main`, the `defaultMain` function can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
-main = defaultMain spec initialState unit
+main = T.defaultMain spec initialState unit
 ```
 
 ## Combining Components
