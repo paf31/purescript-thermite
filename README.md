@@ -5,7 +5,7 @@
 `purescript-thermite` is a PureScript wrapper for [`purescript-react`](http://github.com/purescript-contrib/purescript-react). It does not provide all of the functionality of React, but instead to provide a clean API to the most commonly-used parts of its API. It is possible to use `purescript-react` for more specialized use cases.
 
 - [Try Thermite!](http://try.purescript.org/?backend=thermite)
-- [Module Documentation](docs/)
+- [Module Documentation](generated-docs/Thermite.md)
 - Example Project: [Code](test/), [Demo](http://functorial.com/purescript-thermite-todomvc/)
 
 ## Building

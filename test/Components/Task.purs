@@ -52,6 +52,6 @@ taskSpec = T.simpleSpec performAction render
   performAction (ChangeCompleted b)   _ _ = void do
     -- This is a test for issue #65.
     -- In practice, we only need one `modifyState` here.
-    T.modifyState id
+    _ <- T.modifyState id
     T.modifyState (_ { completed = b })
   performAction _                     _ _ = pure unit
