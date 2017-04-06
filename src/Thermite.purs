@@ -57,7 +57,6 @@ import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Monoid (class Monoid)
-import Data.Nullable (toMaybe)
 import Data.Tuple (Tuple(..))
 import React (createFactory)
 import React.DOM (div')
@@ -243,7 +242,7 @@ createReactSpec' wrap (Spec spec) =
               Right (CoTransform f k) -> do
                 st <- liftEff (coerceEff (React.readState this))
                 let newState = f st
-                makeAff \_ k1 -> unsafeCoerceEff do
+                _ <- makeAff \_ k1 -> unsafeCoerceEff do
                   void $ React.writeStateWithCallback this newState (unsafeCoerceEff (k1 newState))
                 pure (Loop (k (Just newState)))
 
@@ -271,7 +270,7 @@ defaultMain
 defaultMain spec initialState props = void do
   let component = createClass spec initialState
   document <- DOM.window >>= DOM.document
-  container <- toMaybe <$> DOM.body document
+  container <- DOM.body document
   traverse_ (render (createFactory component props) <<< DOM.htmlElementToElement) container
 
 -- | This function captures the state of the `Spec` as a function argument.
