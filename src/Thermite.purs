@@ -51,6 +51,7 @@ import DOM.HTML (window) as DOM
 import DOM.HTML.Document (body) as DOM
 import DOM.HTML.Types (htmlElementToElement) as DOM
 import DOM.HTML.Window (document) as DOM
+import Data.Functor.Contravariant (class Contravariant)
 import Data.Either (Either(..))
 import Data.Foldable (for_, traverse_)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
@@ -119,13 +120,20 @@ defaultRender _ _ _ _ = []
 -- |
 -- | The `Monoid` instance for `Spec` will compose `Spec`s by placing rendered
 -- | HTML elements next to one another, and performing actions in sequence.
-newtype Spec eff state props action = Spec
+newtype Spec eff action state props = Spec
   { performAction      :: PerformAction eff state props action
   , render             :: Render state props action
   }
 
+instance contravariantSpec :: Contravariant (Spec eff action state) where
+
+  cmap f (Spec sp) = simpleSpec performAction render
+    where
+      performAction a = sp.performAction a <<< f
+      render a = sp.render a <<< f
+
 -- | A `Lens` for accessing the `PerformAction` portion of a `Spec`.
-_performAction :: forall eff state props action. Lens' (Spec eff state props action) (PerformAction eff state props action)
+_performAction :: forall eff state props action. Lens' (Spec eff action state props) (PerformAction eff state props action)
 _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { performAction = pa }))
 
 -- | A `Lens` for accessing the `Render` portion of a `Spec`.
@@ -138,7 +146,7 @@ _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { 
 -- | wrap = over _render \child dispatch props state childre  ->
 -- |   [ R.div [ RP.className "wrapper" ] [ child dispatch props state children ] ]
 -- | ```
-_render :: forall eff state props action. Lens' (Spec eff state props action) (Render state props action)
+_render :: forall eff state props action. Lens' (Spec eff action state props) (Render state props action)
 _render = lens (\(Spec s) -> s.render) (\(Spec s) r -> Spec (s { render = r }))
 
 -- | Create a minimal `Spec`. The arguments are, in order:
@@ -166,27 +174,27 @@ simpleSpec
   :: forall eff state props action
    . PerformAction eff state props action
   -> Render state props action
-  -> Spec eff state props action
+  -> Spec eff action state props
 simpleSpec performAction render =
   Spec { performAction: performAction
        , render: render
        }
 
-instance semigroupSpec :: Semigroup (Spec eff state props action) where
+instance semigroupSpec :: Semigroup (Spec eff action state props) where
   append (Spec spec1) (Spec spec2) =
     Spec { performAction:       \a p s -> do spec1.performAction a p s
                                              spec2.performAction a p s
          , render:              \k p s   -> spec1.render k p s <> spec2.render k p s
          }
 
-instance monoidSpec :: Monoid (Spec eff state props action) where
+instance monoidSpec :: Monoid (Spec eff action state props) where
   mempty = simpleSpec (\_ _ _ -> pure unit)
                       (\_ _ _ _ -> [])
 
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
-  :: forall eff state props action
-   . Spec eff state props action
+  :: forall eff action state props
+   . Spec eff action state props
   -> state
   -> React.ReactClass props
 createClass spec state = React.createClass <<< _.spec $ createReactSpec spec state
@@ -197,8 +205,8 @@ createClass spec state = React.createClass <<< _.spec $ createReactSpec spec sta
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec
-  :: forall eff state props action
-   . Spec eff state props action
+  :: forall eff action state props
+   . Spec eff action state props
   -> state
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
@@ -213,9 +221,9 @@ createReactSpec = createReactSpec' div'
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec'
-  :: forall eff state props action
+  :: forall eff action state props
    . (Array React.ReactElement -> React.ReactElement)
-  -> Spec eff state props action
+  -> Spec eff action state props
   -> state
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
@@ -263,7 +271,7 @@ createReactSpec' wrap (Spec spec) =
 -- | document body.
 defaultMain
   :: forall state props action eff
-   . Spec eff state props action
+   . Spec eff action state props
   -> state
   -> props
   -> Eff (dom :: DOM.DOM | eff) Unit
@@ -278,9 +286,9 @@ defaultMain spec initialState props = void do
 -- | This can sometimes be useful in complex scenarios involving the `focus` and
 -- | `foreach` combinators.
 withState
-  :: forall eff state props action
-   . (state -> Spec eff state props action)
-  -> Spec eff state props action
+  :: forall eff action state props
+   . (state -> Spec eff action state props)
+  -> Spec eff action state props
 withState f = simpleSpec performAction render
   where
     performAction :: PerformAction eff state props action
@@ -308,8 +316,8 @@ focus
   :: forall eff props state2 state1 action1 action2
    . Lens' state2 state1
   -> Prism' action2 action1
-  -> Spec eff state1 props action1
-  -> Spec eff state2 props action2
+  -> Spec eff action1 state1 props
+  -> Spec eff action2 state2 props
 focus lens prism (Spec spec) = Spec { performAction, render }
   where
     performAction :: PerformAction eff state2 props action2
@@ -325,27 +333,27 @@ focus lens prism (Spec spec) = Spec { performAction, render }
 
 -- | A variant of `focus` which only changes the state type, by applying a `Lens`.
 focusState
-  :: forall eff props state2 state1 action
+  :: forall eff action props state2 state1
    . Lens' state2 state1
-  -> Spec eff state1 props action
-  -> Spec eff state2 props action
+  -> Spec eff action state1 props
+  -> Spec eff action state2 props
 focusState lens = focus lens id
 
 -- | A variant of `focus` which only changes the action type, by applying a `Prism`,
 -- | effectively matching some subset of a larger action type.
 match
-  :: forall eff props state action1 action2
+  :: forall eff action1 action2 props state
    . Prism' action2 action1
-  -> Spec eff state props action1
-  -> Spec eff state props action2
+  -> Spec eff action1 state props
+  -> Spec eff action2 state props
 match prism = focus id prism
 
 -- | Create a component which renders an optional subcomponent.
 split
-  :: forall eff props state1 state2 action
+  :: forall eff action props state1 state2
    . Prism' state1 state2
-  -> Spec eff state2 props action
-  -> Spec eff state1 props action
+  -> Spec eff action state2 props
+  -> Spec eff action state1 props
 split prism (Spec spec) = Spec { performAction, render }
   where
     performAction :: PerformAction eff state1 props action
@@ -368,9 +376,9 @@ split prism (Spec spec) = Spec { performAction, render }
 -- | The action type is modified to take the index of the originating subcomponent as an
 -- | additional argument.
 foreach
-  :: forall eff props state action
-   . (Int -> Spec eff state props action)
-  -> Spec eff (List state) props (Tuple Int action)
+  :: forall eff action props state
+   . (Int -> Spec eff action state props)
+  -> Spec eff (Tuple Int action) (List state) props
 foreach f = Spec
     { performAction: performAction
     , render: render

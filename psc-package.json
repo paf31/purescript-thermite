@@ -5,6 +5,7 @@
     "depends": [
       "aff",
       "coroutines",
+      "contravariant",
       "dom",
       "freet",
       "profunctor-lenses",
