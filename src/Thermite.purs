@@ -124,6 +124,11 @@ newtype Spec eff state props action = Spec
   , render             :: Render state props action
   }
 
+cmapProps f (Spec sp) = Spec { performAction, render }
+  where
+    performAction a = sp.performAction a <<< f
+    render a = sp.render a <<< f
+
 -- | A `Lens` for accessing the `PerformAction` portion of a `Spec`.
 _performAction :: forall eff state props action. Lens' (Spec eff state props action) (PerformAction eff state props action)
 _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { performAction = pa }))
