@@ -6,7 +6,7 @@
 
 - [Try Thermite!](http://try.purescript.org/?backend=thermite)
 - [Module Documentation](generated-docs/Thermite.md)
-- Example Project: [Code](test/), [Demo](http://functorial.com/purescript-thermite-todomvc/)
+- [Task List Example](http://try.purescript.org/?gist=f5f273e4c5e4161fceff&backend=thermite)
 
 ## Building
 
