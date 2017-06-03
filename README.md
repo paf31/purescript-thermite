@@ -90,7 +90,7 @@ _Note_: `PerformAction` returns a _coroutine_, which can emit many asynchronous 
 getIncrementValueFromServer :: Aff _ Int
 
 performAction :: T.PerformAction _ State _ Action
-performAction Increment _ _ = forever do
+performAction Increment _ _ = do
   Just amount <- lift getIncrementValueFromServer
   void $ T.cotransform $ \state -> state { counter = state.counter + amount }
 ```
