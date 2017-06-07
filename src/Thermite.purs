@@ -18,7 +18,7 @@ module Thermite
   , defaultRender
   , writeState
   , modifyState
-  , Spec
+  , Spec(..)
   , _performAction
   , _render
   , simpleSpec
