@@ -32,6 +32,7 @@ module Thermite
   , match
   , split
   , foreach
+  , cmapProps
 
   , module T
   ) where
