@@ -41,7 +41,7 @@ import Prelude
 import React as React
 import Control.Coroutine (CoTransform(CoTransform), CoTransformer, cotransform, transform, transformCoTransformL, transformCoTransformR)
 import Control.Coroutine (CoTransformer, cotransform) as T
-import Control.Monad.Aff (Aff, launchAff, makeAff)
+import Control.Monad.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
@@ -253,8 +253,9 @@ createReactSpec' wrap (Spec spec) =
               Right (CoTransform f k) -> do
                 st <- liftEff (coerceEff (React.readState this))
                 let newState = f st
-                _ <- makeAff \_ k1 -> unsafeCoerceEff do
-                  void $ React.writeStateWithCallback this newState (unsafeCoerceEff (k1 newState))
+                _ <- makeAff \cb -> unsafeCoerceEff do
+                  void $ React.writeStateWithCallback this newState (unsafeCoerceEff (cb (Right newState)))
+                  pure nonCanceler
                 pure (Loop (k (Just newState)))
 
           cotransformer :: CoTransformer (Maybe state) (state -> state) (Aff eff) Unit
