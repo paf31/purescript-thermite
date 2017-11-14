@@ -21,4 +21,4 @@ import Thermite as T
 
 -- | The main method creates the task list component, and renders it to the document body.
 main :: Eff (dom :: DOM.DOM) Unit
-main = T.defaultMain taskList initialTaskListState unit
+main = T.defaultMain taskList (const $ pure initialTaskListState) unit
