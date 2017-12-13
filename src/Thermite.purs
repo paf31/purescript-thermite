@@ -60,7 +60,6 @@ import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
 import React (createFactory)
-import React.DOM (div')
 import ReactDOM (render)
 
 -- | A type synonym for an action handler, which takes an action, the current props
@@ -211,10 +210,10 @@ createReactSpec
   :: forall eff state props action
    . Spec eff state props action
   -> state
-  -> { spec :: React.ReactSpec props state React.ReactElement eff
+  -> { spec :: React.ReactSpec props state (Array React.ReactElement) eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
-createReactSpec = createReactSpec' div'
+createReactSpec = createReactSpec' id
 
 -- | Create a React component spec from a Thermite component `Spec` with an additional
 -- | function for converting the rendered Array of ReactElement's into a single ReactElement
