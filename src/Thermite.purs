@@ -211,7 +211,7 @@ createReactSpec
   :: forall eff state props action
    . Spec eff state props action
   -> state
-  -> { spec :: React.ReactSpec props state eff
+  -> { spec :: React.ReactSpec props state React.ReactElement eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -224,11 +224,12 @@ createReactSpec = createReactSpec' div'
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec'
-  :: forall eff state props action
-   . (Array React.ReactElement -> React.ReactElement)
+  :: forall eff state props render action
+   . (React.ReactRender render)
+  => (Array React.ReactElement -> render)
   -> Spec eff state props action
   -> state
-  -> { spec :: React.ReactSpec props state eff
+  -> { spec :: React.ReactSpec props state render eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec' wrap (Spec spec) =
@@ -264,7 +265,7 @@ createReactSpec' wrap (Spec spec) =
       -- functions do quite what we want here.
       unsafeCoerceEff (launchAff (tailRecM step cotransformer))
 
-    render :: React.Render props state eff
+    render :: React.Render props state render eff
     render this = map wrap $
       spec.render (dispatcher this)
         <$> React.getProps this
