@@ -21,10 +21,7 @@
     "purescript-dom": "^4.0.0",
     "purescript-freet": "^3.0.0",
     "purescript-profunctor-lenses": "^3.0.0",
-    "purescript-react-dom": "^4.0.0",
-    "purescript-react": "^5.0.0"
-  },
-  "resolutions": {
+    "purescript-react-dom": "^5.0.0",
     "purescript-react": "^5.0.0"
   }
 }
