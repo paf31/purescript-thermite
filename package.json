@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "rimraf output && rimraf .pulp-cache",
     "build": "pulp build -- --censor-lib --strict",
-    "example": "pulp test -r cat > html/index.js"
+    "example": "pulp browserify -I test -m Test.Main > html/index.js"
   },
   "dependencies": {
     "react": "^15.6.1",
