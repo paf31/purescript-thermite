@@ -268,6 +268,19 @@ withState f = Spec {performAction,render}
     render :: Render state props action
     render d p st = view _render (f st) d p st
 
+-- | This function captures the props of the `Spec` as a function argument.
+withProps
+  :: forall eff state props action
+   . (props -> Spec eff state props action)
+  -> Spec eff state props action
+withProps f = simpleSpec performAction render
+  where
+    performAction :: PerformAction eff state props action
+    performAction a p st = view _performAction (f p) a p st
+
+    render :: Render state props action
+    render k p st = view _render (f p) k p st
+
 -- | Change the state type, using a lens to focus on a part of the state.
 -- |
 -- | For example, to combine two `Spec`s, combining state types using `Tuple`
