@@ -10,12 +10,15 @@
 
     <script src="../node_modules/react/dist/react.js"></script>
     <script src="../node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script type="text/javascript">
       function require(name) {
         if (name === 'react') {
           return window.React;
         } else if (name === 'react-dom') {
           return window.ReactDOM;
+        } else if (name === 'create-react-class'){
+          return window.createReactClass;
         }
       }
     </script>
