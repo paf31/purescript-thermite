@@ -211,7 +211,7 @@ createReactSpec
   :: forall eff state props action
    . Spec eff state props action
   -> state
-  -> { spec :: React.ReactSpec props state eff
+  -> { spec :: React.ReactSpec props state React.ReactElement eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -228,7 +228,7 @@ createReactSpec'
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec eff state props action
   -> state
-  -> { spec :: React.ReactSpec props state eff
+  -> { spec :: React.ReactSpec props state React.ReactElement eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec' wrap (Spec spec) =
@@ -264,7 +264,7 @@ createReactSpec' wrap (Spec spec) =
       -- functions do quite what we want here.
       unsafeCoerceEff (launchAff (tailRecM step cotransformer))
 
-    render :: React.Render props state eff
+    render :: React.Render props state React.ReactElement eff
     render this = map wrap $
       spec.render (dispatcher this)
         <$> React.getProps this
