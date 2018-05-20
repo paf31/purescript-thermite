@@ -198,9 +198,9 @@ instance monoidSpec :: Monoid (Spec eff state props action) where
 createClass
   :: forall eff state props action
    . Spec eff state props action
-  -> state
+  -> React.GetInitialState props state eff
   -> React.ReactClass props
-createClass spec state = React.createClass <<< _.spec $ createReactSpec spec state
+createClass spec getState = React.createClass <<< _.spec $ createReactSpec spec getState
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -210,7 +210,7 @@ createClass spec state = React.createClass <<< _.spec $ createReactSpec spec sta
 createReactSpec
   :: forall eff state props action
    . Spec eff state props action
-  -> state
+  -> React.GetInitialState props state eff
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
@@ -227,13 +227,12 @@ createReactSpec'
   :: forall eff state props action
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec eff state props action
-  -> state
+  -> React.GetInitialState props state eff
   -> { spec :: React.ReactSpec props state eff
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) =
-    \state ->
-      { spec: React.spec state render
+createReactSpec' wrap (Spec spec) getState =
+      { spec: React.spec' getState render
       , dispatcher
       }
   where
@@ -276,11 +275,11 @@ createReactSpec' wrap (Spec spec) =
 defaultMain
   :: forall state props action eff
    . Spec eff state props action
-  -> state
+  -> React.GetInitialState props state eff
   -> props
   -> Eff (dom :: DOM.DOM | eff) Unit
-defaultMain spec initialState props = void do
-  let component = createClass spec initialState
+defaultMain spec getState props = void do
+  let component = createClass spec getState
   document <- DOM.window >>= DOM.document
   container <- DOM.body document
   traverse_ (render (createFactory component props) <<< DOM.htmlElementToElement) container
