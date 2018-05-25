@@ -26,6 +26,7 @@ module Thermite
   , createReactConstructor
   , defaultMain
   , withState
+  , withProps
   , focus
   , focusState
   , match
