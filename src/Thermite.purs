@@ -27,6 +27,7 @@ module Thermite
   , createReactSpec'
   , defaultMain
   , withState
+  , withProps
   , focus
   , focusState
   , match
