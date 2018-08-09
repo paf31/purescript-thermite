@@ -6,13 +6,13 @@
     "example": "pulp test -r cat > html/index.js"
   },
   "dependencies": {
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
   },
   "devDependencies": {
-    "pulp": "^11.0.0",
-    "purescript-psa": "^0.5.0",
-    "purescript": "^0.11.1",
-    "rimraf": "^2.5.4"
+    "pulp": "^12.3.0",
+    "purescript-psa": "^0.7.2",
+    "purescript": "^0.12.0",
+    "rimraf": "^2.6.2"
   }
 }
