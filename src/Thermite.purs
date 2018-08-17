@@ -52,13 +52,15 @@ import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Effect.Class (liftEffect)
-import React (createElementDynamic)
+import React (Children, createElementDynamic)
 import React as React
 import React.DOM (div')
 import ReactDOM (render)
+import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window) as DOM
 import Web.HTML.HTMLDocument (body)
 import Web.HTML.Window (document) as DOM
+import Web.HTML.HTMLElement as DOM
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -188,10 +190,14 @@ instance monoidSpec :: Monoid (Spec state props action) where
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
-   . Spec state props action
-  -> state
-  -> React.ReactClass props
-createClass spec state = React.component "mainClass" <<< _.spec $ createReactSpec spec state
+   . Spec (Record state) (Record props) action
+  -> (Record state)
+  -> React.ReactClass (Record props)
+createClass spec state = React.component "mainClass" component
+  where
+    component this =
+      pure $ _.spec $ createReactSpec spec this state
+      --pure {state, render this}
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -201,6 +207,7 @@ createClass spec state = React.component "mainClass" <<< _.spec $ createReactSpe
 createReactSpec
   :: forall state props action
    . Spec state props action
+  -> React.ReactThis props state
   -> state
   -> { spec :: {state :: state, render :: React.Render}
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
@@ -244,7 +251,7 @@ createReactSpec' wrap (Spec spec) this' =
                 st <- liftEffect (React.getState this)
                 let newState = f st
                 _ <- makeAff \cb -> do
-                  void $ React.writeStateWithCallback this newState (cb (Right newState))
+                  void $ React.writeStateWithCallback (unsafeCoerce this) (unsafeCoerce newState) (cb (Right newState))
                   pure nonCanceler
                 pure (Loop (k (Just newState)))
 
@@ -265,15 +272,15 @@ createReactSpec' wrap (Spec spec) this' =
 -- | document body.
 defaultMain
   :: forall state props action
-   . Spec state props action
-  -> state
-  -> props
+   . Spec (Record state) (Record props) action
+  -> (Record state)
+  -> Record props
   -> Effect Unit
 defaultMain spec initialState props = void do
   let component = createClass spec initialState
   document <- DOM.window >>= DOM.document
   container <- body document
-  traverse_ (render (createElementDynamic component props) ) container -- <<< DOM.htmlElementToElement
+  traverse_ (render (createElementDynamic (unsafeCoerce component) (unsafeCoerce props) [] ) ) ( DOM.toElement <$> container) -- <<< DOM.htmlElementToElement
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
