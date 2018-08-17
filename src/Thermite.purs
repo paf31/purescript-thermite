@@ -225,7 +225,7 @@ createReactSpec'
      }
 createReactSpec' wrap (Spec spec) this' =
     \state' ->
-      { spec: pure {state : state', render : render this'}
+      { spec: {state : state', render : render this'}
       , dispatcher
       }
   where
