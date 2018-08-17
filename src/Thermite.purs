@@ -56,7 +56,6 @@ import React (createElementDynamic)
 import React as React
 import React.DOM (div')
 import ReactDOM (render)
-import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window) as DOM
 import Web.HTML.HTMLDocument (body)
 import Web.HTML.Window (document) as DOM
@@ -216,7 +215,7 @@ createReactSpec = createReactSpec' div'
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec'
-  :: forall state props action snapshot given spec
+  :: forall state props action
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec (Record state) props action
   -> React.ReactThis props (Record state)
@@ -224,9 +223,9 @@ createReactSpec'
   -> { spec :: {state :: Record state, render :: React.Render}
      , dispatcher :: React.ReactThis props (Record state) -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) this =
+createReactSpec' wrap (Spec spec) this' =
     \state' ->
-      { spec: pure {state : state', render : render this}
+      { spec: pure {state : state', render : render this'}
       , dispatcher
       }
   where
