@@ -48,7 +48,6 @@ import Data.Foldable (for_, traverse_)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
-import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
@@ -57,6 +56,7 @@ import React (createElementDynamic)
 import React as React
 import React.DOM (div')
 import ReactDOM (render)
+import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window) as DOM
 import Web.HTML.HTMLDocument (body)
 import Web.HTML.Window (document) as DOM
@@ -192,7 +192,7 @@ createClass
    . Spec state props action
   -> state
   -> React.ReactClass props
-createClass spec state = React.createClass <<< _.spec $ createReactSpec spec state
+createClass spec state = React.component "mainClass" <<< _.spec $ createReactSpec spec state
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -203,7 +203,7 @@ createReactSpec
   :: forall state props action
    . Spec  state props action
   -> state
-  -> { spec :: React.ReactSpec props state
+  -> { spec :: React.ReactSpecAll props state
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -216,26 +216,25 @@ createReactSpec = createReactSpec' div'
 -- | component spec needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec'
-  :: forall state props action
-   . (Array React.ReactElement -> React.ReactElement)
+  :: forall state props action snapshot given spec
+   . React.ReactComponentSpec (Record props) (Record state) snapshot given spec
+   => (Array React.ReactElement -> React.ReactElement)
   -> Spec state props action
   -> state
-  -> { spec :: React.ReactSpec props state
+  -> { spec :: React.ReactSpecAll state props (snapshot)
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec' wrap (Spec spec) =
-    \state ->
-      { spec: React.spec state render
+    \state' ->
+      { spec: {state : state', render}
       , dispatcher
       }
   where
     dispatcher :: React.ReactThis props state -> action -> EventHandler
     dispatcher this action = void do
       props <- React.getProps this
-      state <- React.readState this
-      let coerceEff :: forall  a. Eff  a -> Eff a
-          coerceEff = unsafeCoerceEff
-
+      state <- React.getState this
+      let
           step :: CoTransformer (Maybe state) (state -> state) Aff Unit
                -> Aff  (Step (CoTransformer (Maybe state) (state -> state) Aff Unit) Unit)
           step cot = do
@@ -243,10 +242,10 @@ createReactSpec' wrap (Spec spec) =
             case e of
               Left _ -> pure (Done unit)
               Right (CoTransform f k) -> do
-                st <- liftEff (coerceEff (React.readState this))
+                st <- liftEffect (React.getState this)
                 let newState = f st
-                _ <- makeAff \cb -> unsafeCoerceEff do
-                  void $ React.writeStateWithCallback this newState (unsafeCoerceEff (cb (Right newState)))
+                _ <- makeAff \cb -> do
+                  void $ React.writeStateWithCallback this newState (cb (Right newState))
                   pure nonCanceler
                 pure (Loop (k (Just newState)))
 
@@ -254,14 +253,14 @@ createReactSpec' wrap (Spec spec) =
           cotransformer = spec.performAction action props state
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
-      unsafeCoerceEff (launchAff (tailRecM step cotransformer))
+      launchAff (tailRecM step cotransformer)
 
-    render :: React.Render props state
+    render :: React.ReactThis props state -> React.Render
     render this = map wrap $
       spec.render (dispatcher this)
         <$> React.getProps this
-        <*> React.readState this
-        <*> React.getChildren this
+        <*> React.getState this
+        <*> pure [] --React.getChildren this
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
@@ -283,11 +282,11 @@ defaultMain spec initialState props = void do
 -- | `foreach` combinators.
 withState
   :: forall state props action
-   . (state -> Spec eff state props action)
-  -> Spec eff state props action
+   . (state -> Spec state props action)
+  -> Spec state props action
 withState f = simpleSpec performAction render
   where
-    performAction :: PerformAction eff state props action
+    performAction :: PerformAction state props action
     performAction a p st = view _performAction (f st) a p st
 
     render :: Render state props action
@@ -309,14 +308,14 @@ withState f = simpleSpec performAction render
 -- | Actions will only be handled when the prism matches its input, otherwise
 -- | the action will be ignored, and should be handled by some other component.
 focus
-  :: forall eff props state2 state1 action1 action2
+  :: forall props state2 state1 action1 action2
    . Lens' state2 state1
   -> Prism' action2 action1
-  -> Spec eff state1 props action1
-  -> Spec eff state2 props action2
+  -> Spec state1 props action1
+  -> Spec state2 props action2
 focus lens prism (Spec spec) = Spec { performAction, render }
   where
-    performAction :: PerformAction eff state2 props action2
+    performAction :: PerformAction state2 props action2
     performAction a p st =
       case matching prism a of
         Left _ -> pure unit
@@ -329,30 +328,30 @@ focus lens prism (Spec spec) = Spec { performAction, render }
 
 -- | A variant of `focus` which only changes the state type, by applying a `Lens`.
 focusState
-  :: forall eff props state2 state1 action
+  :: forall props state2 state1 action
    . Lens' state2 state1
-  -> Spec eff state1 props action
-  -> Spec eff state2 props action
+  -> Spec state1 props action
+  -> Spec state2 props action
 focusState lens = focus lens identity
 
 -- | A variant of `focus` which only changes the action type, by applying a `Prism`,
 -- | effectively matching some subset of a larger action type.
 match
-  :: forall eff props state action1 action2
+  :: forall props state action1 action2
    . Prism' action2 action1
-  -> Spec eff state props action1
-  -> Spec eff state props action2
+  -> Spec state props action1
+  -> Spec state props action2
 match prism = focus identity prism
 
 -- | Create a component which renders an optional subcomponent.
 split
-  :: forall eff props state1 state2 action
+  :: forall props state1 state2 action
    . Prism' state1 state2
-  -> Spec eff state2 props action
-  -> Spec eff state1 props action
+  -> Spec state2 props action
+  -> Spec state1 props action
 split prism (Spec spec) = Spec { performAction, render }
   where
-    performAction :: PerformAction eff state1 props action
+    performAction :: PerformAction state1 props action
     performAction a p st =
       case matching prism st of
         Left _ -> pure unit
@@ -372,15 +371,15 @@ split prism (Spec spec) = Spec { performAction, render }
 -- | The action type is modified to take the index of the originating subcomponent as an
 -- | additional argument.
 foreach
-  :: forall eff props state action
-   . (Int -> Spec eff state props action)
-  -> Spec eff (List state) props (Tuple Int action)
+  :: forall props state action
+   . (Int -> Spec state props action)
+  -> Spec (List state) props (Tuple Int action)
 foreach f = Spec
     { performAction: performAction
     , render: render
     }
   where
-    performAction :: PerformAction eff (List state) props (Tuple Int action)
+    performAction :: PerformAction (List state) props (Tuple Int action)
     performAction (Tuple i a) p sts =
         for_ (sts !! i) \st ->
           case f i of
