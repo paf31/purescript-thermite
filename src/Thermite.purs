@@ -201,9 +201,9 @@ createClass spec state = React.component "mainClass" <<< _.spec $ createReactSpe
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec
   :: forall state props action
-   . Spec  state props action
+   . Spec state props action
   -> state
-  -> { spec :: React.ReactSpecAll props state
+  -> { spec :: {state :: state, render :: React.Render}
      , dispatcher :: React.ReactThis props state -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -217,26 +217,26 @@ createReactSpec = createReactSpec' div'
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec'
   :: forall state props action snapshot given spec
-   . React.ReactComponentSpec (Record props) (Record state) snapshot given spec
-   => (Array React.ReactElement -> React.ReactElement)
-  -> Spec state props action
-  -> state
-  -> { spec :: React.ReactSpecAll state props (snapshot)
-     , dispatcher :: React.ReactThis props state -> action -> EventHandler
+   . (Array React.ReactElement -> React.ReactElement)
+  -> Spec (Record state) props action
+  -> React.ReactThis props (Record state)
+  -> Record state
+  -> { spec :: {state :: Record state, render :: React.Render}
+     , dispatcher :: React.ReactThis props (Record state) -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) =
+createReactSpec' wrap (Spec spec) this =
     \state' ->
-      { spec: {state : state', render}
+      { spec: pure {state : state', render : render this}
       , dispatcher
       }
   where
-    dispatcher :: React.ReactThis props state -> action -> EventHandler
+    dispatcher :: React.ReactThis props (Record state) -> action -> EventHandler
     dispatcher this action = void do
       props <- React.getProps this
       state <- React.getState this
       let
-          step :: CoTransformer (Maybe state) (state -> state) Aff Unit
-               -> Aff  (Step (CoTransformer (Maybe state) (state -> state) Aff Unit) Unit)
+          step :: CoTransformer (Maybe (Record state)) (Record state -> Record state) Aff Unit
+               -> Aff  (Step (CoTransformer (Maybe (Record state)) (Record state -> Record state) Aff Unit) Unit)
           step cot = do
             e <- resume cot
             case e of
@@ -249,13 +249,13 @@ createReactSpec' wrap (Spec spec) =
                   pure nonCanceler
                 pure (Loop (k (Just newState)))
 
-          cotransformer :: CoTransformer (Maybe state) (state -> state) Aff Unit
+          cotransformer :: CoTransformer (Maybe (Record state)) (Record state -> Record state) Aff Unit
           cotransformer = spec.performAction action props state
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
       launchAff (tailRecM step cotransformer)
 
-    render :: React.ReactThis props state -> React.Render
+    render :: React.ReactThis props (Record state) -> React.Render
     render this = map wrap $
       spec.render (dispatcher this)
         <$> React.getProps this
