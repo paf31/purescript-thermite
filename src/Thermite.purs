@@ -52,15 +52,15 @@ import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Effect.Class (liftEffect)
-import React (Children, createElementDynamic)
+import React (Children)
 import React as React
 import React.DOM (div')
 import ReactDOM (render)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window) as DOM
-import Web.HTML.HTMLDocument (body)
+import Web.HTML.HTMLDocument (body) as DOM
+import Web.HTML.HTMLElement (toElement) as DOM
 import Web.HTML.Window (document) as DOM
-import Web.HTML.HTMLElement as DOM
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -190,9 +190,9 @@ instance monoidSpec :: Monoid (Spec state props action) where
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
-   . Spec (Record state) (Record props) action
+   . Spec (Record state) {children :: Children | props} action
   -> (Record state)
-  -> React.ReactClass (Record props)
+  -> React.ReactClass  {children :: Children | props}
 createClass spec state = React.component "mainClass" component
   where
     component this =
@@ -272,15 +272,16 @@ createReactSpec' wrap (Spec spec) this' =
 -- | document body.
 defaultMain
   :: forall state props action
-   . Spec (Record state) (Record props) action
-  -> (Record state)
-  -> Record props
+   . Spec (Record state) {children :: Children | props} action
+  -> Record state
+  -> {children :: Children |props}
   -> Effect Unit
 defaultMain spec initialState props = void do
   let component = createClass spec initialState
-  document <- DOM.window >>= DOM.document
-  container <- body document
-  traverse_ (render (createElementDynamic (unsafeCoerce component) (unsafeCoerce props) [] ) ) ( DOM.toElement <$> container) -- <<< DOM.htmlElementToElement
+  window <- DOM.window
+  document <- DOM.document window
+  container <- DOM.body document
+  traverse_ (render (React.unsafeCreateLeafElement component props) ) ( DOM.toElement <$>container) -- <<< DOM.htmlElementToElement
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
