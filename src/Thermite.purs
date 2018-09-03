@@ -192,21 +192,19 @@ instance monoidSpec :: Monoid (Spec state props action) where
   mempty = simpleSpec (\_ _ _ -> pure unit)
                       (\_ _ _ _ -> [])
 
-type ReactRender props state
+type ReactSpecSimple props state
    = React.ReactThis {children :: Children | props} (Record state)
-  -> React.Render
+  -> Effect {state :: Record state, render :: React.Render}
 
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
-   . Spec (Record state) (Record props) action
+   . String
+  -> Spec (Record state) (Record props) action
   -> Record state
   -> React.ReactClass {children :: Children | props}
-createClass spec state = React.component "mainClass" component
-  where
-    component this =
-      let s = _.spec $ createReactSpec spec state in
-      pure {state: s.state, render: s.render this}
+createClass className spec state =
+  React.component className $ _.spec $ createReactSpec spec state
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -217,7 +215,7 @@ createReactSpec
   :: forall state props action
    . Spec (Record state) (Record props) action
   -> Record state
-  -> { spec :: {state :: Record state, render :: ReactRender props state}
+  -> { spec :: ReactSpecSimple props state
      , dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -237,13 +235,13 @@ createReactSpec'
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec (Record state) (Record props) action
   -> Record state
-  -> { spec :: {state :: Record state, render :: ReactRender props state}
+  -> { spec :: ReactSpecSimple props state
      , dispatcher :: React.ReactThis {children :: Children | props} (Record state)
                   -> action -> EventHandler
      }
 createReactSpec' wrap (Spec spec) =
     \state' ->
-      { spec: {state : state', render : render}
+      { spec: \this -> pure {state : state', render : render this}
       , dispatcher
       }
   where
@@ -287,7 +285,7 @@ defaultMain
   -> {children :: Children | props}
   -> Effect Unit
 defaultMain spec initialState props = void do
-  let component = createClass spec initialState
+  let component = createClass "DefaultMain" spec initialState
   window <- DOM.window
   document <- DOM.document window
   container <- DOM.body document
