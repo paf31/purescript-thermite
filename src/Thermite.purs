@@ -192,6 +192,10 @@ instance monoidSpec :: Monoid (Spec state props action) where
   mempty = simpleSpec (\_ _ _ -> pure unit)
                       (\_ _ _ _ -> [])
 
+type ReactRender props state
+   = React.ReactThis {children :: Children | props} (Record state)
+  -> React.Render
+
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
@@ -200,7 +204,9 @@ createClass
   -> React.ReactClass {children :: Children | props}
 createClass spec state = React.component "mainClass" component
   where
-    component this = pure <<< _.spec $ createReactSpec spec this state
+    component this =
+      let s = _.spec $ createReactSpec spec state in
+      pure {state: s.state, render: s.render this}
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -210,9 +216,8 @@ createClass spec state = React.component "mainClass" component
 createReactSpec
   :: forall state props action
    . Spec (Record state) (Record props) action
-  -> React.ReactThis {children :: Children | props} (Record state)
   -> Record state
-  -> { spec :: {state :: Record state, render :: React.Render}
+  -> { spec :: {state :: Record state, render :: ReactRender props state}
      , dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -231,15 +236,14 @@ createReactSpec'
   :: forall state props action
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec (Record state) (Record props) action
-  -> React.ReactThis {children :: Children | props} (Record state)
   -> Record state
-  -> { spec :: {state :: Record state, render :: React.Render}
+  -> { spec :: {state :: Record state, render :: ReactRender props state}
      , dispatcher :: React.ReactThis {children :: Children | props} (Record state)
                   -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) this' =
+createReactSpec' wrap (Spec spec) =
     \state' ->
-      { spec: {state : state', render : render this'}
+      { spec: {state : state', render : render}
       , dispatcher
       }
   where
