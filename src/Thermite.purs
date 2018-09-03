@@ -18,6 +18,7 @@ module Thermite
   , defaultRender
   , writeState
   , modifyState
+  , StateCoTransformer
   , Spec
   , _performAction
   , _render
@@ -52,15 +53,19 @@ import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Effect.Class (liftEffect)
-import React (Children)
+import React (Children, childrenToArray)
 import React as React
 import React.DOM (div')
 import ReactDOM (render)
-import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window) as DOM
 import Web.HTML.HTMLDocument (body) as DOM
 import Web.HTML.HTMLElement (toElement) as DOM
 import Web.HTML.Window (document) as DOM
+
+import Record.Unsafe (unsafeDelete)
+
+type StateCoTransformer state a =
+  CoTransformer (Maybe state) (state -> state) Aff a
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -74,18 +79,18 @@ type PerformAction state props action
    = action
   -> props
   -> state
-  -> CoTransformer (Maybe state) (state -> state) Aff Unit
+  -> StateCoTransformer state Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall state props action. PerformAction state props action
 defaultPerformAction _ _ _ = pure unit
 
 -- | Replace the current component state.
-writeState :: forall state. state -> CoTransformer (Maybe state) (state -> state) Aff (Maybe state)
+writeState :: forall state. state -> StateCoTransformer state (Maybe state)
 writeState st = cotransform (const st)
 
 -- | An alias for `cotransform` - apply a function to the current component state.
-modifyState :: forall state. (state -> state) -> CoTransformer (Maybe state) (state -> state) Aff (Maybe state)
+modifyState :: forall state. (state -> state) -> StateCoTransformer state (Maybe state)
 modifyState = cotransform
 
 -- | A type synonym for an event handler which can be used to construct
@@ -139,7 +144,7 @@ _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { 
 -- |
 -- | ```purescript
 -- | wrap :: Spec _ State _ Action -> Spec _ State _ Action
--- | wrap = over _render \child dispatch props state childre  ->
+-- | wrap = over _render \child dispatch props state children ->
 -- |   [ R.div [ RP.className "wrapper" ] [ child dispatch props state children ] ]
 -- | ```
 _render :: forall state props action. Lens' (Spec state props action) (Render state props action)
@@ -190,14 +195,12 @@ instance monoidSpec :: Monoid (Spec state props action) where
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
-   . Spec (Record state) {children :: Children | props} action
-  -> (Record state)
-  -> React.ReactClass  {children :: Children | props}
+   . Spec (Record state) (Record props) action
+  -> Record state
+  -> React.ReactClass {children :: Children | props}
 createClass spec state = React.component "mainClass" component
   where
-    component this =
-      pure $ _.spec $ createReactSpec spec this state
-      --pure {state, render this}
+    component this = pure <<< _.spec $ createReactSpec spec this state
 
 -- | Create a React component spec from a Thermite component `Spec`.
 -- |
@@ -206,13 +209,16 @@ createClass spec state = React.component "mainClass" component
 -- | e.g. by adding additional lifecycle methods.
 createReactSpec
   :: forall state props action
-   . Spec state props action
-  -> React.ReactThis props state
-  -> state
-  -> { spec :: {state :: state, render :: React.Render}
-     , dispatcher :: React.ReactThis props state -> action -> EventHandler
+   . Spec (Record state) (Record props) action
+  -> React.ReactThis {children :: Children | props} (Record state)
+  -> Record state
+  -> { spec :: {state :: Record state, render :: React.Render}
+     , dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
+
+noChildren :: forall props. {children :: Children | props} -> Record props
+noChildren = unsafeDelete "children"
 
 -- | Create a React component spec from a Thermite component `Spec` with an additional
 -- | function for converting the rendered Array of ReactElement's into a single ReactElement
@@ -224,11 +230,12 @@ createReactSpec = createReactSpec' div'
 createReactSpec'
   :: forall state props action
    . (Array React.ReactElement -> React.ReactElement)
-  -> Spec state props action
-  -> React.ReactThis props state
-  -> state
-  -> { spec :: {state :: state, render :: React.Render}
-     , dispatcher :: React.ReactThis props state -> action -> EventHandler
+  -> Spec (Record state) (Record props) action
+  -> React.ReactThis {children :: Children | props} (Record state)
+  -> Record state
+  -> { spec :: {state :: Record state, render :: React.Render}
+     , dispatcher :: React.ReactThis {children :: Children | props} (Record state)
+                  -> action -> EventHandler
      }
 createReactSpec' wrap (Spec spec) this' =
     \state' ->
@@ -236,13 +243,13 @@ createReactSpec' wrap (Spec spec) this' =
       , dispatcher
       }
   where
-    dispatcher :: React.ReactThis props state -> action -> EventHandler
+    dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
     dispatcher this action = void do
       props <- React.getProps this
       state <- React.getState this
       let
-          step :: CoTransformer (Maybe state) (state -> state) Aff Unit
-               -> Aff  (Step (CoTransformer (Maybe state) (state -> state) Aff Unit) Unit)
+          step :: StateCoTransformer (Record state) Unit
+               -> Aff (Step (StateCoTransformer (Record state) Unit) Unit)
           step cot = do
             e <- resume cot
             case e of
@@ -251,37 +258,36 @@ createReactSpec' wrap (Spec spec) this' =
                 st <- liftEffect (React.getState this)
                 let newState = f st
                 _ <- makeAff \cb -> do
-                  void $ React.writeStateWithCallback (unsafeCoerce this) (unsafeCoerce newState) (cb (Right newState))
+                  void $ React.writeStateWithCallback this newState (cb (Right newState))
                   pure nonCanceler
                 pure (Loop (k (Just newState)))
 
-          cotransformer :: CoTransformer (Maybe state) (state -> state) Aff Unit
-          cotransformer = spec.performAction action props state
+          cotransformer :: StateCoTransformer (Record state) Unit
+          cotransformer = spec.performAction action (noChildren props) state
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
       launchAff (tailRecM step cotransformer)
 
-    render :: React.ReactThis props state -> React.Render
-    render this = map wrap $
-      spec.render (dispatcher this)
-        <$> React.getProps this
-        <*> React.getState this
-        <*> pure [] --React.getChildren this
+    render :: React.ReactThis {children :: Children | props} (Record state) -> React.Render
+    render this = do
+      props <- React.getProps this
+      state <- React.getState this
+      pure $ wrap $ spec.render (dispatcher this) (noChildren props) state (childrenToArray props.children)
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
 defaultMain
   :: forall state props action
-   . Spec (Record state) {children :: Children | props} action
+   . Spec (Record state) (Record props) action
   -> Record state
-  -> {children :: Children |props}
+  -> {children :: Children | props}
   -> Effect Unit
 defaultMain spec initialState props = void do
   let component = createClass spec initialState
   window <- DOM.window
   document <- DOM.document window
   container <- DOM.body document
-  traverse_ (render (React.unsafeCreateLeafElement component props) ) ( DOM.toElement <$>container) -- <<< DOM.htmlElementToElement
+  traverse_ (render (React.unsafeCreateLeafElement component props)) (DOM.toElement <$> container)
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
