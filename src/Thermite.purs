@@ -13,12 +13,11 @@
 module Thermite
   ( PerformAction
   , defaultPerformAction
-  , EventHandler
   , Render
   , defaultRender
   , writeState
   , modifyState
-  , StateCoTransformer
+  , Thermite
   , Spec
   , _performAction
   , _render
@@ -64,11 +63,18 @@ import Web.HTML.Window (document) as DOM
 
 import Record.Unsafe (unsafeDelete)
 
-type StateCoTransformer state a =
-  CoTransformer (Maybe state) (state -> state) Aff a
+-- | A type synonym for a `CoTransformer` which emits state update
+-- | asynchronously.
+-- |
+-- | This coroutine type parameters are:
+-- | * input: a potentially null state (`Maybe state`)
+-- | * output: a state update (`state -> state`)
+-- | * effect: asynchronous effect monad (`Aff`)
+type Thermite state =
+  CoTransformer (Maybe state) (state -> state) Aff
 
 -- | A type synonym for an action handler, which takes an action, the current props
--- | and state for the component, and return a `CoTransformer` which will emit
+-- | and state for the component, and return a `Thermite` which will emit
 -- | state updates asynchronously.
 -- |
 -- | `Control.Coroutine.cotransform` can be used to emit state update functions
@@ -79,28 +85,24 @@ type PerformAction state props action
    = action
   -> props
   -> state
-  -> StateCoTransformer state Unit
+  -> Thermite state Unit
 
 -- | A default `PerformAction` action implementation which ignores all actions.
 defaultPerformAction :: forall state props action. PerformAction state props action
 defaultPerformAction _ _ _ = pure unit
 
 -- | Replace the current component state.
-writeState :: forall state. state -> StateCoTransformer state (Maybe state)
+writeState :: forall state. state -> Thermite state (Maybe state)
 writeState st = cotransform (const st)
 
 -- | An alias for `cotransform` - apply a function to the current component state.
-modifyState :: forall state. (state -> state) -> StateCoTransformer state (Maybe state)
+modifyState :: forall state. (state -> state) -> Thermite state (Maybe state)
 modifyState = cotransform
-
--- | A type synonym for an event handler which can be used to construct
--- | `purescript-react`'s event attributes.
-type EventHandler = Effect Unit
 
 -- | A rendering function, which takes an action handler function, the current state and
 -- | props, an array of child nodes and returns a HTML document.
 type Render state props action
-   = (action -> EventHandler)
+   = (action -> Effect Unit)
   -> props
   -> state
   -> Array React.ReactElement
@@ -216,7 +218,7 @@ createReactSpec
    . Spec (Record state) (Record props) action
   -> Record state
   -> { spec :: ReactSpecSimple props state
-     , dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
+     , dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> Effect Unit
      }
 createReactSpec = createReactSpec' div'
 
@@ -237,7 +239,7 @@ createReactSpec'
   -> Record state
   -> { spec :: ReactSpecSimple props state
      , dispatcher :: React.ReactThis {children :: Children | props} (Record state)
-                  -> action -> EventHandler
+                  -> action -> Effect Unit
      }
 createReactSpec' wrap (Spec spec) =
     \state' ->
@@ -245,13 +247,13 @@ createReactSpec' wrap (Spec spec) =
       , dispatcher
       }
   where
-    dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> EventHandler
+    dispatcher :: React.ReactThis {children :: Children | props} (Record state) -> action -> Effect Unit
     dispatcher this action = void do
       props <- React.getProps this
       state <- React.getState this
       let
-          step :: StateCoTransformer (Record state) Unit
-               -> Aff (Step (StateCoTransformer (Record state) Unit) Unit)
+          step :: Thermite (Record state) Unit
+               -> Aff (Step (Thermite (Record state) Unit) Unit)
           step cot = do
             e <- resume cot
             case e of
@@ -264,7 +266,7 @@ createReactSpec' wrap (Spec spec) =
                   pure nonCanceler
                 pure (Loop (k (Just newState)))
 
-          cotransformer :: StateCoTransformer (Record state) Unit
+          cotransformer :: Thermite (Record state) Unit
           cotransformer = spec.performAction action (noChildren props) state
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
@@ -289,7 +291,7 @@ defaultMain spec initialState props = void do
   window <- DOM.window
   document <- DOM.document window
   container <- DOM.body document
-  traverse_ (render (React.unsafeCreateLeafElement component props)) (DOM.toElement <$> container)
+  traverse_ (render (React.unsafeCreateLeafElement component props) <<< DOM.toElement) container
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |

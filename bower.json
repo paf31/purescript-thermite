@@ -26,8 +26,5 @@
       "purescript-react": "^6.1.0",
       "purescript-typelevel-prelude" : "^3.0.0",
       "purescript-prelude" : "^4.0.0"
-  },
-  "resolutions": {
-    "purescript-react": "exports"
   }
 }
