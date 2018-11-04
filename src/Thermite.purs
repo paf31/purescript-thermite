@@ -54,7 +54,6 @@ import Data.Foldable (for_, traverse_)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
-import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
 import React (unsafeCreateElement, Children)
 import React as React
