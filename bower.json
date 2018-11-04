@@ -16,15 +16,15 @@
     "url": "git://github.com/paf31/purescript-thermite.git"
   },
   "dependencies": {
-    "purescript-aff": "^4.0.0",
-    "purescript-coroutines": "^4.0.0",
-    "purescript-dom": "^4.0.0",
-    "purescript-freet": "^3.0.0",
-    "purescript-profunctor-lenses": "^3.0.0",
-    "purescript-react-dom": "^4.0.0",
-    "purescript-react": "^5.0.1"
+    "purescript-aff": "^5.0.2",
+    "purescript-coroutines": "^5.0.0",
+    "purescript-web-html": "^1.2.0",
+    "purescript-freet": "^4.0.0",
+    "purescript-profunctor-lenses": "^5.0.0",
+    "purescript-react-dom": "^6.0.0",
+    "purescript-react": "^6.1.0"
   },
   "resolutions": {
-    "purescript-react": "^5.0.1"
+    "purescript-react": "^6.1.0"
   }
 }
