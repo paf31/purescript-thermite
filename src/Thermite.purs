@@ -203,7 +203,7 @@ createReactSpec
   :: forall state props action
    . Spec { | state } { children :: Children | props } action
   -> { | state }
-  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render) -- spec :: React.ReactSpec props state React.ReactElement
+  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state }) -- spec :: React.ReactSpec props state React.ReactElement
      , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
      }
 createReactSpec = createReactSpec' div'
@@ -219,15 +219,14 @@ createReactSpec'
   :: forall state props action
    . (Array React.ReactElement -> React.ReactElement)
   -> Spec { | state } { children :: Children | props } action
-  -> { | state }
-  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render) -- React.ReactSpec props state React.ReactElement
+  -> { | state } -- ^ Initial State
+  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state }) -- React.ReactSpec props state React.ReactElement
      , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
      }
-createReactSpec' wrap (Spec spec) =
-    \state ->
-      { constructor: \this -> pure { render: render this } -- spec: React.spec state render
-      , dispatcher
-      }
+createReactSpec' wrap (Spec spec) initState =
+  { constructor: \this -> pure { render: render this, state: initState } -- spec: React.spec state render
+  , dispatcher
+  }
   where
     dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
     dispatcher this action = void do
