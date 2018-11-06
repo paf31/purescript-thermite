@@ -57,7 +57,7 @@ import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
 import React (unsafeCreateElement, Children)
 import React as React
-import React.DOM (div')
+import React.DOM (div', text)
 import ReactDOM (render)
 
 -- | A type synonym for an action handler, which takes an action, the current props
@@ -246,7 +246,7 @@ createReactSpec' wrap (Spec spec) initState =
                     go cb = do
                       let cont :: Effect Unit
                           cont = cb (Right newState)
-                      void $ React.writeStateWithCallback this newState cont
+                      void (React.writeStateWithCallback this newState cont)
                       pure nonCanceler
 
                 _ <- makeAff go
@@ -262,10 +262,11 @@ createReactSpec' wrap (Spec spec) initState =
       launchAff (tailRecM step cotransformer)
 
     render :: React.ReactThis { children :: Children | props } { | state } -> React.Render
-    render this = map wrap $ do
-      props <- React.getProps this
-      state <- React.getState this
-      pure $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
+    render this = pure (wrap [text "foo"])
+      -- map wrap $ do
+      -- props <- React.getProps this
+      -- state <- React.getState this
+      -- pure $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
