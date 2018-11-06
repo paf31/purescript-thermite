@@ -262,11 +262,11 @@ createReactSpec' wrap (Spec spec) initState =
       launchAff (tailRecM step cotransformer)
 
     render :: React.ReactThis { children :: Children | props } { | state } -> React.Render
-    render this = pure (wrap [text "foo"])
-      -- map wrap $ do
-      -- props <- React.getProps this
-      -- state <- React.getState this
-      -- pure $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
+    render this = -- pure (wrap [text "foo"])
+      map wrap $ do
+        props <- React.getProps this
+        state <- React.getState this
+        pure $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
