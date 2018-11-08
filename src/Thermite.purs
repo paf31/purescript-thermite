@@ -13,7 +13,7 @@
 module Thermite
   ( PerformAction
   , defaultPerformAction
-  , EventHandler
+  , Dispatch
   , Render
   , defaultRender
   , writeState
@@ -23,8 +23,7 @@ module Thermite
   , _render
   , simpleSpec
   , createClass
-  , createReactSpec
-  , createReactSpec'
+  , createReactConstructor
   , defaultMain
   , withState
   , focus
@@ -38,13 +37,12 @@ module Thermite
   ) where
 
 import Prelude
-import Control.Coroutine (CoTransform(CoTransform), CoTransformer, cotransform, transform, transformCoTransformL, transformCoTransformR)
-import Control.Coroutine (CoTransformer, cotransform) as T
-import Effect.Aff (Aff, launchAff, makeAff, nonCanceler, Canceler, Error)
+import Effect.Aff (Aff, launchAff, makeAff, nonCanceler, Fiber)
 import Effect (Effect)
-import Effect.Class (liftEffect)
 import Control.Monad.Free.Trans (resume)
 import Control.Monad.Rec.Class (Step(..), forever, tailRecM)
+import Control.Coroutine (CoTransform(CoTransform), CoTransformer, cotransform, transform, transformCoTransformL, transformCoTransformR)
+import Control.Coroutine (CoTransformer, cotransform) as T
 import Web.HTML (window) as Web
 import Web.HTML.HTMLDocument (body) as Web
 import Web.HTML.HTMLElement (toElement) as Web
@@ -57,7 +55,6 @@ import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
 import React (unsafeCreateElement, Children)
 import React as React
-import React.DOM (div', text)
 import ReactDOM (render)
 
 -- | A type synonym for an action handler, which takes an action, the current props
@@ -86,14 +83,13 @@ writeState st = cotransform (const st)
 modifyState :: forall state. (state -> state) -> CoTransformer (Maybe state) (state -> state) Aff (Maybe state)
 modifyState = cotransform
 
--- | A type synonym for an event handler which can be used to construct
--- | `purescript-react`'s event attributes.
-type EventHandler = Effect Unit
+-- | A type synonym for a `dispatch`able function of action types.
+type Dispatch action = action -> Effect (Fiber Unit)
 
 -- | A rendering function, which takes an action handler function, the current state and
 -- | props, an array of child nodes and returns a HTML document.
 type Render state props action
-   = (action -> EventHandler)
+   = Dispatch action
   -> props
   -> state
   -> Array React.ReactElement
@@ -136,7 +132,7 @@ _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { 
 -- | set of controls with some containing element. For example:
 -- |
 -- | ```purescript
--- | wrap :: Spec _ State _ Action -> Spec _ State _ Action
+-- | wrap :: Spec State _ Action -> Spec State _ Action
 -- | wrap = over _render \child dispatch props state childre  ->
 -- |   [ R.div [ RP.className "wrapper" ] [ child dispatch props state children ] ]
 -- | ```
@@ -155,13 +151,13 @@ _render = lens (\(Spec s) -> s.render) (\(Spec s) r -> Spec (s { render = r }))
 -- |
 -- | data Action = Increment
 -- |
--- | spec :: Spec _ Int _ Action
+-- | spec :: Spec Int _ Action
 -- | spec = simpleSpec performAction render
 -- |   where
 -- |   render :: Render _ Int _
 -- |   render _ _ n _ = [ R.text (show n) ]
 -- |
--- |   performAction :: PerformAction _ Int _ Action
+-- |   performAction :: PerformAction Int _ Action
 -- |   performAction Increment _ n k = k (n + 1)
 -- | ```
 simpleSpec
@@ -182,54 +178,38 @@ instance semigroupSpec :: Semigroup (Spec state props action) where
          }
 
 instance monoidSpec :: Monoid (Spec state props action) where
-  mempty = simpleSpec (\_ _ _ -> pure unit)
-                      (\_ _ _ _ -> [])
+  mempty = simpleSpec defaultPerformAction defaultRender
 
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
    . Spec { | state } { children :: Children | props } action
-  -> { | state }
-  -> String
+  -> { | state } -- ^ Initial State
+  -> String -- ^ Component Name
   -> React.ReactClass { children :: Children | props }
-createClass spec state name = React.component name <<< _.constructor $ createReactSpec spec state
+createClass spec state name = React.component name (createReactConstructor spec state).constructor
 
--- | Create a React component spec from a Thermite component `Spec`.
--- |
--- | This function is a low-level alternative to `createClass`, used when the React
--- | component spec needs to be modified before being turned into a component class,
--- | e.g. by adding additional lifecycle methods.
-createReactSpec
-  :: forall state props action
-   . Spec { | state } { children :: Children | props } action
-  -> { | state }
-  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state }) -- spec :: React.ReactSpec props state React.ReactElement
-     , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
-     }
-createReactSpec = createReactSpec' div'
-
--- | Create a React component spec from a Thermite component `Spec` with an additional
+-- | Create a React component constructor from a Thermite component `Spec` with an additional
 -- | function for converting the rendered Array of ReactElement's into a single ReactElement
 -- | as is required by React.
 -- |
 -- | This function is a low-level alternative to `createClass`, used when the React
--- | component spec needs to be modified before being turned into a component class,
+-- | component constructor needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
-createReactSpec'
+createReactConstructor
   :: forall state props action
-   . (Array React.ReactElement -> React.ReactElement)
-  -> Spec { | state } { children :: Children | props } action
+   . Spec { | state } { children :: Children | props } action
   -> { | state } -- ^ Initial State
-  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state }) -- React.ReactSpec props state React.ReactElement
-     , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
+  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state })
+     , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> Dispatch action
      }
-createReactSpec' wrap (Spec spec) initState =
-  { constructor: \this -> pure { render: render this, state: initState } -- spec: React.spec state render
+createReactConstructor (Spec spec) initState =
+  { constructor: \this -> pure { render: render this, state: initState }
   , dispatcher
   }
   where
-    dispatcher :: React.ReactThis { children :: Children | props } { | state } -> action -> EventHandler
-    dispatcher this action = void do
+    dispatcher :: React.ReactThis { children :: Children | props } { | state } -> Dispatch action
+    dispatcher this action = do
       let step :: CoTransformer (Maybe { | state }) ({ | state } -> { | state }) Aff Unit
                -> Aff (Step (CoTransformer (Maybe { | state }) ({ | state } -> { | state }) Aff Unit) Unit)
           step cot = do
@@ -237,19 +217,12 @@ createReactSpec' wrap (Spec spec) initState =
             case e of
               Left _ -> pure (Done unit)
               Right (CoTransform f k) -> do
-                st <- liftEffect (React.getState this)
-
-                let newState :: { | state }
-                    newState = f st
-
-                    go :: (Either Error { | state } -> Effect Unit) -> Effect Canceler
-                    go cb = do
-                      let cont :: Effect Unit
-                          cont = cb (Right newState)
-                      void (React.writeStateWithCallback this newState cont)
-                      pure nonCanceler
-
-                _ <- makeAff go
+                -- cotransform state stored in the React component, then apply the new state while in lock-step with
+                -- React's ability to digest state mutations.
+                newState <- makeAff \resolve -> do
+                  st <- React.getState this
+                  let st' = f st
+                  nonCanceler <$ React.writeStateWithCallback this st' (resolve (Right st'))
                 pure (Loop (k (Just newState)))
 
       props <- React.getProps this
@@ -262,20 +235,19 @@ createReactSpec' wrap (Spec spec) initState =
       launchAff (tailRecM step cotransformer)
 
     render :: React.ReactThis { children :: Children | props } { | state } -> React.Render
-    render this = -- pure (wrap [text "foo"])
-      map wrap $ do
-        props <- React.getProps this
-        state <- React.getState this
-        pure $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
+    render this = do
+      props <- React.getProps this
+      state <- React.getState this
+      pure $ React.toElement $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
 defaultMain
   :: forall state props action
    . Spec { | state } { children :: Children | props } action
-  -> { | state }
-  -> String
-  -> { | props }
+  -> { | state } -- ^ Initial State
+  -> String -- ^ Component Name
+  -> { | props } -- ^ Read-Only Props
   -> Effect Unit
 defaultMain spec initialState name props = void do
   let component :: React.ReactClass { children :: Children | props }
