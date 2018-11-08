@@ -53,7 +53,7 @@ import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.List (List(..), (!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
-import React (unsafeCreateElement, Children)
+import React (createElement, Children, class ReactPropFields)
 import React as React
 import ReactDOM (render)
 
@@ -243,17 +243,18 @@ createReactConstructor (Spec spec) initState =
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
 defaultMain
-  :: forall state props action
-   . Spec { | state } { children :: Children | props } action
+  :: forall state props given action
+   . ReactPropFields props given
+  => Spec { | state } { children :: Children | props } action
   -> { | state } -- ^ Initial State
   -> String -- ^ Component Name
-  -> { | props } -- ^ Read-Only Props
+  -> { | given } -- ^ Read-Only Props
   -> Effect Unit
 defaultMain spec initialState name props = void do
   let component :: React.ReactClass { children :: Children | props }
       component = createClass spec initialState name
   container <- Web.body =<< Web.document =<< Web.window
-  traverse_ (render (unsafeCreateElement component props [] {- (React.childrenToArray props.children) -}) <<< Web.toElement) container
+  traverse_ (render (createElement component props []) <<< Web.toElement) container
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
@@ -277,10 +278,10 @@ withState f = simpleSpec performAction render
 -- | and action types using `Either`:
 -- |
 -- | ```purescript
--- | spec1 :: Spec _ S1 _ A1
--- | spec2 :: Spec _ S2 _ A2
+-- | spec1 :: Spec S1 _ A1
+-- | spec2 :: Spec S2 _ A2
 -- |
--- | spec :: Spec _ (Tuple S1 S2) _ (Either A1 A2)
+-- | spec :: Spec (Tuple S1 S2) _ (Either A1 A2)
 -- | spec = focus _1 _Left spec1 <> focus _2 _Right spec2
 -- | ```
 -- |
