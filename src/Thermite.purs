@@ -37,7 +37,7 @@ module Thermite
   ) where
 
 import Prelude
-import Effect.Aff (Aff, launchAff, makeAff, nonCanceler, Fiber)
+import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Effect (Effect)
 import Control.Monad.Free.Trans (resume)
 import Control.Monad.Rec.Class (Step(..), forever, tailRecM)
@@ -84,7 +84,7 @@ modifyState :: forall state. (state -> state) -> CoTransformer (Maybe state) (st
 modifyState = cotransform
 
 -- | A type synonym for a `dispatch`able function of action types.
-type Dispatch action = action -> Effect (Fiber Unit)
+type Dispatch action = action -> Effect Unit
 
 -- | A rendering function, which takes an action handler function, the current state and
 -- | props, an array of child nodes and returns a HTML document.
@@ -232,7 +232,7 @@ createReactConstructor (Spec spec) initState =
 
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
-      launchAff (tailRecM step cotransformer)
+      void $ launchAff $ tailRecM step cotransformer
 
     render :: React.ReactThis { children :: Children | props } { | state } -> React.Render
     render this = do
