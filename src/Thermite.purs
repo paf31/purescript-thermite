@@ -15,6 +15,7 @@ module Thermite
   , defaultPerformAction
   , Dispatch
   , Render
+  , WithChildren
   , defaultRender
   , writeState
   , modifyState
@@ -94,6 +95,10 @@ type Render state props action
   -> state
   -> Array React.ReactElement
   -> Array React.ReactElement
+
+-- | Convenience type when specifying the type of a `Spec`.
+type WithChildren props = { children :: Children | props }
+
 
 -- | A default `Render` implementation which renders nothing.
 -- |
