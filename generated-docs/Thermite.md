@@ -52,6 +52,14 @@ type Render state props action = Dispatch action -> props -> state -> Array Reac
 A rendering function, which takes an action handler function, the current state and
 props, an array of child nodes and returns a HTML document.
 
+#### `WithChildren`
+
+``` purescript
+type WithChildren props = { children :: Children | props }
+```
+
+Convenience type when specifying the type of a `Spec`.
+
 #### `defaultRender`
 
 ``` purescript
@@ -153,7 +161,7 @@ spec = simpleSpec performAction render
 #### `createClass`
 
 ``` purescript
-createClass :: forall state props action. Spec {  | state } { children :: Children | props } action -> {  | state } -> String -> ReactClass { children :: Children | props }
+createClass :: forall state props action. Spec {  | state } (WithChildren props) action -> {  | state } -> String -> ReactClass (WithChildren props)
 ```
 
 Create a React component class from a Thermite component `Spec`.
@@ -161,7 +169,7 @@ Create a React component class from a Thermite component `Spec`.
 #### `createReactConstructor`
 
 ``` purescript
-createReactConstructor :: forall state props action. Spec {  | state } { children :: Children | props } action -> {  | state } -> { constructor :: ReactClassConstructor { children :: Children | props } {  | state } (render :: Render, state :: {  | state }), dispatcher :: ReactThis { children :: Children | props } {  | state } -> Dispatch action }
+createReactConstructor :: forall state props action. Spec {  | state } (WithChildren props) action -> {  | state } -> { constructor :: ReactClassConstructor (WithChildren props) {  | state } (render :: Render, state :: {  | state }), dispatcher :: ReactThis (WithChildren props) {  | state } -> Dispatch action }
 ```
 
 Create a React component constructor from a Thermite component `Spec` with an additional
@@ -175,7 +183,7 @@ e.g. by adding additional lifecycle methods.
 #### `defaultMain`
 
 ``` purescript
-defaultMain :: forall state props given action. ReactPropFields props given => Spec {  | state } { children :: Children | props } action -> {  | state } -> String -> {  | given } -> Effect Unit
+defaultMain :: forall state props given action. ReactPropFields props given => Spec {  | state } (WithChildren props) action -> {  | state } -> String -> {  | given } -> Effect Unit
 ```
 
 A default implementation of `main` which renders a component to the

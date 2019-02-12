@@ -188,10 +188,10 @@ instance monoidSpec :: Monoid (Spec state props action) where
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
   :: forall state props action
-   . Spec { | state } { children :: Children | props } action
+   . Spec { | state } (WithChildren props) action
   -> { | state } -- ^ Initial State
   -> String -- ^ Component Name
-  -> React.ReactClass { children :: Children | props }
+  -> React.ReactClass (WithChildren props)
 createClass spec state name = React.component name (createReactConstructor spec state).constructor
 
 -- | Create a React component constructor from a Thermite component `Spec` with an additional
@@ -203,17 +203,17 @@ createClass spec state name = React.component name (createReactConstructor spec 
 -- | e.g. by adding additional lifecycle methods.
 createReactConstructor
   :: forall state props action
-   . Spec { | state } { children :: Children | props } action
+   . Spec { | state } (WithChildren props) action
   -> { | state } -- ^ Initial State
-  -> { constructor :: React.ReactClassConstructor { children :: Children | props } { | state } (render :: React.Render, state :: { | state })
-     , dispatcher :: React.ReactThis { children :: Children | props } { | state } -> Dispatch action
+  -> { constructor :: React.ReactClassConstructor (WithChildren props) { | state } (render :: React.Render, state :: { | state })
+     , dispatcher :: React.ReactThis (WithChildren props) { | state } -> Dispatch action
      }
 createReactConstructor (Spec spec) initState =
   { constructor: \this -> pure { render: render this, state: initState }
   , dispatcher
   }
   where
-    dispatcher :: React.ReactThis { children :: Children | props } { | state } -> Dispatch action
+    dispatcher :: React.ReactThis (WithChildren props) { | state } -> Dispatch action
     dispatcher this action = do
       let step :: CoTransformer (Maybe { | state }) ({ | state } -> { | state }) Aff Unit
                -> Aff (Step (CoTransformer (Maybe { | state }) ({ | state } -> { | state }) Aff Unit) Unit)
@@ -239,7 +239,7 @@ createReactConstructor (Spec spec) initState =
       -- functions do quite what we want here.
       void $ launchAff $ tailRecM step cotransformer
 
-    render :: React.ReactThis { children :: Children | props } { | state } -> React.Render
+    render :: React.ReactThis (WithChildren props) { | state } -> React.Render
     render this = do
       props <- React.getProps this
       state <- React.getState this
@@ -250,13 +250,13 @@ createReactConstructor (Spec spec) initState =
 defaultMain
   :: forall state props given action
    . ReactPropFields props given
-  => Spec { | state } { children :: Children | props } action
+  => Spec { | state } (WithChildren props) action
   -> { | state } -- ^ Initial State
   -> String -- ^ Component Name
   -> { | given } -- ^ Read-Only Props
   -> Effect Unit
 defaultMain spec initialState name props = void do
-  let component :: React.ReactClass { children :: Children | props }
+  let component :: React.ReactClass (WithChildren props)
       component = createClass spec initialState name
   container <- Web.body =<< Web.document =<< Web.window
   traverse_ (render (createElement component props []) <<< Web.toElement) container
