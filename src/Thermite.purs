@@ -15,10 +15,10 @@ module Thermite
   , defaultPerformAction
   , Dispatch
   , Render
-  , WithChildren
   , defaultRender
   , writeState
   , modifyState
+  , WithChildren
   , Spec
   , _performAction
   , _render
@@ -50,13 +50,17 @@ import Web.HTML.HTMLElement (toElement) as Web
 import Web.HTML.Window (document) as Web
 import Data.Either (Either(..))
 import Data.Foldable (for_, traverse_)
+import Data.FoldableWithIndex (foldlWithIndex)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
-import Data.List (List(..), (!!), modifyAt)
+import Data.Array ((!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
 import React (createElement, Children, class ReactPropFields)
 import React as React
 import ReactDOM (render)
+
+import Unsafe.Coerce (unsafeCoerce)
+import Effect.Console (log)
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -96,15 +100,17 @@ type Render state props action
   -> Array React.ReactElement
   -> Array React.ReactElement
 
--- | Convenience type when specifying the type of a `Spec`.
-type WithChildren props = { children :: Children | props }
-
 
 -- | A default `Render` implementation which renders nothing.
 -- |
 -- | This is useful when just `append`ing action handlers.
 defaultRender :: forall state props action. Render state props action
 defaultRender _ _ _ _ = []
+
+
+-- | Thermite assumes _all_ thermite-created components have children. This is a convenience type
+-- | when specifying the `children :: Children` prop field of a `Spec`.
+type WithChildren props = { children :: Children | props }
 
 -- | A component specification, which can be passed to `createClass`.
 -- |
@@ -170,16 +176,12 @@ simpleSpec
    . PerformAction state props action
   -> Render state props action
   -> Spec state props action
-simpleSpec performAction render =
-  Spec { performAction: performAction
-       , render: render
-       }
+simpleSpec performAction render = Spec {performAction, render}
 
 instance semigroupSpec :: Semigroup (Spec state props action) where
   append (Spec spec1) (Spec spec2) =
-    Spec { performAction:       \a p s -> do spec1.performAction a p s
-                                             spec2.performAction a p s
-         , render:              \k p s   -> spec1.render k p s <> spec2.render k p s
+    Spec { performAction: \a p s -> spec1.performAction a p s *> spec2.performAction a p s
+         , render:        \k p s -> spec1.render k p s <> spec2.render k p s
          }
 
 instance monoidSpec :: Monoid (Spec state props action) where
@@ -201,11 +203,15 @@ createClass spec state name = React.component name (createReactConstructor spec 
 -- | This function is a low-level alternative to `createClass`, used when the React
 -- | component constructor needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
+-- |
+-- | __Note__: React.js assumes _all_ react components have a _record_-based state; when constructing
+-- | and composing thermite `Spec`s, you are free to decide whichever state construct you wish, but when
+-- | converting to React, it must be a `Record`.
 createReactConstructor
   :: forall state props action
    . Spec { | state } (WithChildren props) action
   -> { | state } -- ^ Initial State
-  -> { constructor :: React.ReactClassConstructor (WithChildren props) { | state } (render :: React.Render, state :: { | state })
+  -> { constructor :: React.ReactClassConstructor (WithChildren props) { | state } (React.ReactSpecRequired { | state } ())
      , dispatcher :: React.ReactThis (WithChildren props) { | state } -> Dispatch action
      }
 createReactConstructor (Spec spec) initState =
@@ -255,11 +261,15 @@ defaultMain
   -> String -- ^ Component Name
   -> { | given } -- ^ Read-Only Props
   -> Effect Unit
-defaultMain spec initialState name props = void do
+defaultMain spec initialState name props = do
   let component :: React.ReactClass (WithChildren props)
       component = createClass spec initialState name
-  container <- Web.body =<< Web.document =<< Web.window
-  traverse_ (render (createElement component props []) <<< Web.toElement) container
+  log (unsafeCoerce component)
+  let element :: React.ReactElement
+      element = createElement component props []
+  log (unsafeCoerce element)
+  mContainer <- Web.window >>= Web.document >>= Web.body
+  traverse_ (render element <<< Web.toElement) mContainer
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
@@ -350,7 +360,7 @@ split prism (Spec spec) = Spec { performAction, render }
         Left _ -> []
         Right st' -> spec.render k p st' children
 
--- | Create a component whose state is described by a list, displaying one subcomponent
+-- | Create a component whose state is described by an array, displaying one subcomponent
 -- | for each entry in the list.
 -- |
 -- | The action type is modified to take the index of the originating subcomponent as an
@@ -358,28 +368,23 @@ split prism (Spec spec) = Spec { performAction, render }
 foreach
   :: forall props state action
    . (Int -> Spec state props action)
-  -> Spec (List state) props (Tuple Int action)
-foreach f = Spec
-    { performAction: performAction
-    , render: render
-    }
+  -> Spec (Array state) props (Tuple Int action)
+foreach f = Spec {performAction, render}
   where
-    performAction :: PerformAction (List state) props (Tuple Int action)
+    performAction :: PerformAction (Array state) props (Tuple Int action)
     performAction (Tuple i a) p sts =
-        for_ (sts !! i) \st ->
+        for_ (sts !! i) \st -> -- for_ only applies to the Maybe, here.
           case f i of
             Spec s -> forever (transform (_ >>= (_ !! i)))
                       `transformCoTransformL` s.performAction a p st
                       `transformCoTransformR` forever (transform (modifying i))
       where
-        modifying :: Int -> (state -> state) -> List state -> List state
+        modifying :: Int -> (state -> state) -> Array state -> Array state
         modifying j g sts' = fromMaybe sts' (modifyAt j g sts')
 
-    render :: Render (List state) props (Tuple Int action)
-    render k p sts _ = foldWithIndex (\i st els -> case f i of Spec s -> els <> s.render (k <<< Tuple i) p st []) sts []
-
-    foldWithIndex :: forall a r. (Int -> a -> r -> r) -> List a -> r -> r
-    foldWithIndex g = go 0
+    render :: Render (Array state) props (Tuple Int action)
+    render k p sts _ = foldlWithIndex go [] sts
       where
-      go _ Nil         r = r
-      go i (Cons x xs) r = go (i + 1) xs (g i x r)
+        go :: Int -> Array React.ReactElement -> state -> Array React.ReactElement
+        go i els st = case f i of
+          Spec s -> els <> s.render (k <<< Tuple i) p st []

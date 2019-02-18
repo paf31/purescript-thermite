@@ -7,7 +7,8 @@ import Data.Either (Either(..))
 import Data.Filter (Filter(..), showFilter)
 import Data.Foldable (fold)
 import Data.Lens (Lens', Prism', over, lens, prism)
-import Data.List (List(..), deleteAt, length, filter)
+import Data.Array (cons, deleteAt, length, filter)
+-- import Data.List (List(..), deleteAt, length, filter)
 import Data.Maybe (fromMaybe)
 import Data.Tuple (Tuple(..), uncurry)
 import React (ReactElement) as R
@@ -36,20 +37,20 @@ _TaskAction = prism (uncurry TaskAction) \ta ->
 
 -- | The state for the full task list component is a list of tasks
 type TaskListState =
-  { tasks       :: List Task
+  { tasks       :: Array Task
   , editText    :: String
   , filter      :: Filter
   }
 
 initialTaskListState :: TaskListState
 initialTaskListState =
-  { tasks: Nil
+  { tasks: []
   , editText: ""
   , filter: All
   }
 
 -- | A `Lens` which corresponds to the `tasks` property.
-_tasks :: Lens' TaskListState (List Task)
+_tasks :: Lens' TaskListState (Array Task)
 _tasks = lens _.tasks (_ { tasks = _ })
 
 -- | A `Spec` for a component consisting of a `List` of tasks.
@@ -93,7 +94,7 @@ taskList = container $ fold
         -- Everything else is handled by some other child component so is ignored here.
         performAction :: T.PerformAction TaskListState Props TaskListAction
         performAction (NewTask s) _ _ = void $ T.modifyState $ \state ->
-          state { tasks = Cons (initialTask s) state.tasks
+          state { tasks = cons (initialTask s) state.tasks
                 , editText = ""
                 }
         performAction _ _ _ = pure unit
