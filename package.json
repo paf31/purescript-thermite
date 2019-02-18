@@ -6,8 +6,8 @@
     "example": "pulp test -r cat > html/index.js"
   },
   "dependencies": {
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2"
   },
   "devDependencies": {
     "pulp": "^12.3.1",
