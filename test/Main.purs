@@ -15,10 +15,9 @@ module Test.Main (main) where
 
 import Prelude
 import Components.TaskList (initialTaskListState, taskList)
-import Control.Monad.Eff (Eff)
-import DOM (DOM) as DOM
+import Effect (Effect)
 import Thermite as T
 
 -- | The main method creates the task list component, and renders it to the document body.
-main :: Eff (dom :: DOM.DOM) Unit
-main = T.defaultMain taskList initialTaskListState unit
+main :: Effect Unit
+main = T.defaultMain taskList initialTaskListState "TaskList" {}

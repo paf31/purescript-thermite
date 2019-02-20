@@ -15,15 +15,15 @@ data TaskAction
 -- | The state for the task component
 type Task =
   { completed :: Boolean
-    , description :: String
+  , description :: String
   }
 
 initialTask :: String -> Task
 initialTask s = { completed: false, description: s }
 
 -- | A `Spec` for the task component.
-taskSpec :: forall eff props. T.Spec eff Task props TaskAction
-taskSpec = T.simpleSpec performAction render
+taskSpec :: forall props. T.Spec Task props TaskAction
+taskSpec = T.Spec {performAction,render}
   where
   -- Renders the current state of the component as a collection of React elements.
   render :: T.Render Task props TaskAction
@@ -34,7 +34,7 @@ taskSpec = T.simpleSpec performAction render
                   , RP.checked s.completed
                   , RP.title "Mark as completed"
                   , RP.onChange \e -> dispatch (ChangeCompleted (unsafeCoerce e).target.checked)
-                  ] []
+                  ]
         , R.text s.description
         , R.a [ RP.className "btn btn-danger pull-right"
               , RP.title "Remove item"
@@ -48,10 +48,10 @@ taskSpec = T.simpleSpec performAction render
   --
   -- _Note_: this component can only see actions of type `TaskAction`, but the `RemoveTask` action
   -- is ignored here: it will be handled by the parent component.
-  performAction :: T.PerformAction eff Task props TaskAction
+  performAction :: T.PerformAction Task props TaskAction
   performAction (ChangeCompleted b)   _ _ = void do
     -- This is a test for issue #65.
     -- In practice, we only need one `modifyState` here.
-    _ <- T.modifyState id
+    _ <- T.modifyState identity
     T.modifyState (_ { completed = b })
   performAction _                     _ _ = pure unit
