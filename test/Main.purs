@@ -5,7 +5,7 @@
 -- |
 -- | This example demonstrates the main features of a Thermite app:
 -- |
--- | - Using `simpleSpec` to create simple components from `Render` and
+-- | - Using `Spec` to create simple components from `Render` and
 -- |   `PerformAction` functions
 -- | - Composing components using the `Monoid` instance and lens combinators.
 -- |

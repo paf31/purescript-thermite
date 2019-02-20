@@ -79,7 +79,7 @@ render dispatch _ state _ =
 The `performAction` function interprets actions by passing a function to the state update function, which is responsible for updating the state using record updates:
 
 ```purescript
-performAction :: T.PerformAction _ State _ Action
+performAction :: T.PerformAction State _ Action
 performAction Increment _ _ = void (T.cotransform (\state -> state { counter = state.counter + 1 }))
 performAction Decrement _ _ = void (T.cotransform (\state -> state { counter = state.counter - 1 }))
 ```
@@ -87,9 +87,9 @@ performAction Decrement _ _ = void (T.cotransform (\state -> state { counter = s
 _Note_: `PerformAction` returns a _coroutine_, which can emit many asynchronous state updates using `cotransform`. This approach also allows us to create asynchronous and/or chunked action handlers (using AJAX or websockets, for example):
 
 ```purescript
-getIncrementValueFromServer :: Aff _ Int
+getIncrementValueFromServer :: Aff Int
 
-performAction :: T.PerformAction _ State _ Action
+performAction :: T.PerformAction State _ Action
 performAction Increment _ _ = do
   Just amount <- lift getIncrementValueFromServer
   void $ T.cotransform $ \state -> state { counter = state.counter + amount }
@@ -98,14 +98,14 @@ performAction Increment _ _ = do
 With these pieces, we can create a `Spec` for our component:
 
 ```purescript
-spec :: T.Spec _ State _ Action
-spec = T.simpleSpec performAction render
+spec :: T.Spec State _ Action
+spec = T.Spec {performAction, render}
 ```
 
 Finally, in `main`, the `defaultMain` function can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
-main = T.defaultMain spec initialState unit
+main = T.defaultMain spec initialState "MyComponent" {}
 ```
 
 ## Combining Components
@@ -125,10 +125,10 @@ See the [example project](test/) for examples of these kinds of composition.
 As a simple example, we can combine two subcomponents by using a `Tuple` to store both states, and `Either` to combine both sets of actions:
 
 ```purescript
-spec1 :: Spec _ S1 _ A1
-spec2 :: Spec _ S2 _ A2
+spec1 :: Spec S1 _ A1
+spec2 :: Spec S2 _ A2
 
-spec :: Spec _ (Tuple S1 S2) _ (Either A1 A2)
+spec :: Spec (Tuple S1 S2) _ (Either A1 A2)
 spec = focus _1 _Left spec1 <> focus _2 _Right spec2
 ```
 
@@ -149,9 +149,9 @@ _child = lens _.child (_ { child = _ })
 
 _ChildAction :: PrismP ParentAction ChildAction
 
-childSpec :: Spec _ Child _ ChildAction
+childSpec :: Spec Child _ ChildAction
 
-spec :: Spec _ Parent _ ParentAction
+spec :: Spec Parent _ ParentAction
 spec = focus _child _ChildAction $ split _Just childSpec
 ```
 
