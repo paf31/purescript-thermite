@@ -191,6 +191,14 @@ This function captures the state of the `Spec` as a function argument.
 This can sometimes be useful in complex scenarios involving the `focus` and
 `foreach` combinators.
 
+#### `withProps`
+
+``` purescript
+withProps :: forall state props action. (props -> Spec state props action) -> Spec state props action
+```
+
+This function captures the props of the `Spec` as a function argument.
+
 #### `focus`
 
 ``` purescript
