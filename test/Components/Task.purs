@@ -15,7 +15,7 @@ data TaskAction
 -- | The state for the task component
 type Task =
   { completed :: Boolean
-    , description :: String
+  , description :: String
   }
 
 initialTask :: String -> Task
@@ -23,7 +23,7 @@ initialTask s = { completed: false, description: s }
 
 -- | A `Spec` for the task component.
 taskSpec :: forall props. T.Spec Task props TaskAction
-taskSpec = T.simpleSpec performAction render
+taskSpec = T.Spec {performAction,render}
   where
   -- Renders the current state of the component as a collection of React elements.
   render :: T.Render Task props TaskAction

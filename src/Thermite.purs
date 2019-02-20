@@ -5,7 +5,7 @@
 -- | - The `view` is a `Render` function which produces a React element for the current state.
 -- | - The `PerformAction` function can be used to update the state based on an action.
 -- |
--- | A `Spec` can be created using `simpleSpec`, and turned into a React component class using
+-- | A `Spec` can be created using its newtype constructor, and turned into a React component class using
 -- | `createClass`.
 -- |
 -- | Thermite also provides type class instances and lens combinators for composing `Spec`s.
@@ -19,10 +19,9 @@ module Thermite
   , writeState
   , modifyState
   , WithChildren
-  , Spec
+  , Spec (..)
   , _performAction
   , _render
-  , simpleSpec
   , createClass
   , createReactConstructor
   , defaultMain
@@ -38,6 +37,8 @@ module Thermite
   ) where
 
 import Prelude
+  ( (>>=), pure, identity, bind, (<$>), (<$), (<*>), (*>), (<>), unit, (<<<), map, const, void
+  , class Monoid, class Semigroup, Unit)
 import Effect.Aff (Aff, launchAff, makeAff, nonCanceler)
 import Effect (Effect)
 import Control.Monad.Free.Trans (resume)
@@ -56,11 +57,11 @@ import Data.Array ((!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
 import React (createElement, Children, class ReactPropFields)
-import React as React
+import React
+  ( ReactElement, ReactClass, ReactSpecRequired, ReactClassConstructor, ReactThis, Render
+  , component, toElement, getState, getProps, writeStateWithCallback, childrenToArray) as React
 import ReactDOM (render)
 
-import Unsafe.Coerce (unsafeCoerce)
-import Effect.Console (log)
 
 -- | A type synonym for an action handler, which takes an action, the current props
 -- | and state for the component, and return a `CoTransformer` which will emit
@@ -88,11 +89,11 @@ writeState st = cotransform (const st)
 modifyState :: forall state. (state -> state) -> CoTransformer (Maybe state) (state -> state) Aff (Maybe state)
 modifyState = cotransform
 
--- | A type synonym for a `dispatch`able function of action types.
+-- | A function capable of dispatching an action type, invoking `PerformAction`.
 type Dispatch action = action -> Effect Unit
 
 -- | A rendering function, which takes an action handler function, the current state and
--- | props, an array of child nodes and returns a HTML document.
+-- | props, an array of child nodes, and returns a HTML document.
 type Render state props action
    = Dispatch action
   -> props
@@ -114,7 +115,22 @@ type WithChildren props = { children :: Children | props }
 
 -- | A component specification, which can be passed to `createClass`.
 -- |
--- | A minimal `Spec` can be built using `simpleSpec`.
+-- | For example:
+-- |
+-- | ```purescript
+-- | import qualified React.DOM as R
+-- |
+-- | data Action = Increment
+-- |
+-- | spec :: Spec Int _ Action
+-- | spec = Spec {performAction, render}
+-- |   where
+-- |   render :: Render Int _ Action
+-- |   render _ _ n _ = [ R.text (show n) ]
+-- |
+-- |   performAction :: PerformAction Int _ Action
+-- |   performAction Increment _ n k = k (n + 1)
+-- | ```
 -- |
 -- | The `Monoid` instance for `Spec` will compose `Spec`s by placing rendered
 -- | HTML elements next to one another, and performing actions in sequence.
@@ -150,33 +166,6 @@ _performAction = lens (\(Spec s) -> s.performAction) (\(Spec s) pa -> Spec (s { 
 _render :: forall state props action. Lens' (Spec state props action) (Render state props action)
 _render = lens (\(Spec s) -> s.render) (\(Spec s) r -> Spec (s { render = r }))
 
--- | Create a minimal `Spec`. The arguments are, in order:
--- |
--- | - The `PerformAction` function for performing actions
--- | - The `Render` function for rendering the current state as a HTML document
--- |
--- | For example:
--- |
--- | ```purescript
--- | import qualified React.DOM as R
--- |
--- | data Action = Increment
--- |
--- | spec :: Spec Int _ Action
--- | spec = simpleSpec performAction render
--- |   where
--- |   render :: Render _ Int _
--- |   render _ _ n _ = [ R.text (show n) ]
--- |
--- |   performAction :: PerformAction Int _ Action
--- |   performAction Increment _ n k = k (n + 1)
--- | ```
-simpleSpec
-  :: forall state props action
-   . PerformAction state props action
-  -> Render state props action
-  -> Spec state props action
-simpleSpec performAction render = Spec {performAction, render}
 
 instance semigroupSpec :: Semigroup (Spec state props action) where
   append (Spec spec1) (Spec spec2) =
@@ -185,7 +174,7 @@ instance semigroupSpec :: Semigroup (Spec state props action) where
          }
 
 instance monoidSpec :: Monoid (Spec state props action) where
-  mempty = simpleSpec defaultPerformAction defaultRender
+  mempty = Spec {performAction: defaultPerformAction, render: defaultRender}
 
 -- | Create a React component class from a Thermite component `Spec`.
 createClass
@@ -196,17 +185,15 @@ createClass
   -> React.ReactClass (WithChildren props)
 createClass spec state name = React.component name (createReactConstructor spec state).constructor
 
--- | Create a React component constructor from a Thermite component `Spec` with an additional
--- | function for converting the rendered Array of ReactElement's into a single ReactElement
--- | as is required by React.
+-- | Create a React component constructor from a Thermite component `Spec`.
 -- |
 -- | This function is a low-level alternative to `createClass`, used when the React
 -- | component constructor needs to be modified before being turned into a component class,
 -- | e.g. by adding additional lifecycle methods.
 -- |
--- | __Note__: React.js assumes _all_ react components have a _record_-based state; when constructing
--- | and composing thermite `Spec`s, you are free to decide whichever state construct you wish, but when
--- | converting to React, it must be a `Record`.
+-- | __Note__: React assumes _all_ react components have a _record_-based state; when constructing
+-- | and composing pure Thermite `Spec`s, you are free to decide whichever state construct you wish.
+-- | However, when finally turning a `Spec` into to React-friendly code, it must be a `Record`.
 createReactConstructor
   :: forall state props action
    . Spec { | state } (WithChildren props) action
@@ -231,25 +218,21 @@ createReactConstructor (Spec spec) initState =
                 -- cotransform state stored in the React component, then apply the new state while in lock-step with
                 -- React's ability to digest state mutations.
                 newState <- makeAff \resolve -> do
-                  st <- React.getState this
-                  let st' = f st
-                  nonCanceler <$ React.writeStateWithCallback this st' (resolve (Right st'))
+                  st <- f <$> React.getState this
+                  nonCanceler <$ React.writeStateWithCallback this st (resolve (Right st))
                 pure (Loop (k (Just newState)))
 
-      props <- React.getProps this
-      state <- React.getState this
-      let cotransformer :: CoTransformer (Maybe { | state }) ({ | state } -> { | state }) Aff Unit
-          cotransformer = spec.performAction action props state
+      cotransformer <- spec.performAction action <$> React.getProps this <*> React.getState this
 
       -- Step the coroutine manually, since none of the existing coroutine
       -- functions do quite what we want here.
-      void $ launchAff $ tailRecM step cotransformer
+      void (launchAff (tailRecM step cotransformer))
 
     render :: React.ReactThis (WithChildren props) { | state } -> React.Render
     render this = do
       props <- React.getProps this
       state <- React.getState this
-      pure $ React.toElement $ spec.render (dispatcher this) props state (React.childrenToArray props.children)
+      pure (React.toElement (spec.render (dispatcher this) props state (React.childrenToArray props.children)))
 
 -- | A default implementation of `main` which renders a component to the
 -- | document body.
@@ -264,10 +247,8 @@ defaultMain
 defaultMain spec initialState name props = do
   let component :: React.ReactClass (WithChildren props)
       component = createClass spec initialState name
-  log (unsafeCoerce component)
   let element :: React.ReactElement
       element = createElement component props []
-  log (unsafeCoerce element)
   mContainer <- Web.window >>= Web.document >>= Web.body
   traverse_ (render element <<< Web.toElement) mContainer
 
@@ -279,13 +260,13 @@ withState
   :: forall state props action
    . (state -> Spec state props action)
   -> Spec state props action
-withState f = simpleSpec performAction render
+withState f = Spec {performAction,render}
   where
     performAction :: PerformAction state props action
     performAction a p st = view _performAction (f st) a p st
 
     render :: Render state props action
-    render k p st = view _render (f st) k p st
+    render d p st = view _render (f st) d p st
 
 -- | Change the state type, using a lens to focus on a part of the state.
 -- |
@@ -308,7 +289,7 @@ focus
   -> Prism' action2 action1
   -> Spec state1 props action1
   -> Spec state2 props action2
-focus lens prism (Spec spec) = Spec { performAction, render }
+focus lens prism (Spec spec) = Spec {performAction,render}
   where
     performAction :: PerformAction state2 props action2
     performAction a p st =
@@ -344,7 +325,7 @@ split
    . Prism' state1 state2
   -> Spec state2 props action
   -> Spec state1 props action
-split prism (Spec spec) = Spec { performAction, render }
+split prism (Spec spec) = Spec {performAction,render}
   where
     performAction :: PerformAction state1 props action
     performAction a p st =
@@ -369,7 +350,7 @@ foreach
   :: forall props state action
    . (Int -> Spec state props action)
   -> Spec (Array state) props (Tuple Int action)
-foreach f = Spec {performAction, render}
+foreach f = Spec {performAction,render}
   where
     performAction :: PerformAction (Array state) props (Tuple Int action)
     performAction (Tuple i a) p sts =

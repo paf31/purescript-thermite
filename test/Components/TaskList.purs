@@ -76,7 +76,7 @@ taskList = container $ fold
 
     -- The header component contains a button which will create a new task.
     header :: T.Spec TaskListState Props TaskListAction
-    header = T.simpleSpec performAction render
+    header = T.Spec {performAction,render}
       where
         render :: T.Render TaskListState Props TaskListAction
         render dispatch _ s _ =
@@ -152,16 +152,18 @@ taskList = container $ fold
     -- The footer uses `defaultPerformAction` since it neither produces nor handles actions.
     -- It simply displays a label with information about completed tasks.
     footer :: forall action. T.Spec TaskListState Props action
-    footer = T.simpleSpec T.defaultPerformAction \_ _ s _ ->
-      let
-        footerText = show completed <> "/" <> show total <> " tasks completed."
-        completed  = length $ filter _.completed s.tasks
-        total      = length s.tasks
-      in [ R.p' [ R.text footerText ] ]
+    footer = T.Spec {performAction: T.defaultPerformAction, render}
+      where
+        render _ _ s _ =
+          let
+            footerText = show completed <> "/" <> show total <> " tasks completed."
+            completed  = length $ filter _.completed s.tasks
+            total      = length s.tasks
+          in [ R.p' [ R.text footerText ] ]
 
     -- This `Spec` handles `RemoveTask` actions from child components
     listActions :: T.Spec TaskListState Props TaskListAction
-    listActions = T.simpleSpec performAction T.defaultRender
+    listActions = T.Spec {performAction, render: T.defaultRender}
       where
       performAction :: T.PerformAction TaskListState Props TaskListAction
       performAction (TaskAction i RemoveTask) _ _ = void $ T.modifyState \state -> state { tasks = fromMaybe state.tasks (deleteAt i state.tasks) }

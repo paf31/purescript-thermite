@@ -7,7 +7,7 @@ Thermite provides a simple model-view-action abstraction on top of `purescript-r
 - The `view` is a `Render` function which produces a React element for the current state.
 - The `PerformAction` function can be used to update the state based on an action.
 
-A `Spec` can be created using `simpleSpec`, and turned into a React component class using
+A `Spec` can be created using its newtype constructor, and turned into a React component class using
 `createClass`.
 
 Thermite also provides type class instances and lens combinators for composing `Spec`s.
@@ -41,7 +41,7 @@ A default `PerformAction` action implementation which ignores all actions.
 type Dispatch action = action -> Effect Unit
 ```
 
-A type synonym for a `dispatch`able function of action types.
+A function capable of dispatching an action type, invoking `PerformAction`.
 
 #### `Render`
 
@@ -50,15 +50,7 @@ type Render state props action = Dispatch action -> props -> state -> Array Reac
 ```
 
 A rendering function, which takes an action handler function, the current state and
-props, an array of child nodes and returns a HTML document.
-
-#### `WithChildren`
-
-``` purescript
-type WithChildren props = { children :: Children | props }
-```
-
-Convenience type when specifying the type of a `Spec`.
+props, an array of child nodes, and returns a HTML document.
 
 #### `defaultRender`
 
@@ -86,15 +78,40 @@ modifyState :: forall state. (state -> state) -> CoTransformer (Maybe state) (st
 
 An alias for `cotransform` - apply a function to the current component state.
 
+#### `WithChildren`
+
+``` purescript
+type WithChildren props = { children :: Children | props }
+```
+
+Thermite assumes _all_ thermite-created components have children. This is a convenience type
+when specifying the `children :: Children` prop field of a `Spec`.
+
 #### `Spec`
 
 ``` purescript
 newtype Spec state props action
+  = Spec { performAction :: PerformAction state props action, render :: Render state props action }
 ```
 
 A component specification, which can be passed to `createClass`.
 
-A minimal `Spec` can be built using `simpleSpec`.
+For example:
+
+```purescript
+import qualified React.DOM as R
+
+data Action = Increment
+
+spec :: Spec Int _ Action
+spec = Spec {performAction, render}
+  where
+  render :: Render Int _ Action
+  render _ _ n _ = [ R.text (show n) ]
+
+  performAction :: PerformAction Int _ Action
+  performAction Increment _ n k = k (n + 1)
+```
 
 The `Monoid` instance for `Spec` will compose `Spec`s by placing rendered
 HTML elements next to one another, and performing actions in sequence.
@@ -130,34 +147,6 @@ wrap = over _render \child dispatch props state childre  ->
   [ R.div [ RP.className "wrapper" ] [ child dispatch props state children ] ]
 ```
 
-#### `simpleSpec`
-
-``` purescript
-simpleSpec :: forall state props action. PerformAction state props action -> Render state props action -> Spec state props action
-```
-
-Create a minimal `Spec`. The arguments are, in order:
-
-- The `PerformAction` function for performing actions
-- The `Render` function for rendering the current state as a HTML document
-
-For example:
-
-```purescript
-import qualified React.DOM as R
-
-data Action = Increment
-
-spec :: Spec Int _ Action
-spec = simpleSpec performAction render
-  where
-  render :: Render _ Int _
-  render _ _ n _ = [ R.text (show n) ]
-
-  performAction :: PerformAction Int _ Action
-  performAction Increment _ n k = k (n + 1)
-```
-
 #### `createClass`
 
 ``` purescript
@@ -169,16 +158,18 @@ Create a React component class from a Thermite component `Spec`.
 #### `createReactConstructor`
 
 ``` purescript
-createReactConstructor :: forall state props action. Spec {  | state } (WithChildren props) action -> {  | state } -> { constructor :: ReactClassConstructor (WithChildren props) {  | state } (render :: Render, state :: {  | state }), dispatcher :: ReactThis (WithChildren props) {  | state } -> Dispatch action }
+createReactConstructor :: forall state props action. Spec {  | state } (WithChildren props) action -> {  | state } -> { constructor :: ReactClassConstructor (WithChildren props) {  | state } (ReactSpecRequired {  | state } ()), dispatcher :: ReactThis (WithChildren props) {  | state } -> Dispatch action }
 ```
 
-Create a React component constructor from a Thermite component `Spec` with an additional
-function for converting the rendered Array of ReactElement's into a single ReactElement
-as is required by React.
+Create a React component constructor from a Thermite component `Spec`.
 
 This function is a low-level alternative to `createClass`, used when the React
 component constructor needs to be modified before being turned into a component class,
 e.g. by adding additional lifecycle methods.
+
+__Note__: React assumes _all_ react components have a _record_-based state; when constructing
+and composing pure Thermite `Spec`s, you are free to decide whichever state construct you wish.
+However, when finally turning a `Spec` into to React-friendly code, it must be a `Record`.
 
 #### `defaultMain`
 
@@ -250,10 +241,10 @@ Create a component which renders an optional subcomponent.
 #### `foreach`
 
 ``` purescript
-foreach :: forall props state action. (Int -> Spec state props action) -> Spec (List state) props (Tuple Int action)
+foreach :: forall props state action. (Int -> Spec state props action) -> Spec (Array state) props (Tuple Int action)
 ```
 
-Create a component whose state is described by a list, displaying one subcomponent
+Create a component whose state is described by an array, displaying one subcomponent
 for each entry in the list.
 
 The action type is modified to take the index of the originating subcomponent as an
