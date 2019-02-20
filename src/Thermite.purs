@@ -271,16 +271,17 @@ withState f = Spec {performAction,render}
 
 -- | This function captures the props of the `Spec` as a function argument.
 withProps
-  :: forall eff state props action
-   . (props -> Spec eff state props action)
-  -> Spec eff state props action
-withProps f = simpleSpec performAction render
+  :: forall state props action
+   . (props -> Spec state props action)
+  -> Spec state props action
+withProps f = Spec {performAction,render}
   where
-    performAction :: PerformAction eff state props action
+    performAction :: PerformAction state props action
     performAction a p st = view _performAction (f p) a p st
 
     render :: Render state props action
     render k p st = view _render (f p) k p st
+
 
 -- | Change the state type, using a lens to focus on a part of the state.
 -- |

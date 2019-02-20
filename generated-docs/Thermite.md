@@ -194,7 +194,7 @@ This can sometimes be useful in complex scenarios involving the `focus` and
 #### `withProps`
 
 ``` purescript
-withProps :: forall eff state props action. (props -> Spec eff state props action) -> Spec eff state props action
+withProps :: forall state props action. (props -> Spec state props action) -> Spec state props action
 ```
 
 This function captures the props of the `Spec` as a function argument.
