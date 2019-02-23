@@ -18,10 +18,8 @@
   "dependencies": {
     "purescript-aff": "^5.0.2",
     "purescript-coroutines": "^5.0.0",
-    "purescript-web-html": "^1.2.0",
     "purescript-freet": "^4.0.0",
     "purescript-profunctor-lenses": "^5.0.0",
-    "purescript-react-dom": "^6.0.0",
     "purescript-react": "^6.1.0"
   },
   "resolutions": {

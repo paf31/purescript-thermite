@@ -24,7 +24,6 @@ module Thermite
   , _render
   , createClass
   , createReactConstructor
-  , defaultMain
   , withState
   , withProps
   , focus
@@ -46,22 +45,17 @@ import Control.Monad.Free.Trans (resume)
 import Control.Monad.Rec.Class (Step(..), forever, tailRecM)
 import Control.Coroutine (CoTransform(CoTransform), CoTransformer, cotransform, transform, transformCoTransformL, transformCoTransformR)
 import Control.Coroutine (CoTransformer, cotransform) as T
-import Web.HTML (window) as Web
-import Web.HTML.HTMLDocument (body) as Web
-import Web.HTML.HTMLElement (toElement) as Web
-import Web.HTML.Window (document) as Web
 import Data.Either (Either(..))
-import Data.Foldable (for_, traverse_)
+import Data.Foldable (for_)
 import Data.FoldableWithIndex (foldlWithIndex)
 import Data.Lens (Prism', Lens', matching, view, review, preview, lens, over)
 import Data.Array ((!!), modifyAt)
 import Data.Maybe (Maybe(Just), fromMaybe)
 import Data.Tuple (Tuple(..))
-import React (createElement, Children, class ReactPropFields)
+import React (Children)
 import React
   ( ReactElement, ReactClass, ReactSpecRequired, ReactClassConstructor, ReactThis, Render
   , component, toElement, getState, getProps, writeStateWithCallback, childrenToArray) as React
-import ReactDOM (render)
 
 
 -- | A type synonym for an action handler, which takes an action, the current props
@@ -234,24 +228,6 @@ createReactConstructor (Spec spec) initState =
       props <- React.getProps this
       state <- React.getState this
       pure (React.toElement (spec.render (dispatcher this) props state (React.childrenToArray props.children)))
-
--- | A default implementation of `main` which renders a component to the
--- | document body.
-defaultMain
-  :: forall state props given action
-   . ReactPropFields props given
-  => Spec { | state } (WithChildren props) action
-  -> { | state } -- ^ Initial State
-  -> String -- ^ Component Name
-  -> { | given } -- ^ Read-Only Props
-  -> Effect Unit
-defaultMain spec initialState name props = do
-  let component :: React.ReactClass (WithChildren props)
-      component = createClass spec initialState name
-  let element :: React.ReactElement
-      element = createElement component props []
-  mContainer <- Web.window >>= Web.document >>= Web.body
-  traverse_ (render element <<< Web.toElement) mContainer
 
 -- | This function captures the state of the `Spec` as a function argument.
 -- |
