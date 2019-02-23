@@ -21,8 +21,5 @@
     "purescript-freet": "^4.0.0",
     "purescript-profunctor-lenses": "^5.0.0",
     "purescript-react": "^6.1.0"
-  },
-  "resolutions": {
-    "purescript-react": "^6.1.0"
   }
 }

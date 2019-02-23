@@ -102,10 +102,12 @@ spec :: T.Spec State _ Action
 spec = T.Spec {performAction, render}
 ```
 
-Finally, in `main`, the `defaultMain` function can be used to render our component to the document body by specifying the initial state:
+Finally, in `main`, the `defaultMain` function from the
+[purescript-thermite-dom](https://github.com/athanclark/purescript-thermite-dom)
+library can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
-main = T.defaultMain spec initialState "MyComponent" {}
+main = defaultMain spec initialState "MyComponent" {}
 ```
 
 ## Combining Components

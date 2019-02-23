@@ -2,12 +2,10 @@
   "private": true,
   "scripts": {
     "clean": "rimraf output && rimraf .pulp-cache",
-    "build": "pulp build -- --censor-lib --strict",
-    "example": "pulp test -r cat > html/index.js"
+    "build": "pulp build -- --censor-lib --strict"
   },
   "dependencies": {
-    "react": "^16.8.2",
-    "react-dom": "^16.8.2"
+    "react": "^16.8.2"
   },
   "devDependencies": {
     "pulp": "^12.3.1",
