@@ -175,7 +175,7 @@ instance monoidSpec :: Monoid (Spec state props action) where
 createClass
   :: forall state props action
    . Spec { | state } (WithChildren props) action
-  -> { | state } -- ^ Initial State
+  -> (WithChildren props -> { | state }) -- ^ Initial State
   -> String -- ^ Component Name
   -> React.ReactClass (WithChildren props)
 createClass spec state name = React.component name (createReactConstructor spec state).constructor
@@ -192,12 +192,14 @@ createClass spec state name = React.component name (createReactConstructor spec 
 createReactConstructor
   :: forall state props action
    . Spec { | state } (WithChildren props) action
-  -> { | state } -- ^ Initial State
+  -> (WithChildren props -> { | state }) -- ^ Initial State
   -> { constructor :: React.ReactClassConstructor (WithChildren props) { | state } (React.ReactSpecRequired { | state } ())
      , dispatcher :: React.ReactThis (WithChildren props) { | state } -> Dispatch action
      }
 createReactConstructor (Spec spec) initState =
-  { constructor: \this -> pure { render: render this, state: initState }
+  { constructor: \this -> do
+      initProps <- React.getProps this
+      pure { render: render this, state: initState initProps }
   , dispatcher
   }
   where
