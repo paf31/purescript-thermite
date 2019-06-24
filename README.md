@@ -107,7 +107,7 @@ Finally, in `main`, the `defaultMain` function from the
 library can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
-main = defaultMain spec initialState "MyComponent" {}
+main = defaultMain spec (const initialState) "MyComponent" {}
 ```
 
 ## Combining Components
