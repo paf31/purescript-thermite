@@ -98,15 +98,23 @@ performAction Increment _ _ = do
 With these pieces, we can create a `Spec` for our component:
 
 ```purescript
-spec :: T.Spec State _ Action
+spec :: T.Spec State (T.WithChildren ()) Action
 spec = T.Spec {performAction, render}
 ```
+
+> Note that the new purescript-react needs some typechecking assistance
+> for `props` - `Spec` needs an extra `{ children :: Children | props }` field in its props,
+> yet that field is not necessary when creating a react element with its `props` argument.
+>
+> `WithChildren props` is just an alias for `{ children :: Children | props }`.
 
 Finally, in `main`, the `defaultMain` function from the
 [purescript-thermite-dom](https://github.com/athanclark/purescript-thermite-dom)
 library can be used to render our component to the document body by specifying the initial state:
 
 ```purescript
+import Thermite.DOM (defaultMain)
+
 main = defaultMain spec (const initialState) "MyComponent" {}
 ```
 
